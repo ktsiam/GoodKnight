@@ -3,8 +3,30 @@
 
 #include "basic.h"
 #include "files_ranks.h"
+#include "move.h"
 
-struct Board {
+class Board {
+public:        
+        Board();
+        Board(BB ks[], BB qs[], BB rs[], BB bs[], BB ns[], BB ps[], Color c);
+
+        BB    get_kingBB  (Color c);
+        BB    get_queenBB (Color c);
+        BB    get_rookBB  (Color c);
+        BB    get_bishopBB(Color c);
+        BB    get_knightBB(Color c);
+        BB    get_pawnBB  (Color c);
+        Color get_color();
+
+        void  set_kingBB  (BB ks, Color c);
+        void  set_queenBB (BB qs, Color c);
+        void  set_rookBB  (BB rs, Color c);
+        void  set_bishopBB(BB bs, Color c);
+        void  set_knightBB(BB ns, Color c);
+        void  set_pawnBB  (BB ps, Color c);
+        void  set_color(Color c);
+
+private:
         BB k[CLR_NB];
         BB q[CLR_NB];
         BB r[CLR_NB];
@@ -12,13 +34,9 @@ struct Board {
         BB n[CLR_NB];        
         BB p[CLR_NB];
         Color clr;
+        Castling castle_rights[CLR_NB];
+        BB en_passant;
 };
 
-const Board BOARD_INIT { 
-        {E1, E8}, {D1, D8}, {A1|A8, H1|H8}, 
-        {C1|F1, C8|F8}, {B1|G1, B8|G8}, {Rank(1), Rank(6)}, WHITE 
-};
-
-//ADD FEN READ FUNCTION
 
 #endif // BOARD_H_

@@ -1,1 +1,3 @@
 main.cpp
+*.o
+chess

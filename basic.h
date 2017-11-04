@@ -13,25 +13,11 @@ enum Piece : uint8_t { K, Q, R, B, N, P, PIECE_NB = 6 };
 enum Castling : uint8_t { NO_CASTLING, O_O, O_O_O };
 const uint8_t DIM = 8;
 
-BB clear_lsb(BB b)
-{
-        assert(b);
-        return b & (b-1);
-}
+inline uint8_t get_idx(BB b);
+inline BB clear_lsb   (BB b);
+inline BB get_lsb     (BB b);
+inline BB unite       (BB *start, BB *end);
 
-BB get_lsb(BB b)
-{
-        assert(b);
-        return b & -b;
-}
-
-BB unite(BB *start, BB *end)
-{
-        BB u = 0;
-        for (BB *bbp = start; bbp != end; ++bbp)
-                u |= *bbp;
-        return u;
-}
 enum Square : BB{
                 A1 = 1ull<<0,  B1 = 1ull<<1,  C1 = 1ull<<2,  D1 = 1ull<<3,
                 E1 = 1ull<<4,  F1 = 1ull<<5,  G1 = 1ull<<6,  H1 = 1ull<<7,
