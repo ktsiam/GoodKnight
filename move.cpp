@@ -1,7 +1,7 @@
 #include "move.h"
 
-Move::Move(BB org, BB dest, Piece p, Castling c = NO_CASTLING, BB en_p = 0):
-        piece{ p }, castling{ c }, en_passant{ en_p }, 
+Move::Move(BB org, BB dest, Piece p, Castling c, BB en_p):
+        piece{ p }, castling{ c }, en_passant{ get_idx(en_p) }, 
         dest{ get_idx(dest) }, origin{ get_idx(org) } { };
 
 BB       Move::get_dest()       { return get_BB(dest);       }

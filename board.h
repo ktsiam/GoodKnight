@@ -8,18 +8,20 @@
 class Board {
 public:
         Board();
-        Board(BB ks[], BB qs[], BB rs[], BB bs[], BB ns[], BB ps[], Color c);
+        void front_move(Move mv);
 
 protected:
-        BB k[CLR_NB];
-        BB q[CLR_NB];
-        BB r[CLR_NB];
-        BB b[CLR_NB];
-        BB n[CLR_NB];
-        BB p[CLR_NB];
+
+        //position
+        BB pieces[PIECE_NB][CLR_NB];
+
+        //info
         Color clr;
         Castling castle_rights[CLR_NB];
         BB en_passant;
+
+        //helper funcs
+        void castle(Castling);
 };
 
 
