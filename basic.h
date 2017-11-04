@@ -18,6 +18,7 @@ const uint8_t DIM = 8;
 uint8_t get_idx   (BB b);
 BB      clear_lsb (BB b);
 BB      get_lsb   (BB b);
+BB      get_BB    (Sq_idx idx);
 BB      unite     (BB *start, BB *end);
 BB      SQ        (std::string s);
 

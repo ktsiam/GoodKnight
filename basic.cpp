@@ -34,6 +34,11 @@ uint8_t get_idx(BB b)
         return index64[((b & -b) * debruijn64) >> 58];
 }
 
+BB get_BB(Sq_idx idx)
+{
+        return 1ull << idx;
+}
+
 BB SQ(std::string s)
 {
         BB file = s[0]-'A';

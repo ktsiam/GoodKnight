@@ -22,6 +22,7 @@ Board::Board()
         b[0] = SQ("C1")|SQ("F1"), b[1] = SQ("C8")|SQ("F8");
         n[0] = SQ("B1")|SQ("G1"), n[1] = SQ("B8")|SQ("G8");
         p[0] = Rank(1),           p[1] = Rank(6);
+
         clr = WHITE;
         en_passant = 0;
 }
