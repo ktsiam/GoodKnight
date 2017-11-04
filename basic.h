@@ -19,6 +19,6 @@ uint8_t get_idx   (BB b);
 BB      clear_lsb (BB b);
 BB      get_lsb   (BB b);
 BB      unite     (BB *start, BB *end);
-BB      SQ        (std::string s); 
+BB      SQ        (std::string s);
 
 #endif // BASIC_H_

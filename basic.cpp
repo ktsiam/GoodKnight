@@ -29,9 +29,9 @@ static const uint8_t index64[64] = {
 };
 
 uint8_t get_idx(BB b)
-{        
+{
         assert (b != 0);
-        return index64[((b & -b) * debruijn64) >> 58];       
+        return index64[((b & -b) * debruijn64) >> 58];
 }
 
 BB SQ(std::string s)

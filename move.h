@@ -4,15 +4,16 @@
 #include "basic.h"
 
 class Move {
-        
+
 public:
-        
+        Move(BB org, BB dest, Piece p, Castling c = NO_CASTLING, uint8_t en_p = 0);
+
 private:
         Sq_idx dest;
         Sq_idx origin;
-        Castling castling;
         Piece piece;
-        uint8_t spec_move;
+        Castling castling;
+        Sq_idx en_passant;
 };
 
 
