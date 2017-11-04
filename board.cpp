@@ -15,12 +15,12 @@ Board::Board(BB ks[], BB qs[], BB rs[], BB bs[], BB ns[], BB ps[], Color c)
 
 Board::Board()
 {
-        k[0] = E1, k[1] = E8;
-        q[0] = D1, q[1] = D8;
-        r[0] = A1|A8, r[1] = H1|H8;
-        b[0] = C1|F1, b[1] = C8|F8;
-        n[0] = B1|G1, n[1] = B8|G8;
-        n[0] = Rank(1), n[1] = Rank(6);       
+        k[0] = SQ("E1"),          k[1] = SQ("E8");
+        q[0] = SQ("D1"),          q[1] = SQ("D8");
+        r[0] = SQ("A1")|SQ("A8"),       r[1] = SQ("H1")|SQ("H8");
+        b[0] = SQ("C1")|SQ("F1"), b[1] = SQ("C8")|SQ("F8");
+        n[0] = SQ("B1")|SQ("G1"), n[1] = SQ("B8")|SQ("G8");
+        n[0] = Rank(1),           n[1] = Rank(6);       
         clr = WHITE;
         en_passant = 0;
 }
