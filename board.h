@@ -2,7 +2,6 @@
 #define BOARD_H_
 
 #include "basic.h"
-#include "files_ranks.h"
 #include "move.h"
 #include <vector>
 

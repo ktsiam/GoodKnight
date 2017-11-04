@@ -7,8 +7,8 @@ LDLFLAGS = -pthread -lpthread
 all: checkers
 
 
-checkers: basic.o main.o files_ranks.o board.o
-	${CXX} ${LDFLAGS} -o	chess	basic.o main.o files_ranks.o board.o
+checkers: basic.o main.o board.o
+	${CXX} ${LDFLAGS} -o	chess	basic.o main.o board.o
 
 clean:
 	rm -f *.o

@@ -20,6 +20,9 @@ BB      clear_lsb (BB b);
 BB      get_lsb   (BB b);
 BB      get_BB    (Sq_idx idx);
 BB      unite     (BB *start, BB *end);
+
+BB      File      (uint8_t idx);
+BB      Rank      (uint8_t idx);
 BB      SQ        (std::string s);
 
 #endif // BASIC_H_
