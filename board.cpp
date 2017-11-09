@@ -15,30 +15,43 @@ Board::Board()
         en_passant = 0;
 }
 
-
+//TAKE INTO ACCOUNT PROMOTION
 void Board::front_move(Move mv)
 {
+        uint8_t flag = mv.get_flag();
+        
+        if (flag & 0b110) // castling
+                return castle(flag & 0b110);
+
         Castling cstl = mv.get_castling();
         if (cstl != NO_CASTLING)
                 return castle(cstl);      
 
-        //TODO
+        Piece myPiece = mv.get_myPiece();
+        pieces[myPiece][clr] ^= mv.get_origin() | mv.get_dest();
+        
+        BB en_p = mv.get_en_passant();
+        if (en_p != 0)             
+                pieces[P][clr^1] ^= en_p;
+        else if (mv.get_theirPiece != 
+                pieces[mv.get_theirPiece][clr^1] ^= mv.get_dest();
 }
 
 void Board::castle(Castling cstl)
 {
-        assert(castle_rights[clr] & cstl);
-
         if (cstl == O_O) {
                 pieces[K][clr] >>= 2;
-                if (clr == WHITE) {
-                        pieces[R][clr] ^= 1 << 7;
-                        pieces[R][clr] ^= 1 << 5; 
-                }
-                else {
-                        pieces[R][clr] ^= 1ull << 63;
-                        pieces[R][clr] ^= 1ull << 61;
-                }
+                if (clr == WHITE)
+                        pieces[R][clr] ^= 0b101 << 5;                
+                else 
+                        pieces[R][clr] ^= 0b101ULL << 61;                
+        }
+        else {
+                pieces[K][clr] <<= 2;
+                if (clr == WHITE)
+                        pieces[R][clr] ^= 0b1001;
+                else
+                        pieces[R][clr] ^= 0b1001ULL << 56;
         }
 }
 

@@ -10,7 +10,7 @@ typedef Bitboard BB;
 typedef uint8_t Sq_idx;
 
 enum Color    : uint8_t { WHITE, BLACK, CLR_NB };
-enum Piece    : uint8_t { K, Q, R, B, N, P, PIECE_NB = 6 };
+enum Piece    : uint8_t { K, Q, R, B, N, P, PIECE_NB = 6, NO_PIECE };
 enum Castling : uint8_t { NO_CASTLING, O_O, O_O_O, BOTH };
 
 const uint8_t DIM = 8;
