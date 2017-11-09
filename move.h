@@ -6,25 +6,30 @@
 class Move {        
 
 public:
-        Move(BB org, BB dest, Piece p, Castling c = NO_CASTLING, BB en_p = 0);
-        BB get_dest();
-        BB get_origin();
-        BB get_en_passant();
-        Piece get_myPiece();
-        Piece get_theirPiece();
-        Castling get_castling();
-        uint8_t get_flag();
+
+        Move(BB org, BB dest, Piece myP, Piece theirP, 
+             bool capt = false, Castling cstl = NO_CASTLING, 
+             Piece promo = NO_PIECE, bool en_p = false);
+
+        Castling is_castling();
+        bool is_capture();
+        bool is_en_passant();
+        BB dest();
+        BB origin();
+        Piece my_piece();
+        Piece their_piece(); 
+        Piece promoted_piece();
+
 
 private:
-        Piece myPiece;
-        Piece theirPiece;
-        Sq_idx dest;
-        Sq_idx origin;
-
-        uint8_t flag; // 0          -     000    -    00    -    0    
-                      // en passant -  promotion - castling - capture 
-
-        Sq_idx en_passant;
+        BB origin;
+        BB destination;
+        Piece my_piece;
+        Piece their_piece;
+        Piece promotion;
+        bool capture;
+        bool castling;
+        bool en_passant;
 };
 
 

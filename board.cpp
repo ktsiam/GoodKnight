@@ -20,21 +20,26 @@ void Board::front_move(Move mv)
 {
         uint8_t flag = mv.get_flag();
         
-        if (flag & 0b110) // castling
+        //check for castling
+        if (flag & 0b110)
                 return castle(flag & 0b110);
 
-        Castling cstl = mv.get_castling();
-        if (cstl != NO_CASTLING)
-                return castle(cstl);      
-
+        //move my piece
         Piece myPiece = mv.get_myPiece();
         pieces[myPiece][clr] ^= mv.get_origin() | mv.get_dest();
-        
-        BB en_p = mv.get_en_passant();
-        if (en_p != 0)             
-                pieces[P][clr^1] ^= en_p;
-        else if (mv.get_theirPiece != 
-                pieces[mv.get_theirPiece][clr^1] ^= mv.get_dest();
+
+        //if capture, kill opponent's piece
+        if (flag & 1) {
+                Piece theirPiece = mv.get_theirPiece(); 
+                pieces[theirPiece][clr^1] ^= mv.get_dest();
+        }
+        //if en passant, kill opponent's piece in en_p location
+        else if (flag & (1 << 6)) {
+                if (clr == WHITE)
+                        pieces[P][BLACK] ^= mv.get_dest >> 8;
+                else
+                        piece[P][WHITE] ^= mv.get_dest << 8;
+        }
 }
 
 void Board::castle(Castling cstl)

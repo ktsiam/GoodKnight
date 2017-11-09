@@ -10,8 +10,12 @@ typedef Bitboard BB;
 typedef uint8_t Sq_idx;
 
 enum Color    : uint8_t { WHITE, BLACK, CLR_NB };
-enum Piece    : uint8_t { K, Q, R, B, N, P, PIECE_NB = 6, NO_PIECE };
+enum Piece    : uint8_t { NO_PIECE, KING, QUEEN, ROOK, BISHOP, KNIGHT,
+                          PAWN, PIECE_NB = 7};
+
 enum Castling : uint8_t { NO_CASTLING, O_O, O_O_O, BOTH };
+enum Direction:  int8_t { NORTH = 8, SOUTH = -8, EAST = 1,  WEST = -1, 
+                          NW    = 7, NE = 9    , SW   = -9, SE   = -7 }
 
 const uint8_t DIM = 8;
 
