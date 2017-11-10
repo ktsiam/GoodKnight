@@ -15,74 +15,45 @@ Board::Board()
         en_passant = 0;
 }
 
-//TAKE INTO ACCOUNT PROMOTION
 void Board::front_move(Move mv)
-{
-        uint8_t flag = mv.get_flag();
-        
-        //check for castling
-        if (flag & 0b110)
-                return castle(flag & 0b110);
+{        
+        //CASTLING
+        Castling cstl;
+        if (cstl = mv.is_castling()) {
+                uint8_t opposite = (clr == BLACK) * 7;
+                if (castl == O_O) {
+                        piece[KING][clr] ^= shiftBB(0b101, 4, opposite);
+                        piece[ROOK][clr] ^= shiftBB(0b101, 5, opposite);
+                }
+                else {
+                        piece[KING][clr] ^= shiftBB(0b101, 2, opposite);
+                        piece[ROOK][clr] ^= shiftBB(0b1001, opposite);
+                }                        
+                return;
+        }        
 
-        //move my piece
-        Piece myPiece = mv.get_myPiece();
-        pieces[myPiece][clr] ^= mv.get_origin() | mv.get_dest();
+        //EN PASSANT
+        if (mv.is_en_passant()) {
+                BB dest = mv.dest();
+                int8_t dir = (clr == WHITE) ? -1 : 1;
+                piece[PAWN][clr]   ^= mv.origin() | mv.dest();             
+                piece[PAWN][clr^1] ^= shiftBB(dest, 0, dir);
+                return;
+        }
 
-        //if capture, kill opponent's piece
-        if (flag & 1) {
-                Piece theirPiece = mv.get_theirPiece(); 
-                pieces[theirPiece][clr^1] ^= mv.get_dest();
+        //CAPTURE
+        if (mv.is_capture()) {
+                piece[mv.their_piece()][clr^1] ^= mv.dest();
         }
-        //if en passant, kill opponent's piece in en_p location
-        else if (flag & (1 << 6)) {
-                if (clr == WHITE)
-                        pieces[P][BLACK] ^= mv.get_dest >> 8;
-                else
-                        piece[P][WHITE] ^= mv.get_dest << 8;
+
+        //PROMOTION
+        Piece promoted;
+        if (promoted = mv.promoted_piece()) {
+                piece[PAWN][clr] ^= mv.origin();
+                piece[promoted][clr] ^= mv.dest();               
+                return;
         }
+
+        //NORMAL MOVE
+        piece[mv.my_piece()][clr] ^= mv.origin() | mv.dest();
 }
-
-void Board::castle(Castling cstl)
-{
-        if (cstl == O_O) {
-                pieces[K][clr] >>= 2;
-                if (clr == WHITE)
-                        pieces[R][clr] ^= 0b101 << 5;                
-                else 
-                        pieces[R][clr] ^= 0b101ULL << 61;                
-        }
-        else {
-                pieces[K][clr] <<= 2;
-                if (clr == WHITE)
-                        pieces[R][clr] ^= 0b1001;
-                else
-                        pieces[R][clr] ^= 0b1001ULL << 56;
-        }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//TO BE IMPLEMENTED IN THE FUTURE:
-/*
-Board::Board(BB *p[CLR_NB], Color c = WHITE)
-{
-        for (int p = K; p != PIECE_NB; ++p)
-                for (int c = WHITE; c != CLR_NB; ++c)
-                        piece[p][c] = p[c];             
-   
-        clr  = c;
-        en_passant = 0;
-}
-*/

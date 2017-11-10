@@ -19,9 +19,6 @@ protected:
         Color clr;
         Castling castle_rights[CLR_NB];
         BB en_passant;
-
-        //helper funcs
-        void castle(Castling);
 };
 
 

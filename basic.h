@@ -10,12 +10,9 @@ typedef Bitboard BB;
 typedef uint8_t Sq_idx;
 
 enum Color    : uint8_t { WHITE, BLACK, CLR_NB };
+enum Castling : uint8_t { NO_CASTLING, O_O, O_O_O, BOTH };
 enum Piece    : uint8_t { NO_PIECE, KING, QUEEN, ROOK, BISHOP, KNIGHT,
                           PAWN, PIECE_NB = 7};
-
-enum Castling : uint8_t { NO_CASTLING, O_O, O_O_O, BOTH };
-enum Direction:  int8_t { NORTH = 8, SOUTH = -8, EAST = 1,  WEST = -1, 
-                          NW    = 7, NE = 9    , SW   = -9, SE   = -7 }
 
 const uint8_t DIM = 8;
 
@@ -28,5 +25,7 @@ BB      unite     (BB *start, BB *end); // merges all BBs from start to end
 BB      File      (uint8_t idx);        // returns file BB of given index
 BB      Rank      (uint8_t idx);        // returns rank BB of given index
 BB      SQ        (std::string s);      // returns BB with given square
+
+BB      shiftBB   (BB b, int8_t dx, int8_t dy); //shifts BB as shown
 
 #endif // BASIC_H_
