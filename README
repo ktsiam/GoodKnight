@@ -1,6 +1,7 @@
 TODO:
           Make move space efficient (i.e. BB -> idx, pack bits)
           
+          Test move functions
           Generate move functions
 
 
