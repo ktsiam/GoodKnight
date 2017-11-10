@@ -13,7 +13,7 @@ public:
         //testing funcs
         void print();
 
-protected:
+private:
 
         //position
         BB pieces[CLR_NB][PIECE_NB];
@@ -22,6 +22,10 @@ protected:
         Color clr;
         Castling castle_rights[CLR_NB];
         BB en_passant_sq;
+
+        //temporary variables (re-evaluated each position)
+        BB all_pieces[CLR_NB];
+
 
         //move helper
         void castle(Castling cstl, Color c);
@@ -32,8 +36,9 @@ protected:
         void set_en_passant(BB org, BB dest);
 
         //gen helper
+        void init_variables();
         BB knight_move_gen();
-        BB knight_attach_gen();
+        BB king_move_gen();
 };
 
 

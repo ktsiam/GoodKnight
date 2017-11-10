@@ -11,6 +11,8 @@ Board::Board()
 
         clr = WHITE;
         en_passant_sq = 0;
+
+        init_variables();
 }
 
 void Board::front_move(Move mv)

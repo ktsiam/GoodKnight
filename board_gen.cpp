@@ -40,11 +40,39 @@ static const BB KING_MOVE[DIM*DIM] = {
         0x2838000000000000, 0x5070000000000000, 0xa0e0000000000000, 0x40c0000000000000
 };
 
+void Board::init_variables()
+{
+        all_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
+        all_pieces[BLACK] = unite(&pieces[BLACK][KING], &pieces[BLACK][PIECE_NB]);
+}
 
+BB Board::knight_move_gen()
+{
+        init_variables();
+        BB knight_moves = 0;
+        BB knight = pieces[clr][KNIGHT];
+        while (knight != 0) {
 
+                uint8_t lsb = get_idx(get_lsb(knight));
+                knight_moves |= KNIGHT_MOVE[lsb];
+                knight = clear_lsb(knight);
+        }
+        return knight_moves & ~all_pieces[clr];
+}
 
+BB Board::king_move_gen()
+{
+        init_variables();
+        BB king_moves = 0;
+        BB king = pieces[clr][KNIGHT];
+        while (king != 0) {
 
-
+                uint8_t lsb = get_idx(get_lsb(king));
+                king_moves |= KING_MOVE[lsb];
+                king = clear_lsb(king);
+        }
+        return king_moves & ~all_pieces[clr];
+}
 
 
 
