@@ -58,12 +58,12 @@ BB File(uint8_t idx)
 BB Rank(uint8_t idx)
 {
         assert(idx < DIM && idx >= 0);
-        return R_INIT << (idx * 8);
+        return R_INIT << (idx * DIM);
 }
 
 BB shiftBB(BB b, int8_t dx, int8_t dy)
 {
-        int8_t d = dy * 8 + dx;
+        int8_t d = dy * DIM + dx;
         if (d > 0)
                 return b << d;
         else
