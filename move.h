@@ -3,22 +3,22 @@
 
 #include "basic.h"
 
-class Move {        
+class Move {
 
 public:
 
-        Move(BB org, BB dest, Piece myP = PAWN, Piece theirP = NO_PIECE, 
-             bool capt = false, Castling cstl = NO_CASTLING, 
-             Piece promo = NO_PIECE, bool en_p = false, 
+        Move(BB org, BB dest, Piece myP = PAWN, Piece theirP = NO_PIECE,
+             bool capt = false, Castling cstl = NO_CASTLING,
+             Piece promo = NO_PIECE, bool en_p = false,
              Castling c_rights = BOTH);
 
         Castling is_castling() const;
         bool is_capture() const;
-        bool is_en_passant() const;
+        BB is_en_passant() const;
         BB dest() const;
         BB origin() const;
         Piece my_piece() const;
-        Piece their_piece() const; 
+        Piece their_piece() const;
         Piece promoted_piece() const;
         Castling castle_rights() const;
 
@@ -35,7 +35,7 @@ protected:
         bool capture;
         Castling castling;
         Piece promotion;
-        bool en_passant;
+        BB en_passant;
         Castling rights;
 };
 
