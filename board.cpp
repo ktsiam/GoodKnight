@@ -12,73 +12,87 @@ Board::Board()
         pieces[PAWN]  [0] = Rank(1),           pieces[PAWN]  [1] = Rank(6);
 
         clr = WHITE;
-        en_passant = 0;
+        en_passant_sq = 0;
 }
 
 void Board::front_move(Move mv)
-{        
-        //CASTLING
-        Castling cstl = mv.is_castling();
-        if (cstl != NO_CASTLING) {
-                uint8_t opposite = (clr == BLACK) * 7;
-                if (cstl == O_O) {
-                        pieces[KING][clr] ^= shiftBB(0b101, 4, opposite);
-                        pieces[ROOK][clr] ^= shiftBB(0b101, 5, opposite);
-                }
-                else {
-                        pieces[KING][clr] ^= shiftBB(0b101,  2, opposite);
-                        pieces[ROOK][clr] ^= shiftBB(0b1001, 0, opposite);
-                }                        
+{       
+        //capture
+        if (mv.is_capture())
+                capture(mv.dest(), mv.their_piece(), clr);
 
-                castle_rights[clr] = NO_CASTLING;
-                goto finish;
-        }        
 
-        //EN PASSANT
-        if (mv.is_en_passant()) {
-                BB dest = mv.dest();
-                int8_t dir = (clr == WHITE) ? -1 : 1;
-                pieces[PAWN][clr]   ^= mv.origin() | mv.dest();
-                pieces[PAWN][clr^1] ^= shiftBB(dest, 0, dir);
-                goto finish;
-        }
-
-        //CAPTURE
-        if (mv.is_capture()) {
-                pieces[mv.their_piece()][clr^1] ^= mv.dest();
-        }
-
-        //PROMOTION
-        {
-                Piece promoted = mv.promoted_piece();
-                if (promoted != NO_PIECE) {
-                        pieces[PAWN][clr] ^= mv.origin();
-                        pieces[promoted][clr] ^= mv.dest();               
-                        goto finish;
-                }
-        }
-                
-        //NORMAL MOVE
-        {
-                Piece my_piece = mv.my_piece();
-                BB    dest     = mv.dest();
-                pieces[my_piece][clr] ^= mv.origin() | dest;
-                
-                //CHECKING FOR POSITIBILITY OF EN-PASSANT NEXT MOVE
-                if (my_piece == PAWN && (
-                            (dest & File(3) && clr == WHITE) || 
-                            (dest & File(4) && clr == BLACK))) {
-                        int8_t dir = (clr == WHITE) ? -1 : 1;
-                        en_passant = shiftBB(dest, 0, dir);
-                }
+        //castling        
+        if (mv.is_castling() != NO_CASTLING) {
+                castle(mv.is_castling(), clr);
+                castle_rights[clr] = NO_CASTLING;                
+        }       
+                        
+        //en-passant
+        else if (mv.is_en_passant())
+                en_passant(mv.origin(), mv.dest(), clr);        
+        
+        //promotion                
+        else if (mv.promoted_piece() != NO_PIECE)
+                        promote(mv.origin(), mv.dest(), mv.promoted_piece(), clr);
+        
+        //displacement
+        else {
+                displace(mv.origin(), mv.dest(), mv.my_piece(), clr);                
+                //checking for future en-passant
+                if (mv.my_piece() == PAWN)
+                        set_en_passant(mv.origin(), mv.dest());
         }                        
         
-        //SWAPING COLOR AND DISABLING EN PASSANT
-finish:
-        en_passant = 0;
+        //swaping color
         clr = (Color) !clr;
 }
 
+void Board::castle(Castling cstl, Color c)
+{
+        uint8_t opposite = (c == BLACK) * 7;
+        if (cstl == O_O) {
+                pieces[KING][c] ^= shiftBB(0b101, 4, opposite);
+                pieces[ROOK][c] ^= shiftBB(0b101, 5, opposite);
+        }
+        else {
+                pieces[KING][c] ^= shiftBB(0b101,  2, opposite);
+                pieces[ROOK][c] ^= shiftBB(0b1001, 0, opposite);
+        }                        
+}
+
+void Board::en_passant(BB org, BB dest, Color c)
+{
+        int8_t dir = (c == WHITE) ? -1 : 1;
+        pieces[PAWN][c]   ^= org | dest;
+        pieces[PAWN][c^1] ^= shiftBB(dest, 0, dir);
+}
+
+void Board::capture(BB dest, Piece pce, Color c)
+{
+        pieces[pce][c^1] ^= dest;
+}
+
+void Board::promote(BB org, BB dest, Piece new_pce, Color c)
+{
+        pieces[PAWN][c] ^= org;
+        pieces[new_pce][c] ^= dest;
+}
+
+void Board::displace(BB org, BB dest, Piece pce, Color c)
+{
+        pieces[pce][c] ^= org | dest;
+}
+        
+void Board::set_en_passant(BB org, BB dest)
+{
+        if (shiftBB(org, 0, 2) == dest) 
+                en_passant_sq = shiftBB(org, 0, 1);
+        else if (shiftBB(org, 0, -2) == dest)
+                en_passant_sq = shiftBB(org, 0, -1);
+        else
+                en_passant_sq = 0;
+}
 
 
 /*///////////////////////////////////////////////////////////
