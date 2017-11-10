@@ -3,13 +3,12 @@
 
 #include "basic.h"
 #include "move.h"
-#include <vector>
 
 class Board {
 public:
         Board();
-        void front_move(Move mv);
-        void back_move(Move mv);
+        void front_move(const Move mv);
+        void back_move(const Move mv);
         //testing funcs
         void print();
 
@@ -40,6 +39,7 @@ public:
         void init_variables();
         BB knight_move_gen();
         BB king_move_gen();
+        //BB pawn_move_gen();
 };
 
 
