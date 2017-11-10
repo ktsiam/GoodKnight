@@ -16,7 +16,7 @@ public:
 protected:
 
         //position
-        BB pieces[PIECE_NB][CLR_NB];
+        BB pieces[CLR_NB][PIECE_NB];
 
         //info
         Color clr;

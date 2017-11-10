@@ -2,12 +2,12 @@
 
 Board::Board()
 {
-        pieces[KING]  [0] = SQ("E1"),          pieces[KING] [1] = SQ("E8");
-        pieces[QUEEN] [0] = SQ("D1"),          pieces[QUEEN] [1] = SQ("D8");
-        pieces[ROOK]  [0] = SQ("A1")|SQ("H1"), pieces[ROOK]  [1] = SQ("A8")|SQ("H8");
-        pieces[BISHOP][0] = SQ("C1")|SQ("F1"), pieces[BISHOP][1] = SQ("C8")|SQ("F8");
-        pieces[KNIGHT][0] = SQ("B1")|SQ("G1"), pieces[KNIGHT][1] = SQ("B8")|SQ("G8");
-        pieces[PAWN]  [0] = Rank(1),           pieces[PAWN]  [1] = Rank(6);
+        pieces[0][KING]   = SQ("E1"),          pieces[1][KING]   = SQ("E8");
+        pieces[0][QUEEN]  = SQ("D1"),          pieces[1][QUEEN]  = SQ("D8");
+        pieces[0][ROOK]   = SQ("A1")|SQ("H1"), pieces[1][ROOK]   = SQ("A8")|SQ("H8");
+        pieces[0][BISHOP] = SQ("C1")|SQ("F1"), pieces[1][BISHOP] = SQ("C8")|SQ("F8");
+        pieces[0][KNIGHT] = SQ("B1")|SQ("G1"), pieces[1][KNIGHT] = SQ("B8")|SQ("G8");
+        pieces[0][PAWN]   = Rank(1),           pieces[1][PAWN]   = Rank(6);
 
         clr = WHITE;
         en_passant_sq = 0;
@@ -79,36 +79,36 @@ void Board::castle(Castling cstl, Color c)
 {
         uint8_t opposite = (c == BLACK) * 7;
         if (cstl == O_O) {
-                pieces[KING][c] ^= shiftBB(0b101, 4, opposite);
-                pieces[ROOK][c] ^= shiftBB(0b101, 5, opposite);
+                pieces[c][KING] ^= shiftBB(0b101, 4, opposite);
+                pieces[c][ROOK] ^= shiftBB(0b101, 5, opposite);
         }
         else {
-                pieces[KING][c] ^= shiftBB(0b101,  2, opposite);
-                pieces[ROOK][c] ^= shiftBB(0b1001, 0, opposite);
+                pieces[c][KING] ^= shiftBB(0b101,  2, opposite);
+                pieces[c][ROOK] ^= shiftBB(0b1001, 0, opposite);
         }
 }
 
 BB Board::en_passant(BB org, BB dest, Color c)
 {
         int8_t dir = (c == WHITE) ? -1 : 1;
-        pieces[PAWN][c]   ^= org | dest;
-        return pieces[PAWN][c^1] ^= shiftBB(dest, 0, dir);
+        pieces[c][PAWN]   ^= org | dest;
+        return pieces[c^1][PAWN] ^= shiftBB(dest, 0, dir);
 }
 
 void Board::capture(BB dest, Piece pce, Color c)
 {
-        pieces[pce][c^1] ^= dest;
+        pieces[c^1][pce] ^= dest;
 }
 
 void Board::promote(BB org, BB dest, Piece new_pce, Color c)
 {
-        pieces[PAWN][c] ^= org;
-        pieces[new_pce][c] ^= dest;
+        pieces[c][PAWN]    ^= org;
+        pieces[c][new_pce] ^= dest;
 }
 
 void Board::displace(BB org, BB dest, Piece pce, Color c)
 {
-        pieces[pce][c] ^= org | dest;
+        pieces[c][pce] ^= org | dest;
 }
 
 void Board::set_en_passant(BB org, BB dest)
