@@ -19,7 +19,7 @@ Board::Board()
 
 void Board::front_move(const Move mv)
 {
-        //capture
+        //capture  (en_passant is NOT a capture)
         if (mv.is_capture())
                 capture(mv.dest(), mv.their_piece(), clr);
 
@@ -41,17 +41,18 @@ void Board::front_move(const Move mv)
         //displacement
         else {
                 displace(mv.origin(), mv.dest(), mv.my_piece(), clr);
+
                 //checking for future en-passant & castling rights
                 switch (mv.my_piece()) {
-                        case PAWN : 
+                        case PAWN :
                                 set_en_passant(mv.origin(), mv.dest()); break;
-                        case KING : 
+                        case KING :
                                 castle_rights[clr] = NO_CASTLING;       break;
-                        case ROOK : 
+                        case ROOK :
                                 if (clr == WHITE) {
                                         bool o_o   = pieces[WHITE][clr] & shiftBB(1, 7, 7*clr);
                                         bool o_o_o = pieces[WHITE][clr] & shiftBB(1, 0, 7*clr);
-                                        castle_rights[clr] = (Castling) 
+                                        castle_rights[clr] = (Castling)
                                                 ((o_o | (o_o_o << 1)) & castle_rights[clr]);
                                 }
                         default : break;
@@ -64,23 +65,22 @@ void Board::front_move(const Move mv)
 
 void Board::back_move(const Move mv)
 {
-        //swapping color
+        //swapping color, adjusting Castling & en_passant
         clr = (Color) !clr;
+        en_passant_sq      = mv.en_passant_status();
+        castle_rights[clr] = mv.castle_rights();
 
-        //capture
+        //capture (en_passant is NOT a capture)
         if (mv.is_capture())
                 capture(mv.dest(), mv.their_piece(), clr);
 
-
         //castling
-        if (mv.is_castling() != NO_CASTLING) {
+        if (mv.is_castling() != NO_CASTLING)
                 castle(mv.is_castling(), clr);
-                castle_rights[clr] = mv.castle_rights();
-        }
 
         //en-passant
         else if (mv.is_en_passant())
-                en_passant_sq = en_passant(mv.origin(), mv.dest(), clr);
+                en_passant(mv.origin(), mv.dest(), clr);
 
         //promotion
         else if (mv.promoted_piece() != NO_PIECE)
@@ -104,11 +104,11 @@ void Board::castle(Castling cstl, Color c)
         }
 }
 
-BB Board::en_passant(BB org, BB dest, Color c)
+void Board::en_passant(BB org, BB dest, Color c)
 {
         int8_t dir = (c == WHITE) ? -1 : 1;
         pieces[c][PAWN]   ^= org | dest;
-        return pieces[c^1][PAWN] ^= shiftBB(dest, 0, dir);
+        pieces[c^1][PAWN] ^= shiftBB(dest, 0, dir);
 }
 
 void Board::capture(BB dest, Piece pce, Color c)

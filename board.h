@@ -28,7 +28,7 @@ private:
 
         //move helper
         void castle(Castling cstl, Color c);
-        BB   en_passant(BB org, BB dest, Color c);
+        void en_passant(BB org, BB dest, Color c);
         void capture(BB dest, Piece pce, Color c);
         void promote(BB org, BB dest, Piece new_pce, Color c);
         void displace(BB org, BB dest, Piece pce, Color c);
@@ -39,7 +39,7 @@ public:
         void init_variables();
         BB knight_move_gen();
         BB king_move_gen();
-        //BB pawn_move_gen();
+        BB pawn_move_gen();
 };
 
 
