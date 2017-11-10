@@ -12,15 +12,15 @@ public:
              Piece promo = NO_PIECE, bool en_p = false, 
              Castling c_rights = BOTH);
 
-        Castling is_castling();
-        bool is_capture();
-        bool is_en_passant();
-        BB dest();
-        BB origin();
-        Piece my_piece();
-        Piece their_piece(); 
-        Piece promoted_piece();
-        Castling castle_rights();
+        Castling is_castling() const;
+        bool is_capture() const;
+        bool is_en_passant() const;
+        BB dest() const;
+        BB origin() const;
+        Piece my_piece() const;
+        Piece their_piece() const; 
+        Piece promoted_piece() const;
+        Castling castle_rights() const;
 
 
 protected:
