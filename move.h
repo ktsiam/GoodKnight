@@ -12,17 +12,17 @@ public:
              Piece promo = NO_PIECE, bool en_p = false,
              Castling c_rights = BOTH, BB en_p_st = 0);
 
-        Castling is_castling() const;   // returns castling type of move
-        bool is_capture() const;        // returns if move is a capture
-        bool is_en_passant() const;     // returns if move is en_passant
-        BB dest() const;                // returns BB with destination
-        BB origin() const;              // returns BB with origin
-        Piece my_piece() const;         // returns piece moved
-        Piece their_piece() const;      // returns piece captured (if)
-        Piece promoted_piece() const;   // returns promoted piece type
+        Castling is_castling()   const;  // returns castling type of move
+        bool is_capture()        const;  // returns if move is a capture
+        bool is_en_passant()     const;  // returns if move is en_passant
+        BB dest()                const;  // returns BB with destination
+        BB origin()              const;  // returns BB with origin
+        Piece my_piece()         const;  // returns piece moved
+        Piece their_piece()      const;  // returns piece captured (if)
+        Piece promoted_piece()   const;  // returns promoted piece type
 
-        Castling castle_rights() const; // returns previous castle rights
-        BB en_passant_status() const;   // returns previous en_passant square
+        Castling castle_rights() const;  // returns previous castle rights
+        BB en_passant_status()   const;  // returns previous en_passant square
 
 
 protected:
