@@ -1,7 +1,5 @@
 #include "board.h"
 
-
-
 Board::Board()
 {
         pieces[KING]  [0] = SQ("E1"),          pieces[KING] [1] = SQ("E8");
@@ -48,6 +46,35 @@ void Board::front_move(Move mv)
         clr = (Color) !clr;
 }
 
+void Board::back_move(Move mv)
+{
+        //swapping color
+        clr = (Color) !clr;
+
+        //capture
+        if (mv.is_capture())
+                capture(mv.dest(), mv.their_piece(), clr);
+
+
+        //castling        
+        if (mv.is_castling() != NO_CASTLING) {
+                castle(mv.is_castling(), clr);
+                castle_rights[clr] = mv.castle_rights();
+        }       
+                        
+        //en-passant
+        else if (mv.is_en_passant())
+                en_passant_sq = en_passant(mv.origin(), mv.dest(), clr);        
+        
+        //promotion                
+        else if (mv.promoted_piece() != NO_PIECE)
+                        promote(mv.origin(), mv.dest(), mv.promoted_piece(), clr);
+        
+        //displacement
+        else
+                displace(mv.origin(), mv.dest(), mv.my_piece(), clr);        
+}
+
 void Board::castle(Castling cstl, Color c)
 {
         uint8_t opposite = (c == BLACK) * 7;
@@ -61,11 +88,11 @@ void Board::castle(Castling cstl, Color c)
         }                        
 }
 
-void Board::en_passant(BB org, BB dest, Color c)
+BB Board::en_passant(BB org, BB dest, Color c)
 {
         int8_t dir = (c == WHITE) ? -1 : 1;
         pieces[PAWN][c]   ^= org | dest;
-        pieces[PAWN][c^1] ^= shiftBB(dest, 0, dir);
+        return pieces[PAWN][c^1] ^= shiftBB(dest, 0, dir);
 }
 
 void Board::capture(BB dest, Piece pce, Color c)
