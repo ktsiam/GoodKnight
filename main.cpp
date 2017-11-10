@@ -3,7 +3,6 @@
 #include "basic.h"
 #include "board.h"
 
-void print(BB);
 void move(Board &b, std::string sq, std::string sq2, Piece p);
 void test_en_passant();
 void test_opening();
@@ -26,7 +25,6 @@ void test_en_passant()
         
         b.front_move(Move{ SQ("E5"), SQ("D6"), PAWN, PAWN, 
                                 true, NO_CASTLING, NO_PIECE, true});
-
         b.print();
 }
 
@@ -43,17 +41,6 @@ void test_opening()
 
         b.front_move(Move{0, 0, NO_PIECE, NO_PIECE, 0, O_O});
         b.print();
-}
-
-void print(BB b)
-{
-        for (int r = 7; r >= 0; --r){
-                std::cout << r+1 << " ";
-                for (int f = 0; f < 8; ++f)
-                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
-                std::cout << "\n";
-        }
-        std::cout << "  A B C D E F G H\n\n";
 }
 
 void move(Board &b, std::string sq, std::string sq2, Piece p)
