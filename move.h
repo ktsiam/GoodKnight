@@ -10,11 +10,12 @@ public:
         Move(BB org, BB dest, Piece myP = PAWN, Piece theirP = NO_PIECE,
              bool capt = false, Castling cstl = NO_CASTLING,
              Piece promo = NO_PIECE, bool en_p = false,
-             Castling c_rights = BOTH);
+             Castling c_rights = BOTH, BB en_p_st = 0);
 
         Castling is_castling() const;
         bool is_capture() const;
-        BB is_en_passant() const;
+        bool is_en_passant() const;
+        BB en_passant_status() const;
         BB dest() const;
         BB origin() const;
         Piece my_piece() const;
@@ -35,8 +36,9 @@ protected:
         bool capture;
         Castling castling;
         Piece promotion;
-        BB en_passant;
+        bool en_passant;
         Castling rights;
+        BB en_pass_status;
 };
 
 
