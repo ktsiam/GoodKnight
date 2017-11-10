@@ -8,6 +8,7 @@
 class Board {
 public:
         Board();
+        void print();
         void front_move(Move mv);
 
 protected:

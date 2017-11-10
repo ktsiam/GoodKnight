@@ -43,7 +43,7 @@ BB SQ(std::string s)
 {
         BB file = s[0]-'A';
         BB rank = s[1]-'1';
-        return 1ull << (8 * rank + file);
+        return shiftBB(1ULL, file, rank);
 }
 
 static const BB F_INIT = 0x101010101010101;
@@ -63,7 +63,7 @@ BB Rank(uint8_t idx)
 
 BB shiftBB(BB b, int8_t dx, int8_t dy)
 {
-        uint8_t d = dy * 8 + dx;
+        int8_t d = dy * 8 + dx;
         if (d > 0)
                 return b << d;
         else

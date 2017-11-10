@@ -7,7 +7,7 @@ class Move {
 
 public:
 
-        Move(BB org, BB dest, Piece myP, Piece theirP, 
+        Move(BB org, BB dest, Piece myP = PAWN, Piece theirP = NO_PIECE, 
              bool capt = false, Castling cstl = NO_CASTLING, 
              Piece promo = NO_PIECE, bool en_p = false);
 
@@ -22,13 +22,17 @@ public:
 
 
 private:
-        BB origin;
+
+        //TODO: INCREASE EFFICIENCY OF HOW INFORMATION IS STORED
+        //use helper functions from basic.h
+
+        BB orgn;
         BB destination;
-        Piece my_piece;
-        Piece their_piece;
-        Piece promotion;
+        Piece my_pce;
+        Piece their_pce;
         bool capture;
-        bool castling;
+        Castling castling;
+        Piece promotion;
         bool en_passant;
 };
 
