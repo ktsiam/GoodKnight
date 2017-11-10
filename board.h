@@ -23,13 +23,17 @@ protected:
         Castling castle_rights[CLR_NB];
         BB en_passant_sq;
 
-        //helper
+        //move helper
         void castle(Castling cstl, Color c);
         BB   en_passant(BB org, BB dest, Color c);
         void capture(BB dest, Piece pce, Color c);
         void promote(BB org, BB dest, Piece new_pce, Color c);
         void displace(BB org, BB dest, Piece pce, Color c);
         void set_en_passant(BB org, BB dest);
+
+        //gen helper
+        BB knight_move_gen();
+        BB knight_attach_gen();
 };
 
 

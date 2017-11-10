@@ -3,6 +3,7 @@
 #include "basic.h"
 #include "board.h"
 
+void print(BB b);
 void move(Board &b, std::string sq, std::string sq2, Piece p);
 void move_r(Board &b, std::string sq, std::string sq2, Piece p);
 void test_en_passant();
@@ -10,11 +11,15 @@ void test_opening();
 
 int main()
 {
-        std::cout << "TESTING OPENING SEQUENCE\n\n";
+
+}
+
+
+/*        std::cout << "TESTING OPENING SEQUENCE\n\n";
         test_opening();
         std::cout << "\n\n\nTESTING EN PASSANT\n\n";
-        test_en_passant();
-}
+        test_en_passant();*/
+
 void test_en_passant()
 {
         Board b;
@@ -75,3 +80,46 @@ void move_r(Board &b, std::string sq, std::string sq2, Piece p)
         b.back_move(mv);
         b.print();
 }
+
+void print(BB b)
+{
+        for (int r = 7; r >= 0; --r){
+                std::cout << r+1 << " ";
+                for (int f = 0; f < 8; ++f)
+                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
+                std::cout << "\n";
+        }
+        std::cout << "  A B C D E F G H\n\n";
+}
+
+//GENERATED MOVE GRAPHS
+void gen_move()
+{
+        BB KNIGHT_MOVE[8][8];
+        for (int y = 0; y < DIM; ++y){
+                for (int x = 0; x < DIM; ++x) {
+                        KNIGHT_MOVE[x][y] = 0;
+                        if (x < 6 && y < 7)
+                                KNIGHT_MOVE[x][y] |= shiftBB(1, x+2, y+1);
+                        if (x < 6 && y >= 1)
+                                KNIGHT_MOVE[x][y] |= shiftBB(1, x+2, y-1);
+                        if (x < 7 && y < 6)
+                                KNIGHT_MOVE[x][y] |= shiftBB(1, x+1, y+2);
+                        if (x < 7 && y >= 2)
+                                KNIGHT_MOVE[x][y] |= shiftBB(1, x+1, y-2);
+                        if (x >= 1 && y < 6)
+                                KNIGHT_MOVE[x][y] |= shiftBB(1, x-1, y+2);
+                        if (x >= 1 && y >= 2)
+                                KNIGHT_MOVE[x][y] |= shiftBB(1, x-1, y-2);
+                        if (x >= 2 && y < 7)
+                                KNIGHT_MOVE[x][y] |= shiftBB(1, x-2, y+1);
+                        if (x >= 2 && y >= 1)
+                                KNIGHT_MOVE[x][y] |= shiftBB(1, x-2, y-1);
+
+                        //print(KNIGHT_MOVE[x][y]);
+                        std::cout << (void *)KNIGHT_MOVE[x][y] << ", ";
+                }
+                std::cout << std::endl;
+        }
+}
+

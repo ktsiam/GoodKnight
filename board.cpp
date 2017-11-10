@@ -14,34 +14,34 @@ Board::Board()
 }
 
 void Board::front_move(Move mv)
-{       
+{
         //capture
         if (mv.is_capture())
                 capture(mv.dest(), mv.their_piece(), clr);
 
 
-        //castling        
+        //castling
         if (mv.is_castling() != NO_CASTLING) {
                 castle(mv.is_castling(), clr);
-                castle_rights[clr] = NO_CASTLING;                
-        }       
-                        
+                castle_rights[clr] = NO_CASTLING;
+        }
+
         //en-passant
         else if (mv.is_en_passant())
-                en_passant(mv.origin(), mv.dest(), clr);        
-        
-        //promotion                
+                en_passant(mv.origin(), mv.dest(), clr);
+
+        //promotion
         else if (mv.promoted_piece() != NO_PIECE)
                         promote(mv.origin(), mv.dest(), mv.promoted_piece(), clr);
-        
+
         //displacement
         else {
-                displace(mv.origin(), mv.dest(), mv.my_piece(), clr);                
+                displace(mv.origin(), mv.dest(), mv.my_piece(), clr);
                 //checking for future en-passant
                 if (mv.my_piece() == PAWN)
                         set_en_passant(mv.origin(), mv.dest());
-        }                        
-        
+        }
+
         //swaping color
         clr = (Color) !clr;
 }
@@ -56,23 +56,23 @@ void Board::back_move(Move mv)
                 capture(mv.dest(), mv.their_piece(), clr);
 
 
-        //castling        
+        //castling
         if (mv.is_castling() != NO_CASTLING) {
                 castle(mv.is_castling(), clr);
                 castle_rights[clr] = mv.castle_rights();
-        }       
-                        
+        }
+
         //en-passant
         else if (mv.is_en_passant())
-                en_passant_sq = en_passant(mv.origin(), mv.dest(), clr);        
-        
-        //promotion                
+                en_passant_sq = en_passant(mv.origin(), mv.dest(), clr);
+
+        //promotion
         else if (mv.promoted_piece() != NO_PIECE)
                         promote(mv.origin(), mv.dest(), mv.promoted_piece(), clr);
-        
+
         //displacement
         else
-                displace(mv.origin(), mv.dest(), mv.my_piece(), clr);        
+                displace(mv.origin(), mv.dest(), mv.my_piece(), clr);
 }
 
 void Board::castle(Castling cstl, Color c)
@@ -85,7 +85,7 @@ void Board::castle(Castling cstl, Color c)
         else {
                 pieces[KING][c] ^= shiftBB(0b101,  2, opposite);
                 pieces[ROOK][c] ^= shiftBB(0b1001, 0, opposite);
-        }                        
+        }
 }
 
 BB Board::en_passant(BB org, BB dest, Color c)
@@ -110,16 +110,17 @@ void Board::displace(BB org, BB dest, Piece pce, Color c)
 {
         pieces[pce][c] ^= org | dest;
 }
-        
+
 void Board::set_en_passant(BB org, BB dest)
 {
-        if (shiftBB(org, 0, 2) == dest) 
+        if (shiftBB(org, 0, 2) == dest)
                 en_passant_sq = shiftBB(org, 0, 1);
         else if (shiftBB(org, 0, -2) == dest)
                 en_passant_sq = shiftBB(org, 0, -1);
         else
                 en_passant_sq = 0;
 }
+
 
 
 /*///////////////////////////////////////////////////////////
@@ -129,7 +130,7 @@ void Board::set_en_passant(BB org, BB dest)
 #include <iostream>
 
 static char find_piece(BB *pieces, BB sq)
-{        
+{
         for (int i = WHITE; i != CLR_NB; ++i)
                 for (int j = KING; j != PIECE_NB; ++j) {
                         if (pieces[2*j+i] & sq) {
@@ -141,8 +142,8 @@ static char find_piece(BB *pieces, BB sq)
                                 case KNIGHT : c = 'n'; break;
                                 case ROOK : c = 'r'; break;
                                 case PAWN : c = 'p'; break;
-                                }                                         
-                                if (i == WHITE) 
+                                }
+                                if (i == WHITE)
                                         c -= 32;
                                 return c;
                         }
@@ -154,9 +155,9 @@ void Board::print()
 {
         std::cout << "  " << "o#"[clr == BLACK] << "\n";
         std::cout << "  -----------------\n";
-        for (int r = 7; r >= 0; --r){
+        for (int r = DIM-1; r >= 0; --r){
                 std::cout << r+1 << "| ";
-                for (int f = 0; f < 8; ++f)
+                for (int f = 0; f < DIM; ++f)
                         std::cout << find_piece((BB*)pieces, 1ULL << (8*r+f)) << " ";
                 std::cout << "|\n";
         }
