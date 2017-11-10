@@ -41,8 +41,8 @@ BB get_BB(Sq_idx idx)
 
 BB SQ(std::string s)
 {
-        BB file = s[0]-'A';
-        BB rank = s[1]-'1';
+        uint8_t file = s[0]-'A';
+        uint8_t rank = s[1]-'1';
         return shiftBB(1ULL, file, rank);
 }
 
