@@ -9,7 +9,8 @@ public:
 
         Move(BB org, BB dest, Piece myP = PAWN, Piece theirP = NO_PIECE, 
              bool capt = false, Castling cstl = NO_CASTLING, 
-             Piece promo = NO_PIECE, bool en_p = false);
+             Piece promo = NO_PIECE, bool en_p = false, 
+             Castling c_rights = BOTH);
 
         Castling is_castling();
         bool is_capture();
@@ -19,9 +20,10 @@ public:
         Piece my_piece();
         Piece their_piece(); 
         Piece promoted_piece();
+        Castling castle_rights();
 
 
-private:
+protected:
 
         //TODO: INCREASE EFFICIENCY OF HOW INFORMATION IS STORED
         //use helper functions from basic.h
@@ -34,6 +36,7 @@ private:
         Castling castling;
         Piece promotion;
         bool en_passant;
+        Castling rights;
 };
 
 
