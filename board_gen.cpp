@@ -1,5 +1,3 @@
-#ifndef BOARD_GEN_H_
-#define BOARD_GEN_H_
 #include "board.h"
 
 static const BB KNIGHT_MOVE[DIM*DIM] = {
@@ -40,6 +38,23 @@ static const BB KING_MOVE[DIM*DIM] = {
         0x2838000000000000, 0x5070000000000000, 0xa0e0000000000000, 0x40c0000000000000
 };
 
+static const BB PAWN_ATTACK[DIM*DIM] = {
+        0x0, 0x0, 0x0, 0x0, 
+        0x0, 0x0, 0x0, 0x0, 
+        0x20000, 0x50000, 0xa0000, 0x140000, 
+        0x280000, 0x500000, 0xa00000, 0x400000, 
+        0x2000000, 0x5000000, 0xa000000, 0x14000000, 
+        0x28000000, 0x50000000, 0xa0000000, 0x40000000, 
+        0x200000000, 0x500000000, 0xa00000000, 0x1400000000, 
+        0x2800000000, 0x5000000000, 0xa000000000, 0x4000000000, 
+        0x20000000000, 0x50000000000, 0xa0000000000, 0x140000000000, 
+        0x280000000000, 0x500000000000, 0xa00000000000, 0x400000000000, 
+        0x2000000000000, 0x5000000000000, 0xa000000000000, 0x14000000000000, 
+        0x28000000000000, 0x50000000000000, 0xa0000000000000, 0x40000000000000, 
+        0x200000000000000, 0x500000000000000, 0xa00000000000000, 0x1400000000000000, 
+        0x2800000000000000, 0x5000000000000000, 0xa000000000000000, 0x4000000000000000
+};
+
 void Board::init_variables()
 {
         all_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
@@ -47,8 +62,7 @@ void Board::init_variables()
 }
 
 BB Board::knight_move_gen()
-{
-        init_variables();
+{        
         BB knight_moves = 0;
         BB knight = pieces[clr][KNIGHT];
         while (knight != 0) {
@@ -61,8 +75,7 @@ BB Board::knight_move_gen()
 }
 
 BB Board::king_move_gen()
-{
-        init_variables();
+{        
         BB king_moves = 0;
         BB king = pieces[clr][KING];
         while (king != 0) {
@@ -74,4 +87,21 @@ BB Board::king_move_gen()
         return king_moves & ~all_pieces[clr];
 }
 
-#endif // BOARD_GEN_H_
+
+BB Board::pawn_move_gen()
+{
+        BB pawn_moves = 0;
+        BB pawn_attacks = 0;
+        BB pawn = pieces[clr][PAWN];
+        while (pawn != 0) {
+                uint8_t lsb = get_idx(get_lsb(pawn));
+                pawn_attacks |= PAWN_ATTACK[lsb];
+                pawn_moves   |= shiftBB(get_lsb(pawn), 0, (clr==WHITE) ? 1 : -1);
+                pawn = clear_lsb(pawn);
+        }
+        
+        pawn_attacks &= all_pieces[clr^1] | en_passant_sq;
+        pawn_moves   &= ~(all_pieces[clr] & all_pieces[clr^1]);        
+
+        return pawn_moves;
+}

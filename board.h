@@ -35,7 +35,7 @@ private:
         void set_en_passant(BB org, BB dest);
 
 public:
-        //gen helper
+        //gen funcs
         void init_variables();
         BB knight_move_gen();
         BB king_move_gen();
