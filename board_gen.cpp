@@ -64,7 +64,7 @@ BB Board::king_move_gen()
 {
         init_variables();
         BB king_moves = 0;
-        BB king = pieces[clr][KNIGHT];
+        BB king = pieces[clr][KING];
         while (king != 0) {
 
                 uint8_t lsb = get_idx(get_lsb(king));
@@ -73,15 +73,5 @@ BB Board::king_move_gen()
         }
         return king_moves & ~all_pieces[clr];
 }
-
-
-
-
-
-
-
-
-
-
 
 #endif // BOARD_GEN_H_

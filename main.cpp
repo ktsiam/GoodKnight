@@ -11,18 +11,16 @@ void test_opening();
 
 int main()
 {
-
+        test_opening();
+        test_en_passant();
 }
 
-
-/*        std::cout << "TESTING OPENING SEQUENCE\n\n";
-        test_opening();
-        std::cout << "\n\n\nTESTING EN PASSANT\n\n";
-        test_en_passant();*/
 
 void test_en_passant()
 {
         Board b;
+
+        std::cout << "EN-PASSANT GAME\n";
         b.print();
         move(b, "E2", "E4", PAWN);
         move(b, "E7", "E6", PAWN);
@@ -33,6 +31,14 @@ void test_en_passant()
                                 true, NO_CASTLING, NO_PIECE, true});
         b.print();
 
+        b.init_variables();
+        std::cout << "POSSIBLE KNIGHT MOVES\n";
+        print(b.knight_move_gen());
+        std::cout << "POSSIBLE KING MOVES\n";
+        print(b.king_move_gen());
+
+
+        std::cout << "REVERSING MOVES\n";
         b.back_move(Move{ SQ("E5"), SQ("D6"), PAWN, PAWN,
                                 true, NO_CASTLING, NO_PIECE, true});
         b.print();
@@ -45,6 +51,8 @@ void test_en_passant()
 void test_opening()
 {
         Board b;
+
+        std::cout << "OPENING GAME\n";
         b.print();
         move(b, "E2", "E4", PAWN);
         move(b, "E7", "E5", PAWN);
@@ -56,6 +64,13 @@ void test_opening()
         b.front_move(Move{0, 0, NO_PIECE, NO_PIECE, 0, O_O});
         b.print();
 
+        b.init_variables();
+        std::cout << "POSSIBLE KNIGHT MOVES\n";
+        print(b.knight_move_gen());
+        std::cout << "POSSIBLE KING MOVES\n";
+        print(b.king_move_gen());
+
+        std::cout << "REVERSING MOVES\n";
         b.back_move(Move{0, 0, NO_PIECE, NO_PIECE, 0, O_O, NO_PIECE, 0, BOTH});
         b.print();
 

@@ -1,5 +1,7 @@
 TODO:
           Make move space efficient (i.e. BB -> idx, pack bits)
-          Generate move function
+          
+          Question castling rights when moving KING or ROOK
+          Generate move functions
 
 

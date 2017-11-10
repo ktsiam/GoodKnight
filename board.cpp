@@ -2,16 +2,18 @@
 
 Board::Board()
 {
-        pieces[0][KING]   = SQ("E1"),          pieces[1][KING]   = SQ("E8");
-        pieces[0][QUEEN]  = SQ("D1"),          pieces[1][QUEEN]  = SQ("D8");
-        pieces[0][ROOK]   = SQ("A1")|SQ("H1"), pieces[1][ROOK]   = SQ("A8")|SQ("H8");
-        pieces[0][BISHOP] = SQ("C1")|SQ("F1"), pieces[1][BISHOP] = SQ("C8")|SQ("F8");
-        pieces[0][KNIGHT] = SQ("B1")|SQ("G1"), pieces[1][KNIGHT] = SQ("B8")|SQ("G8");
-        pieces[0][PAWN]   = Rank(1),           pieces[1][PAWN]   = Rank(6);
+        pieces[WHITE][KING]   = SQ("E1"),          pieces[BLACK][KING]   = SQ("E8");
+        pieces[WHITE][QUEEN]  = SQ("D1"),          pieces[BLACK][QUEEN]  = SQ("D8");
+        pieces[WHITE][ROOK]   = SQ("A1")|SQ("H1"), pieces[BLACK][ROOK]   = SQ("A8")|SQ("H8");
+        pieces[WHITE][BISHOP] = SQ("C1")|SQ("F1"), pieces[BLACK][BISHOP] = SQ("C8")|SQ("F8");
+        pieces[WHITE][KNIGHT] = SQ("B1")|SQ("G1"), pieces[BLACK][KNIGHT] = SQ("B8")|SQ("G8");
+        pieces[WHITE][PAWN]   = Rank(1),           pieces[BLACK][PAWN]   = Rank(6);
 
         clr = WHITE;
         en_passant_sq = 0;
-
+        
+        castle_rights[WHITE] = BOTH;
+        castle_rights[BLACK] = BOTH;
         init_variables();
 }
 
@@ -135,7 +137,7 @@ static char find_piece(BB *pieces, BB sq)
 {
         for (int i = WHITE; i != CLR_NB; ++i)
                 for (int j = KING; j != PIECE_NB; ++j) {
-                        if (pieces[2*j+i] & sq) {
+                        if (pieces[j+i*PIECE_NB] & sq) {
                                 char c;
                                 switch (j) {
                                 case KING : c = 'k'; break;
@@ -155,7 +157,11 @@ static char find_piece(BB *pieces, BB sq)
 
 void Board::print()
 {
-        std::cout << "  " << "o#"[clr == BLACK] << "\n";
+        std::cout << ((clr==WHITE)?"\nWHITE   ":"\nBLACK   ");
+        std::cout << ((castle_rights[BLACK] == BOTH)  ? "O-O & O-O-O\n": 
+                      (castle_rights[BLACK] == O_O)   ? "O-O\n": 
+                      (castle_rights[BLACK] == O_O_O) ? "O-O-O\n" : "\n");
+        
         std::cout << "  -----------------\n";
         for (int r = DIM-1; r >= 0; --r){
                 std::cout << r+1 << "| ";
@@ -164,6 +170,10 @@ void Board::print()
                 std::cout << "|\n";
         }
         std::cout << "  -----------------\n";
-        std::cout << "   A B C D E F G H\n\n";
+        std::cout << "   A B C D E F G H\n        ";
+        std::cout << ((castle_rights[WHITE] == BOTH)  ? "O-O & O-O-O\n": 
+                      (castle_rights[WHITE] == O_O)   ? "O-O\n": 
+                      (castle_rights[WHITE] == O_O_O) ? "O-O-O\n" : "\n");
+        std::cout << "\n  #################\n\n";
 }
 

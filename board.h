@@ -35,6 +35,7 @@ private:
         void displace(BB org, BB dest, Piece pce, Color c);
         void set_en_passant(BB org, BB dest);
 
+public:
         //gen helper
         void init_variables();
         BB knight_move_gen();
