@@ -30,13 +30,13 @@ void test_en_passant()
         move(b, "D7", "D5", PAWN);
 
         b.front_move(Move{ SQ("E5"), SQ("D6"), PAWN, BOTH, 0, PAWN,
-                                true, NO_CASTLING, NO_PIECE, true});
+                                NO_CASTLING, NO_PIECE, true});
         b.print();
 
 
         std::cout << "REVERSING MOVES\n";
         b.back_move(Move{ SQ("E5"), SQ("D6"), PAWN, BOTH, 0, PAWN,
-                                true, NO_CASTLING, NO_PIECE, true});
+                                NO_CASTLING, NO_PIECE, true});
         b.print();
         move_r(b, "D7", "D5", PAWN);
         move_r(b, "E4", "E5", PAWN);
@@ -57,12 +57,12 @@ void test_opening()
         move(b, "F1", "C4", BISHOP);
         move(b, "F8", "C5", BISHOP);
 
-        b.front_move(Move{0, 0, NO_PIECE, BOTH, 0, NO_PIECE, 0, O_O});
+        b.front_move(Move{0, 0, NO_PIECE, BOTH, 0, NO_PIECE, O_O});
         b.print();
 
 
         std::cout << "REVERSING MOVES\n";
-        b.back_move(Move{0, 0, NO_PIECE, BOTH, 0, NO_PIECE, 0, O_O, NO_PIECE, 0});
+        b.back_move(Move{0, 0, NO_PIECE, BOTH, 0, NO_PIECE, O_O, NO_PIECE, 0});
         b.print();
 
         move_r(b, "F8", "C5", BISHOP);

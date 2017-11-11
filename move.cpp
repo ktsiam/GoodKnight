@@ -1,15 +1,14 @@
 #include "move.h"
 
 Move::Move(BB org, BB dest, Piece myP, Castling c_rights, 
-           BB en_p_st, Piece theirP, bool capt, Castling cstl, 
+           BB en_p_st, Piece theirP, Castling cstl, 
            Piece promo, bool en_p) :
 
         orgn(org), destination(dest), my_pce(myP), rights(c_rights), 
-        en_pass_status(en_p_st), their_pce(theirP), capture(capt), 
-        castling(cstl), promotion(promo), en_passant(en_p) { };
+        en_pass_status(en_p_st), their_pce(theirP), castling(cstl), 
+        promotion(promo), en_passant(en_p) { };
 
 Castling Move::is_castling()       const { return castling;       }
-bool     Move::is_capture()        const { return capture;        }
 bool     Move::is_en_passant()     const { return en_passant;     }
 BB       Move::dest()              const { return destination;    }
 BB       Move::origin()            const { return orgn;           }
