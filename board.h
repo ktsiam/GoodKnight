@@ -44,6 +44,8 @@ private:
         void general_move_gen(BB origin, Piece pce, BB moves);
         void pawn_black_move_gen();
         void pawn_white_move_gen();
+        void promotion_gen(BB origin, BB dest, Piece = NO_PIECE);
+        void en_passant_gen(BB pawns);
 
         //move helper
         void castle(Castling cstl, Color c);
