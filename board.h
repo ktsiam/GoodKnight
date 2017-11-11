@@ -11,7 +11,11 @@ public:
         void front_move(const Move &mv);
         void back_move (const Move &mv);
 
+        //for testing
         void print();
+        void printBB(BB b);
+        void print_moves();
+        void custom_move(std::string);
 
 private:
         //move chains
@@ -28,7 +32,7 @@ private:
 
 
         //dependency
-        void init_variables();
+        void init_moves();
 
         //move generators
         void castling_gen();

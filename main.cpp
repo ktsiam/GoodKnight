@@ -12,11 +12,39 @@ void test_opening();
 
 int main()
 {
-        test_opening();
-        test_en_passant();
-        //gen_move();
+        Board b;
+        b.print();
+        b.print_moves();
+
+
+//        test_opening();
+//        test_en_passant();
 }
 
+void move(Board &b, std::string sq, std::string sq2, Piece p)
+{
+        Move mv(SQ(sq), SQ(sq2), p, NO_CASTLING, false);
+        b.front_move(mv);
+        b.print();
+}
+
+void move_r(Board &b, std::string sq, std::string sq2, Piece p)
+{
+        Move mv(SQ(sq), SQ(sq2), p, NO_CASTLING, false);
+        b.back_move(mv);
+        b.print();
+}
+
+void print(BB b)
+{
+        for (int r = 7; r >= 0; --r){
+                std::cout << r+1 << " ";
+                for (int f = 0; f < 8; ++f)
+                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
+                std::cout << "\n";
+        }
+        std::cout << "  A B C D E F G H\n\n";
+}
 
 void test_en_passant()
 {
@@ -73,31 +101,6 @@ void test_opening()
         move_r(b, "E2", "E4", PAWN);
 }
 
-void move(Board &b, std::string sq, std::string sq2, Piece p)
-{
-        Move mv(SQ(sq), SQ(sq2), p);
-        b.front_move(mv);
-        b.print();
-}
-
-void move_r(Board &b, std::string sq, std::string sq2, Piece p)
-{
-        Move mv(SQ(sq), SQ(sq2), p);
-        b.back_move(mv);
-        b.print();
-}
-
-void print(BB b)
-{
-        for (int r = 7; r >= 0; --r){
-                std::cout << r+1 << " ";
-                for (int f = 0; f < 8; ++f)
-                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
-                std::cout << "\n";
-        }
-        std::cout << "  A B C D E F G H\n\n";
-}
-
 //GENERATED MOVE GRAPHS
 void gen_move()
 {
@@ -117,4 +120,3 @@ void gen_move()
                 }                
         }
 }
-

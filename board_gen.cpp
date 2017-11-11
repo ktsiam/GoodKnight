@@ -9,10 +9,18 @@
  * BB PAWN_MOVE  [2][64]  *
  **************************/
 
-void Board::init_variables()
+void Board::init_moves()
 {
         all_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
         all_pieces[BLACK] = unite(&pieces[BLACK][KING], &pieces[BLACK][PIECE_NB]);
+
+        move_vec.clear();
+
+        castling_gen();
+        king_move_gen();
+        knight_move_gen();
+
+        //no pawns yet!
 }
 
 Piece Board::find_piece(BB sq, Color c)
@@ -25,12 +33,15 @@ Piece Board::find_piece(BB sq, Color c)
 
 void Board::castling_gen()
 {
+        int8_t y_shift = clr * 7;
         if (castle_rights[clr] & 1)
-                move_vec.push_back(Move(0, 0, NO_PIECE, castle_rights[clr],
-                                        en_passant_sq, NO_PIECE, O_O));
+                if ((~shiftBB(0b11, 5, y_shift) & (all_pieces[clr] | all_pieces[clr^1])) == (all_pieces[clr] | all_pieces[clr^1]))
+                        move_vec.push_back(Move(0, 0, NO_PIECE, castle_rights[clr],
+                                                en_passant_sq, NO_PIECE, O_O));
         if (castle_rights[clr] & 2)
-                move_vec.push_back(Move(0, 0, NO_PIECE, castle_rights[clr],
-                                        en_passant_sq, NO_PIECE, O_O_O));
+                if ((~shiftBB(0b111, 1, y_shift) & (all_pieces[clr] | all_pieces[clr^1])) == (all_pieces[clr] | all_pieces[clr^1]))
+                        move_vec.push_back(Move(0, 0, NO_PIECE, castle_rights[clr],
+                                                en_passant_sq, NO_PIECE, O_O_O));
 }
 
 void Board::king_move_gen()
@@ -43,14 +54,49 @@ void Board::king_move_gen()
 void Board::knight_move_gen()
 {
         BB knight_pos = pieces[clr][KNIGHT];
+
         while (knight_pos) {
                 BB origin = get_clear_lsb(knight_pos);
-                general_move_gen(origin, KNIGHT, KNIGHT_MOVE[origin]);
+                BB moves  = KNIGHT_MOVE[get_idx(origin)];
+
+                general_move_gen(origin, KNIGHT, moves);
         }
 }
 
+
+
+void Board::general_move_gen(BB origin, Piece pce, BB moves)
+{       
+        moves &= ~all_pieces[clr];
+
+        if (!moves) return;
+
+        BB attack     = moves & all_pieces[clr^1];
+        BB non_attack = moves ^ attack;        
+
+        while (non_attack) {
+                BB dest = get_clear_lsb(non_attack);      
+                move_vec.push_back(Move{origin, dest, pce, castle_rights[clr], 0});
+        }
+
+        while (attack) {
+                BB dest     = get_clear_lsb(attack);
+                Piece their = find_piece(dest, (Color) (clr^1));
+                Move new_mv{origin, dest, pce, castle_rights[clr], 0, their};
+                move_vec.push_back(new_mv);
+        }        
+}
+
+
+////////////////////////////////////////////////////////
+//////////////////NEEEEDDDSSS WORRRRK///////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+
 void Board::pawn_white_move_gen()
 {
+/*
         BB pawn_pos = pieces[WHITE][PAWN];
 
         //check for en_passant
@@ -99,6 +145,7 @@ void Board::pawn_white_move_gen()
                         }
                 }
         }                
+*/
 }
 
 void Board::en_passant_gen(BB pawns)
@@ -136,26 +183,3 @@ void Board::double_move_gen(BB origin)
                 move_vec.push_back(new_mv);
         }
 }
-void Board::general_move_gen(BB origin, Piece pce, BB moves)
-{       
-        
-        if (!moves) return;
-
-        BB attack     = moves & ~all_pieces[clr^1];
-        BB non_attack = moves ^ attack;
-
-        while (non_attack) {
-                BB dest = get_clear_lsb(moves);      
-                move_vec.push_back(Move{origin, dest, pce, castle_rights[clr], 0});
-        }
-
-        while (attack) {
-                BB dest     = get_clear_lsb(moves);
-                Piece their = find_piece(dest, (Color) (clr^1));
-                Move new_mv{origin, dest, pce, castle_rights[clr], 0, their};
-                move_vec.push_back(new_mv);
-        }        
-}
-
-
-

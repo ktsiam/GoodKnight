@@ -14,7 +14,8 @@ Board::Board()
 
         castle_rights[WHITE] = BOTH;
         castle_rights[BLACK] = BOTH;
-        init_variables();
+
+        init_moves();
 }
 
 void Board::front_move(const Move &mv)
@@ -140,10 +141,14 @@ void Board::set_en_passant(BB org, BB dest)
 
 
 /*///////////////////////////////////////////////////////////
- *       PRINT FUNCTION USED FOR TESTING, etc.
+ *       PRINT FUNCTIONS USED FOR TESTING, etc.
 ///////////////////////////////////////////////////////////*/
 
+
 #include <iostream>
+
+
+
 
 static char get_print_piece(BB *pieces, BB sq)
 {
@@ -190,3 +195,40 @@ void Board::print()
         std::cout << "\n  #################\n\n";
 }
 
+void Board::printBB(BB b)
+{
+        for (int r = 7; r >= 0; --r){
+                std::cout << r+1 << " ";
+                for (int f = 0; f < 8; ++f)
+                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
+                std::cout << "\n";
+        }
+        std::cout << "  A B C D E F G H\n\n";        
+}
+
+static std::string get_square(BB b)
+{
+        int i = get_idx(b);
+        int file = i%DIM;
+        int rank = i/DIM;
+
+        std::string sq;
+        sq.push_back("ABCDEFGH"[file]);
+        return sq + "12345678"[rank];
+}
+
+void Board::print_moves()
+{
+        init_moves();
+
+        for (auto mv = move_vec.begin(); mv != move_vec.end(); ++mv) {
+                std::string str = "";
+                
+                str += get_square(mv->origin()) + " ";
+
+                if (mv->their_piece() != NO_PIECE)
+                        str += "x ";
+                str += get_square(mv->dest());
+                std::cout << str << std::endl;
+        }
+}
