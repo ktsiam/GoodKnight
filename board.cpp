@@ -145,7 +145,7 @@ void Board::set_en_passant(BB org, BB dest)
 
 #include <iostream>
 
-static char find_piece(BB *pieces, BB sq)
+static char get_print_piece(BB *pieces, BB sq)
 {
         for (int i = WHITE; i != CLR_NB; ++i)
                 for (int j = KING; j != PIECE_NB; ++j) {
@@ -179,7 +179,7 @@ void Board::print()
         for (int r = DIM-1; r >= 0; --r){
                 std::cout << r+1 << "| ";
                 for (int f = 0; f < DIM; ++f)
-                        std::cout << find_piece((BB*)pieces, 1ULL << (8*r+f)) << " ";
+                        std::cout << get_print_piece ((BB*)pieces, 1ULL << (8*r+f)) << " ";
                 std::cout << "|\n";
         }
         std::cout << "  -----------------\n";
