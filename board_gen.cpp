@@ -11,8 +11,10 @@
 
 void Board::init_moves()
 {
-        all_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
-        all_pieces[BLACK] = unite(&pieces[BLACK][KING], &pieces[BLACK][PIECE_NB]);
+        team_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
+        team_pieces[BLACK] = unite(&pieces[BLACK][KING], &pieces[BLACK][PIECE_NB]);
+
+        all_pieces = team_pieces[WHITE] | team_pieces[BLACK];
 
         move_vec.clear();
 
@@ -35,11 +37,11 @@ void Board::castling_gen()
 {
         int8_t y_shift = clr * 7;
         if (castle_rights[clr] & 1)
-                if ((~shiftBB(0b11, 5, y_shift) & (all_pieces[clr] | all_pieces[clr^1])) == (all_pieces[clr] | all_pieces[clr^1]))
+                if ((~shiftBB(0b11, 5, y_shift) & all_pieces) == all_pieces)
                         move_vec.push_back(Move(0, 0, NO_PIECE, castle_rights[clr],
                                                 en_passant_sq, NO_PIECE, O_O));
         if (castle_rights[clr] & 2)
-                if ((~shiftBB(0b111, 1, y_shift) & (all_pieces[clr] | all_pieces[clr^1])) == (all_pieces[clr] | all_pieces[clr^1]))
+                if ((~shiftBB(0b111, 1, y_shift) & all_pieces) == all_pieces)
                         move_vec.push_back(Move(0, 0, NO_PIECE, castle_rights[clr],
                                                 en_passant_sq, NO_PIECE, O_O_O));
 }
@@ -67,11 +69,11 @@ void Board::knight_move_gen()
 
 void Board::general_move_gen(BB origin, Piece pce, BB moves)
 {       
-        moves &= ~all_pieces[clr];
+        moves &= ~team_pieces[clr];
 
         if (!moves) return;
 
-        BB attack     = moves & all_pieces[clr^1];
+        BB attack     = moves & team_pieces[clr^1];
         BB non_attack = moves ^ attack;        
 
         while (non_attack) {
@@ -128,7 +130,7 @@ void Board::pawn_white_move_gen()
                 BB dest = shiftBB(origin, 1, 0);
                 
                 //if front move possible
-                if ( ~(all_pieces[WHITE] | all_pieces[BLACK]) & dest) {
+                if ( ~(all_pieces) & dest) {
 
                         //check for promotion
                         if (dest & Rank(7))
@@ -178,7 +180,7 @@ void Board::double_move_gen(BB origin)
 {
         BB dest = shiftBB(origin, 0, 2);
                 
-        if (~(all_pieces[WHITE] | all_pieces[BLACK]) & dest) {
+        if (~all_pieces & dest) {
                 Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
                 move_vec.push_back(new_mv);
         }

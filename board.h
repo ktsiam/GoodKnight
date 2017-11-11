@@ -28,7 +28,8 @@ private:
         BB en_passant_sq;
 
         //temporary variables (re-evaluated each position)
-        BB all_pieces[CLR_NB];
+        BB all_pieces;
+        BB team_pieces[CLR_NB];
 
 
         //dependency
