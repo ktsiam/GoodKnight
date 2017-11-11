@@ -16,12 +16,9 @@ int main()
         b.print();
         b.print_moves();
 
-
-//        test_opening();
-//        test_en_passant();
 }
 
-void move(Board &b, std::string sq, std::string sq2, Piece p)
+/*void move(Board &b, std::string sq, std::string sq2, Piece p)
 {
         Move mv(SQ(sq), SQ(sq2), p, NO_CASTLING, false);
         b.front_move(mv);
@@ -120,3 +117,4 @@ void gen_move()
                 }                
         }
 }
+*/
