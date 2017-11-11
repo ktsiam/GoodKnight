@@ -7,11 +7,9 @@ class Move {
 
 public:
 
-        Move(BB org, BB dest, Piece myP = PAWN, Castling c_rights = BOTH, 
-             BB en_p_st = 0, Piece theirP = NO_PIECE,
-             Castling cstl = NO_CASTLING,
-             Piece promo = NO_PIECE, bool en_p = false
-                );
+        Move(BB org, BB dest, Piece myP, Castling c_rights, BB en_p_st, 
+             Piece theirP = NO_PIECE, Castling cstl = NO_CASTLING,
+             Piece promo = NO_PIECE, bool en_p = false);
 
         Castling is_castling()   const;  // returns castling type of move
         bool is_en_passant()     const;  // returns if move is en_passant
