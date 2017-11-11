@@ -35,12 +35,15 @@ private:
         void king_move_gen();
 
         void knight_move_gen();
-        void pawn_move_gen();
+        void (Board::*pawn_move_gen[CLR_NB])() = 
+        { &Board::pawn_white_move_gen, &Board::pawn_black_move_gen };
 
 
         //generator helpers
         Piece find_piece(BB sq, Color c);
         void general_move_gen(BB origin, Piece pce, BB moves);
+        void pawn_black_move_gen();
+        void pawn_white_move_gen();
 
         //move helper
         void castle(Castling cstl, Color c);
