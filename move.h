@@ -7,10 +7,11 @@ class Move {
 
 public:
 
-        Move(BB org, BB dest, Piece myP = PAWN, Piece theirP = NO_PIECE,
+        Move(BB org, BB dest, Piece myP = PAWN, Castling c_rights = BOTH, 
+             BB en_p_st = 0, Piece theirP = NO_PIECE,
              bool capt = false, Castling cstl = NO_CASTLING,
-             Piece promo = NO_PIECE, bool en_p = false,
-             Castling c_rights = BOTH, BB en_p_st = 0);
+             Piece promo = NO_PIECE, bool en_p = false
+                );
 
         Castling is_castling()   const;  // returns castling type of move
         bool is_capture()        const;  // returns if move is a capture
@@ -33,13 +34,13 @@ protected:
         BB orgn;
         BB destination;
         Piece my_pce;
+        Castling rights;
+        BB en_pass_status;
         Piece their_pce;
         bool capture;
         Castling castling;
         Piece promotion;
         bool en_passant;
-        Castling rights;
-        BB en_pass_status;
 };
 
 
