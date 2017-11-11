@@ -1,5 +1,10 @@
 #include "board.h"
 
+static BB SQ(std::string s)
+{
+        return File(s[0] - 'A') & Rank(s[1] - '1');
+}
+
 Board::Board()
 {
         pieces[WHITE][KING]   = SQ("E1");          pieces[BLACK][KING]   = SQ("E8");
@@ -136,99 +141,4 @@ void Board::set_en_passant(BB org, BB dest)
                 en_passant_sq = shiftBB(org, 0, -1);
         else
                 en_passant_sq = 0;
-}
-
-
-
-/*///////////////////////////////////////////////////////////
- *       PRINT FUNCTIONS USED FOR TESTING, etc.
-///////////////////////////////////////////////////////////*/
-
-
-#include <iostream>
-
-
-
-
-static char get_print_piece(BB *pieces, BB sq)
-{
-        for (int i = WHITE; i != CLR_NB; ++i)
-                for (int j = KING; j != PIECE_NB; ++j) {
-                        if (pieces[j+i*PIECE_NB] & sq) {
-                                char c;
-                                switch (j) {
-                                case KING : c = 'k'; break;
-                                case QUEEN : c = 'q'; break;
-                                case BISHOP : c = 'b'; break;
-                                case KNIGHT : c = 'n'; break;
-                                case ROOK : c = 'r'; break;
-                                case PAWN : c = 'p'; break;
-                                default : return '?';
-                                }
-                                if (i == WHITE)
-                                        c -= 32;
-                                return c;
-                        }
-                }
-        return ' ';
-}
-
-void Board::print()
-{
-        std::cout << ((clr==WHITE)?"\nWHITE   ":"\nBLACK   ");
-        std::cout << ((castle_rights[BLACK] == BOTH)  ? "O-O & O-O-O\n":
-                      (castle_rights[BLACK] == O_O)   ? "O-O\n":
-                      (castle_rights[BLACK] == O_O_O) ? "O-O-O\n" : "\n");
-
-        std::cout << "  -----------------\n";
-        for (int r = DIM-1; r >= 0; --r){
-                std::cout << r+1 << "| ";
-                for (int f = 0; f < DIM; ++f)
-                        std::cout << get_print_piece ((BB*)pieces, 1ULL << (8*r+f)) << " ";
-                std::cout << "|\n";
-        }
-        std::cout << "  -----------------\n";
-        std::cout << "   A B C D E F G H\n        ";
-        std::cout << ((castle_rights[WHITE] == BOTH)  ? "O-O & O-O-O\n":
-                      (castle_rights[WHITE] == O_O)   ? "O-O\n":
-                      (castle_rights[WHITE] == O_O_O) ? "O-O-O\n" : "\n");
-        std::cout << "\n  #################\n\n";
-}
-
-void Board::printBB(BB b)
-{
-        for (int r = 7; r >= 0; --r){
-                std::cout << r+1 << " ";
-                for (int f = 0; f < 8; ++f)
-                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
-                std::cout << "\n";
-        }
-        std::cout << "  A B C D E F G H\n\n";        
-}
-
-static std::string get_square(BB b)
-{
-        int i = get_idx(b);
-        int file = i%DIM;
-        int rank = i/DIM;
-
-        std::string sq;
-        sq.push_back("ABCDEFGH"[file]);
-        return sq + "12345678"[rank];
-}
-
-void Board::print_moves()
-{
-        init_moves();
-
-        for (auto mv = move_vec.begin(); mv != move_vec.end(); ++mv) {
-                std::string str = "";
-                
-                str += get_square(mv->origin()) + " ";
-
-                if (mv->their_piece() != NO_PIECE)
-                        str += "x ";
-                str += get_square(mv->dest());
-                std::cout << str << std::endl;
-        }
 }

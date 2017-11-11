@@ -11,7 +11,7 @@ public:
         void front_move(const Move &mv);
         void back_move (const Move &mv);
 
-        //for testing
+        //for printing
         void print();
         void printBB(BB b);
         void print_moves();
