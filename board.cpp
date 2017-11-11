@@ -20,7 +20,7 @@ Board::Board()
 void Board::front_move(const Move &mv)
 {
         //capture  (en_passant is NOT a capture)
-        if (mv.is_capture())
+        if (mv.their_piece() != NO_PIECE)
                 capture(mv.dest(), mv.their_piece(), clr);
 
 
@@ -71,7 +71,7 @@ void Board::back_move(const Move &mv)
         castle_rights[clr] = mv.castle_rights();
 
         //capture (en_passant is NOT a capture)
-        if (mv.is_capture())
+        if (mv.their_piece() != NO_PIECE)
                 capture(mv.dest(), mv.their_piece(), clr);
 
         //castling
