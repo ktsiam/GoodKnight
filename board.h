@@ -38,8 +38,9 @@ private:
         void pawn_move_gen();
 
 
-        //generator helper
+        //generator helpers
         Piece find_piece(BB sq, Color c);
+        void general_move_gen(BB origin, Piece pce, BB moves);
 
         //move helper
         void castle(Castling cstl, Color c);

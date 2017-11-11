@@ -34,29 +34,41 @@ void Board::castling_gen()
 }
 
 void Board::king_move_gen()
-{        
+{       
         BB origin = pieces[clr][KING];
         BB moves  = KING_MOVE[get_idx(origin)];
-        moves    &= ~all_pieces[clr];
+        general_move_gen(origin, KING, moves);        
+}
 
+void Board::knight_move_gen()
+{
+        BB knight_pos = pieces[clr][KNIGHT];
+        
+        while (knight_pos) {
+                BB origin = get_clear_lsb(knight_pos);
+                general_move_gen(origin, KNIGHT, KNIGHT_MOVE[origin]);
+        }
+}
+
+void Board::general_move_gen(BB origin, Piece pce, BB moves)
+{       
+        
         if (!moves) return;
 
         BB attack     = moves & ~all_pieces[clr^1];
         BB non_attack = moves ^ attack;
 
         while (non_attack) {
-                BB dest = get_clear_lsb(moves);                
-                move_vec.push_back(Move{origin, dest, KING, castle_rights[clr], 0});
+                BB dest = get_clear_lsb(moves);      
+                move_vec.push_back(Move{origin, dest, pce, castle_rights[clr], 0});
         }
 
         while (attack) {
                 BB dest     = get_clear_lsb(moves);
-                Piece their = find_piece(dest, clr^1);
-                move_vec.push_back(Move{origin, dest, KING, castle_rights[clr], 0, their});
-        }
+                Piece their = find_piece(dest, (Color) (clr^1));
+                move_vec.push_back(Move{origin, dest, pce, castle_rights[clr], 0, their});
+        }        
 }
-
-
 
 
 
