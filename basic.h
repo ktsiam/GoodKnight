@@ -31,7 +31,6 @@ BB      unite     (BB *start, BB *end); // merges all BBs from start to end
 //generate BBs
 BB      File      (uint8_t idx);        // returns file BB of given index
 BB      Rank      (uint8_t idx);        // returns rank BB of given index
-BB      SQ        (std::string s);      // returns BB with given square
 
 //operation
 BB      shiftBB   (BB b, int8_t dx, int8_t dy); //shifts BB as shown

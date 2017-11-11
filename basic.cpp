@@ -62,12 +62,6 @@ BB Rank(uint8_t idx)
         assert(idx < DIM && idx >= 0);
         return R_INIT << (idx * DIM);
 }
-BB SQ(std::string s)
-{
-        uint8_t file = s[0]-'A';
-        uint8_t rank = s[1]-'1';
-        return shiftBB(1ULL, file, rank);
-}
 
 
 //OPERATION
