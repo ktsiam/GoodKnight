@@ -3,16 +3,19 @@
 
 #include "basic.h"
 #include "move.h"
+#include <vector>
 
 class Board {
 public:
         Board();
-        void front_move(const Move mv);
-        void back_move(const Move mv);
+        void front_move(const Move &mv);
+        void back_move(const Move &mv);
         //testing funcs
         void print();
 
 private:
+        //move chains
+        std::vector<Move> nextMoves;        
 
         //position
         BB pieces[CLR_NB][PIECE_NB];
@@ -37,9 +40,11 @@ private:
 public:
         //gen funcs
         void init_variables();
-        BB knight_move_gen();
-        BB king_move_gen();
-        BB pawn_move_gen();
+
+        
+        void knight_move_gen();
+        void king_move_gen();
+        void pawn_move_gen();
 };
 
 

@@ -17,7 +17,7 @@ Board::Board()
         init_variables();
 }
 
-void Board::front_move(const Move mv)
+void Board::front_move(const Move &mv)
 {
         //capture  (en_passant is NOT a capture)
         if (mv.is_capture())
@@ -63,7 +63,7 @@ void Board::front_move(const Move mv)
         clr = (Color) !clr;
 }
 
-void Board::back_move(const Move mv)
+void Board::back_move(const Move &mv)
 {
         //swapping color, adjusting Castling & en_passant
         clr = (Color) !clr;

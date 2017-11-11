@@ -14,6 +14,7 @@ int main()
 {
         test_opening();
         test_en_passant();
+        //gen_move();
 }
 
 
@@ -28,19 +29,13 @@ void test_en_passant()
         move(b, "E4", "E5", PAWN);
         move(b, "D7", "D5", PAWN);
 
-        b.front_move(Move{ SQ("E5"), SQ("D6"), PAWN, PAWN,
+        b.front_move(Move{ SQ("E5"), SQ("D6"), PAWN, BOTH, 0, PAWN,
                                 true, NO_CASTLING, NO_PIECE, true});
         b.print();
 
-        b.init_variables();
-        std::cout << "POSSIBLE KNIGHT MOVES\n";
-        print(b.knight_move_gen());
-        std::cout << "POSSIBLE KING MOVES\n";
-        print(b.king_move_gen());
-
 
         std::cout << "REVERSING MOVES\n";
-        b.back_move(Move{ SQ("E5"), SQ("D6"), PAWN, PAWN,
+        b.back_move(Move{ SQ("E5"), SQ("D6"), PAWN, BOTH, 0, PAWN,
                                 true, NO_CASTLING, NO_PIECE, true});
         b.print();
         move_r(b, "D7", "D5", PAWN);
@@ -62,19 +57,12 @@ void test_opening()
         move(b, "F1", "C4", BISHOP);
         move(b, "F8", "C5", BISHOP);
 
-        b.front_move(Move{0, 0, NO_PIECE, NO_PIECE, 0, O_O});
+        b.front_move(Move{0, 0, NO_PIECE, BOTH, 0, NO_PIECE, 0, O_O});
         b.print();
 
-        b.init_variables();
-        std::cout << "POSSIBLE KNIGHT MOVES\n";
-        print(b.knight_move_gen());
-        std::cout << "POSSIBLE KING MOVES\n";
-        print(b.king_move_gen());
-        std::cout << "POSSIBLE PAWN MOVES\n";
-        print(b.pawn_move_gen());
 
         std::cout << "REVERSING MOVES\n";
-        b.back_move(Move{0, 0, NO_PIECE, NO_PIECE, 0, O_O, NO_PIECE, 0, BOTH});
+        b.back_move(Move{0, 0, NO_PIECE, BOTH, 0, NO_PIECE, 0, O_O, NO_PIECE, 0});
         b.print();
 
         move_r(b, "F8", "C5", BISHOP);
@@ -119,13 +107,13 @@ void gen_move()
                         KNIGHT_MOVE[x][y] = 0;
                       
                         if (y != 0 && y != 7){
-                                if (x <= 6)
-                                        KNIGHT_MOVE[x][y] |= shiftBB(1, x+1, y+1);
-                                if (x >= 1)
-                                        KNIGHT_MOVE[x][y] |= shiftBB(1, x-1, y+1);
+                                if (y == 1)
+                                        KNIGHT_MOVE[x][y] |= shiftBB(1, x, y+2);
+                                else
+                                        KNIGHT_MOVE[x][y] |= shiftBB(1, x, y+1);
                         }
                         //print(KNIGHT_MOVE[x][y]);
-                        //std::cout << (void *)KNIGHT_MOVE[x][y] << ", ";
+                        std::cout << (void *)KNIGHT_MOVE[x][y] << ", ";
                 }                
         }
 }
