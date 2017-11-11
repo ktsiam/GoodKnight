@@ -1,13 +1,11 @@
 TODO:
           Make move space-efficient (i.e. BB -> idx, pack bits)
           
-          Test move_gen functions already made
-          make testing-printing framework!
+          make interactive framework for testing
 
           Generate move_gen functions for:
-                   - PAWNS
                    - BISHOPS
                    - ROOKS
                    - QUEENS
 
-          Create interactive gameplay
+          Make this code clockwork before moving further
