@@ -15,7 +15,13 @@ int main()
         Board b;
         b.print();
         b.print_moves();
-
+        
+        std::string move;
+        while(std::cin >> move){
+                b.custom_move(move);
+                b.print();
+                b.print_moves();
+        }
 }
 
 /*void move(Board &b, std::string sq, std::string sq2, Piece p)
