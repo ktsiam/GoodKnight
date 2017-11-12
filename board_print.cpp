@@ -38,6 +38,59 @@ static Piece char_to_piece(char c)
         return p;
 }
 
+void Board::custom_move(std::string str)
+{
+        if (str == "O-O") 
+                return castle(O_O, clr);
+        else if (str == "O-O-O")
+                return castle(O_O_O, clr);
+        
+        Piece my_piece = char_to_piece(str[0]);
+        if (my_piece == NO_PIECE)
+                my_piece = PAWN;
+        else
+                str.erase(0);
+        
+        bool capture = (str[0] == 'x') || (str[0] == 'X');
+        if (capture)
+                str.erase(0);
+
+        BB dest = str_to_sq(str.substr(0, 2));
+
+        Piece promotion = NO_PIECE;
+        if (str.find('=') != std::string::npos)
+                promotion = char_to_piece(str.back());
+                
+        bool en_passant = true;
+        Piece their_piece;
+        if (capture) {
+                their_piece = find_piece(dest, (Color) (clr^1));
+                if (their_piece == NO_PIECE) {
+                        en_passant = true;
+                        capture    = false;
+                }
+        }
+        else
+                their_piece = NO_PIECE;
+
+        BB origin = 3; //impossible
+        
+        for (auto it = move_vec.begin(); it != move_vec.end(); ++it) {
+                if (it -> my_piece() == my_piece && it -> dest() == dest) {
+                        origin = it -> origin();
+                        break;
+                }
+        }
+        
+        if (origin == 3)
+                std::cout << "INVALID MOVE\n";
+        else {
+                Move mv{origin, dest, my_piece, castle_rights[clr], en_passant_sq, 
+                                their_piece, NO_CASTLING, promotion, en_passant};
+                front_move(mv);
+        }
+                
+}
 
 void Board::print()
 {

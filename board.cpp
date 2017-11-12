@@ -67,6 +67,9 @@ void Board::front_move(const Move &mv)
 
         //swaping color
         clr = (Color) !clr;
+
+        //initializing moves
+        init_moves();
 }
 
 void Board::back_move(const Move &mv)
@@ -95,6 +98,9 @@ void Board::back_move(const Move &mv)
         //displacement
         else
                 displace(mv.origin(), mv.dest(), mv.my_piece(), clr);
+
+        //initializing moves INEFFICIENT!!!
+        init_moves();
 }
 
 void Board::castle(Castling cstl, Color c)
