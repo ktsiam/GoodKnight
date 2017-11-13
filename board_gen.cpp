@@ -98,7 +98,7 @@ void Board::general_move_gen(BB origin, Piece pce, BB moves)
 
 void Board::pawn_move_gen()
 {
-        BB pawn_pos = pieces[WHITE][PAWN];
+        BB pawn_pos = pieces[clr][PAWN];
         BB en_p_rank = Rank((clr == WHITE) ? 4 : 3);
 
         if (en_passant_sq && (pawn_pos & en_p_rank))
@@ -114,7 +114,8 @@ void Board::pawn_move_gen()
 
 void Board::pawn_non_attack_gen(BB origin) 
 {
-        BB dest = shiftBB(origin, 0, 1);
+        int8_t push = (clr == WHITE) ? 1 : -1;
+        BB     dest = shiftBB(origin, 0, push);
         
         if ( ~(all_pieces) & dest) {
                 BB promo_rank = Rank((clr == WHITE) ? 7 : 0);
@@ -133,11 +134,14 @@ void Board::pawn_non_attack_gen(BB origin)
 
 void Board::pawn_attack_gen(BB origin)
 {
-        BB attack = PAWN_ATTACK[WHITE][get_idx(origin)];
+        BB attack = PAWN_ATTACK[clr][get_idx(origin)];
         while (attack) {
                 BB dest     = get_clear_lsb(attack);
-                Piece their = find_piece(dest, (Color) (clr^1));
-                                
+
+                if (dest & ~team_pieces[clr^1])
+                        continue;
+
+                Piece their = find_piece(dest, (Color) (clr^1));                                
                 BB promo_rank = Rank((clr == WHITE) ? 7 : 0);
                 if (dest & promo_rank)
                         promotion_gen(origin, dest, their);                
