@@ -22,6 +22,7 @@ void Test_board::custom_move(std::string str)
                         front_move(move_vec[i]);
                         init_move_str();
                         print();
+                        return;
                 }
         std::cout << "MOVE NOT FOUND :\n";
         print_moves();
@@ -48,9 +49,10 @@ void Test_board::init_move_str()
                 if (my_piece != PAWN)
                         new_mv.push_back(piece_to_char(my_piece));
                 else
-                        if (capture)
+                        if (capture || it -> is_en_passant())
                                 new_mv.push_back(sq_to_str(origin)[0]);
-                if (capture)
+
+                if (capture || it -> is_en_passant())
                         new_mv.push_back('x');
 
                 new_mv += sq_to_str(dest);
