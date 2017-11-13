@@ -6,8 +6,8 @@ LDLFLAGS =
 all: chess
 
 
-chess: basic.o main.o move.o board.o board_gen.o board_print.o
-	${CXX} ${LDFLAGS} -o	chess	basic.o main.o move.o board.o board_gen.o board_print.o
+chess: basic.o main.o move.o board.o board_gen.o test_board.o
+	${CXX} ${LDFLAGS} -o	chess	basic.o main.o move.o board.o board_gen.o test_board.o
 
 clean:
 	rm -f *.o

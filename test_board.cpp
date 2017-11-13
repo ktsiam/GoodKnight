@@ -1,4 +1,4 @@
-#include "board.h"
+#include "test_board.h"
 
 #include <iostream>
 
@@ -8,14 +8,19 @@ static std::string sq_to_str(BB b)
         int file = i%DIM;
         int rank = i/DIM;
 
-        std::string sq;
+        std::string sq = "";
         sq.push_back("ABCDEFGH"[file]);
-        return sq + "12345678"[rank];
+        sq.push_back("12345678"[rank]);
+        return sq;
 }
 
 static BB str_to_sq(std::string s)
 {
-        return File(s[0] - 'A') & Rank(s[1] - '1');
+        assert(s[0] >= 'A' && s[1] >= '1');
+        if (s[0] >= 'a')
+                return File(s[0] - 'a') & Rank(s[1] - '1');
+        else
+                return File(s[0] - 'A') & Rank(s[1] - '1');
 }
 
 static char piece_to_char(Piece p)
@@ -27,40 +32,45 @@ static Piece char_to_piece(char c)
 {
         Piece p;
         switch(c){
-                case 'K' : p = KING;     break;
-                case 'Q' : p = QUEEN;    break;
-                case 'R' : p = ROOK;     break;
-                case 'B' : p = BISHOP;   break;
-                case 'N' : p = KNIGHT;   break;
-                case 'P' : p = PAWN;     break;
-                default  : p = NO_PIECE; break;
+                case 'K' : case 'k' : p = KING;     break;
+                case 'Q' : case 'q' : p = QUEEN;    break;
+                case 'R' : case 'r' : p = ROOK;     break;
+                case 'B' : case 'b' : p = BISHOP;   break;
+                case 'N' : case 'n' : p = KNIGHT;   break;
+                case 'P' : case 'p' : p = PAWN;     break;
+                default  : p = NO_PIECE;            break;
         }
         return p;
 }
 
-void Board::custom_move(std::string str)
+void Test_board::custom_move(std::string str)
 {
+        //make a vector with all moves --> compare them!!!
+        
         if (str == "O-O")
                 return castle(O_O, clr);
         else if (str == "O-O-O")
                 return castle(O_O_O, clr);
 
+
+        //examples:
+        // e4 Nf3 Bxb5 cxd5 c8=Q O-O                       
+
         Piece my_piece = char_to_piece(str[0]);
         if (my_piece == NO_PIECE)
                 my_piece = PAWN;
+        //B can be square or piece
+        else if (my_piece == BISHOP && 
+                 (str[1] <= '9' || str[1] == 'x' || str[1] == 'X'))
+                my_piece = PAWN;
         else
                 str.erase(0, 1);
-
-        //std::cout << "MY PIECE : " << my_piece << std::endl; //TEST
 
         bool capture = (str[0] == 'x') || (str[0] == 'X');
         if (capture)
                 str.erase(0, 1);
 
-        //std::cerr << "LENGTH : " << str.size() << " "<<str.substr(0, 2) << std::endl; //test
         BB dest = str_to_sq(str.substr(0, 2));
-
-        //std::cerr << "destination : \n"; printBB(dest); //TEST
 
         Piece promotion = NO_PIECE;
         if (str.find('=') != std::string::npos)
@@ -105,11 +115,13 @@ void Board::custom_move(std::string str)
                 std::cout << "promotion_piece : " << promotion <<std::endl;
                 std::cout << "en_passant bool : " << en_passant <<std::endl;
                 front_move(mv);
+                print();
+                print_moves();
         }
 
 }
 
-void Board::print()
+void Test_board::print()
 {
         std::cout << ((clr==WHITE)?"\nWHITE   ":"\nBLACK   ");
         std::cout << ((castle_rights[BLACK] == BOTH)  ? "O-O & O-O-O\n":
@@ -141,7 +153,7 @@ void Board::print()
         std::cout << "\n  #################\n\n";
 }
 
-void Board::printBB(BB b)
+void Test_board::printBB(BB b)
 {
         for (int r = 7; r >= 0; --r){
                 std::cout << r+1 << " ";
@@ -152,7 +164,7 @@ void Board::printBB(BB b)
         std::cout << "  A B C D E F G H\n\n";
 }
 
-void Board::print_moves()
+void Test_board::print_moves()
 {
         init_moves();
 

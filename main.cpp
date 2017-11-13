@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "basic.h"
-#include "board.h"
+#include "test_board.h"
 
 void print(BB b);
 void move(Board &b, std::string sq, std::string sq2, Piece p);
@@ -12,16 +12,13 @@ void test_opening();
 
 int main()
 {
-        Board b;
+        Test_board b;
         b.print();
         b.print_moves();
         
         std::string move;
-        while(std::cin >> move){
+        while(std::cin >> move)
                 b.custom_move(move);
-                b.print();
-                b.print_moves();
-        }
 }
 
 /*void move(Board &b, std::string sq, std::string sq2, Piece p)

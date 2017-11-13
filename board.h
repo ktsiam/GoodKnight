@@ -11,15 +11,8 @@ public:
         void front_move(const Move &mv);
         void back_move (const Move &mv);
 
-        //for interactive
-        void print();
-        void printBB(BB b);
-        void print_moves();
-        void custom_move(std::string str);
-
-private:
-        //move chains
-        std::vector<Move> move_vec;        
+protected:
+        std::vector<Move> move_vec;
 
         //position
         BB pieces[CLR_NB][PIECE_NB];
