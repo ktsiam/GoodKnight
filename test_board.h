@@ -5,8 +5,6 @@
 
 class Test_board : public Board {
 public:
-        //void front_move(const Move &mv);
-        //void back_move (const Move &mv);
         Test_board() = default;
         void print();
         void printBB(BB b);
@@ -14,7 +12,8 @@ public:
         void custom_move(std::string str);
 
 private:
-        std::vector<Move> move_vec;        
+        void init_move_str();
+        std::vector<std::string> move_str;
 };
 
 

@@ -2,6 +2,68 @@
 
 #include <iostream>
 
+static std::string to_lowercase(std::string s);
+static std::string sq_to_str (BB b);
+static char        piece_to_char(Piece p);
+
+void Test_board::print_moves()
+{
+        init_move_str();
+        for (auto it = move_str.begin(); it != move_str.end(); ++it)
+                std::cout << *it << ' ';
+        std::cout << std::endl;
+}
+
+void Test_board::custom_move(std::string str)
+{
+        init_move_str();
+        for (uint i = 0; i < move_str.size(); ++i)
+                if (to_lowercase(str) == to_lowercase(move_str[i])) {
+                        front_move(move_vec[i]);
+                        init_move_str();
+                        print();
+                }
+        std::cout << "MOVE NOT FOUND :\n";
+        print_moves();
+}
+
+void Test_board::init_move_str()
+{
+        init_moves();
+        move_str.clear();
+        for (auto it = move_vec.begin(); it != move_vec.end(); ++it) {
+                if (it -> is_castling()) {
+                        if (it -> is_castling() == O_O)
+                                move_str.push_back("O-O");
+                        else
+                                move_str.push_back("O-O-O");
+                        continue;
+                }
+                std::string new_mv = "";
+                BB origin = it -> origin();
+                BB dest   = it -> dest();
+                bool capture = it -> their_piece() != NO_PIECE;
+                Piece my_piece = it -> my_piece();
+
+                if (my_piece != PAWN)
+                        new_mv.push_back(piece_to_char(my_piece));
+                else
+                        if (capture)
+                                new_mv.push_back(sq_to_str(origin)[0]);
+                if (capture)
+                        new_mv.push_back('x');
+
+                new_mv += sq_to_str(dest);
+
+                Piece promotion = it -> promoted_piece();
+                if (promotion != NO_PIECE) {
+                        new_mv.push_back('=');
+                        new_mv.push_back(piece_to_char(promotion));
+                }
+                move_str.push_back(new_mv);
+        }
+}
+
 static std::string sq_to_str(BB b)
 {
         int i = get_idx(b);
@@ -9,18 +71,9 @@ static std::string sq_to_str(BB b)
         int rank = i/DIM;
 
         std::string sq = "";
-        sq.push_back("ABCDEFGH"[file]);
+        sq.push_back("abcdefgh"[file]);
         sq.push_back("12345678"[rank]);
         return sq;
-}
-
-static BB str_to_sq(std::string s)
-{
-        assert(s[0] >= 'A' && s[1] >= '1');
-        if (s[0] >= 'a')
-                return File(s[0] - 'a') & Rank(s[1] - '1');
-        else
-                return File(s[0] - 'A') & Rank(s[1] - '1');
 }
 
 static char piece_to_char(Piece p)
@@ -28,97 +81,26 @@ static char piece_to_char(Piece p)
         return "KQRBNP  "[p];
 }
 
-static Piece char_to_piece(char c)
+static std::string to_lowercase(std::string s)
 {
-        Piece p;
-        switch(c){
-                case 'K' : case 'k' : p = KING;     break;
-                case 'Q' : case 'q' : p = QUEEN;    break;
-                case 'R' : case 'r' : p = ROOK;     break;
-                case 'B' : case 'b' : p = BISHOP;   break;
-                case 'N' : case 'n' : p = KNIGHT;   break;
-                case 'P' : case 'p' : p = PAWN;     break;
-                default  : p = NO_PIECE;            break;
-        }
-        return p;
+        std::string lower = "";
+        for (auto it = s.begin(); it != s.end(); ++it)
+                lower.push_back(tolower(*it));
+        return lower;
 }
 
-void Test_board::custom_move(std::string str)
+
+
+
+void Test_board::printBB(BB b)
 {
-        //make a vector with all moves --> compare them!!!
-        
-        if (str == "O-O")
-                return castle(O_O, clr);
-        else if (str == "O-O-O")
-                return castle(O_O_O, clr);
-
-
-        //examples:
-        // e4 Nf3 Bxb5 cxd5 c8=Q O-O                       
-
-        Piece my_piece = char_to_piece(str[0]);
-        if (my_piece == NO_PIECE)
-                my_piece = PAWN;
-        //B can be square or piece
-        else if (my_piece == BISHOP && 
-                 (str[1] <= '9' || str[1] == 'x' || str[1] == 'X'))
-                my_piece = PAWN;
-        else
-                str.erase(0, 1);
-
-        bool capture = (str[0] == 'x') || (str[0] == 'X');
-        if (capture)
-                str.erase(0, 1);
-
-        BB dest = str_to_sq(str.substr(0, 2));
-
-        Piece promotion = NO_PIECE;
-        if (str.find('=') != std::string::npos)
-                promotion = char_to_piece(str.back());
-
-        bool en_passant = false;
-        Piece their_piece;
-        if (capture) {
-                their_piece = find_piece(dest, (Color) (clr^1));
-                if (their_piece == NO_PIECE) {
-                        en_passant = true;
-                        capture    = false;
-                }
+        for (int r = 7; r >= 0; --r){
+                std::cout << r+1 << " ";
+                for (int f = 0; f < 8; ++f)
+                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
+                std::cout << "\n";
         }
-        else
-                their_piece = NO_PIECE;
-
-        BB origin = 3; //impossible
-
-        for (auto it = move_vec.begin(); it != move_vec.end(); ++it) {
-                if (it -> my_piece() == my_piece && it -> dest() == dest) {
-                        origin = it -> origin();
-                        break;
-                }
-        }
-
-
-        if (origin == 3)
-                std::cout << "INVALID MOVE\n";
-        else {
-                //std::cout << "ORIGIN : \n";printBB(origin) ; //TEST
-                Move mv{origin, dest, my_piece, castle_rights[clr], en_passant_sq,
-                                their_piece, NO_CASTLING, promotion, en_passant};
-
-                printBB(origin);
-                printBB(dest);
-                std::cout << "my_piece : " << my_piece << std::endl;
-                std::cout << "castle : " << castle_rights[clr] << std::endl;
-                std::cout << "en_p_sq : " << en_passant_sq << std::endl;
-                std::cout << "their_piece : " << their_piece<<std::endl;
-                std::cout << "castle : " << NO_CASTLING<<std::endl;
-                std::cout << "promotion_piece : " << promotion <<std::endl;
-                std::cout << "en_passant bool : " << en_passant <<std::endl;
-                front_move(mv);
-                print();
-                print_moves();
-        }
-
+        std::cout << "  A B C D E F G H\n\n";
 }
 
 void Test_board::print()
@@ -151,51 +133,4 @@ void Test_board::print()
                       (castle_rights[WHITE] == O_O)   ? "O-O\n":
                       (castle_rights[WHITE] == O_O_O) ? "O-O-O\n" : "\n");
         std::cout << "\n  #################\n\n";
-}
-
-void Test_board::printBB(BB b)
-{
-        for (int r = 7; r >= 0; --r){
-                std::cout << r+1 << " ";
-                for (int f = 0; f < 8; ++f)
-                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
-                std::cout << "\n";
-        }
-        std::cout << "  A B C D E F G H\n\n";
-}
-
-void Test_board::print_moves()
-{
-        init_moves();
-
-        for (auto mv = move_vec.begin(); mv != move_vec.end(); ++mv) {
-                if (mv -> is_castling())
-                        std::cout << ((mv -> is_castling() == O_O)? "O-O" : "O-O-O");
-
-                else if (mv -> is_en_passant())
-                        std::cout << sq_to_str(mv -> origin())[0] << "x"
-                                  << sq_to_str(mv -> dest()) << " (en passant)";
-
-                else {
-                        std::string move = "";
-
-                        Piece p = mv -> my_piece();
-                        if (p != PAWN)
-                                std::cout << piece_to_char(p);
-
-                        if (mv -> their_piece() != NO_PIECE) {
-                                if (mv -> their_piece() == PAWN)
-                                        std::cout << (sq_to_str(mv -> origin())[0]);
-                                std::cout << 'x';
-                        }
-
-                        std::cout << sq_to_str(mv -> dest());
-
-                        if (mv -> promoted_piece() != NO_PIECE) {
-                                std::cout << " = "
-                                          << piece_to_char(mv -> promoted_piece());
-                        }
-                }
-                std::cout << " ";
-        }
 }

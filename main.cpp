@@ -15,7 +15,7 @@ int main()
         Test_board b;
         b.print();
         b.print_moves();
-        
+
         std::string move;
         while(std::cin >> move)
                 b.custom_move(move);
@@ -108,7 +108,7 @@ void gen_move()
         for (int y = 0; y < DIM-1; ++y){
                 for (int x = 0; x < DIM; ++x) {
                         KNIGHT_MOVE[x][y] = 0;
-                      
+
                         if (y != 0 && y != 7){
                                 if (y == 1)
                                         KNIGHT_MOVE[x][y] |= shiftBB(1, x, y+2);
@@ -117,7 +117,7 @@ void gen_move()
                         }
                         //print(KNIGHT_MOVE[x][y]);
                         std::cout << (void *)KNIGHT_MOVE[x][y] << ", ";
-                }                
+                }
         }
 }
 */
