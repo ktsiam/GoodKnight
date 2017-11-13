@@ -1,7 +1,5 @@
 TODO:
-          Make move space-efficient (i.e. BB -> idx, pack bits)
-          
-          make interactive framework for testing
+          Make move space-efficient (i.e. BB -> idx, pack bits)          
 
           Generate move_gen functions for:
                    - BISHOPS

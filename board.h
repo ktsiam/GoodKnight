@@ -13,6 +13,8 @@ public:
 
 protected:
         std::vector<Move> move_vec;
+        void init_moves();
+        Piece find_piece(BB sq, Color c);
 
         //position
         BB pieces[CLR_NB][PIECE_NB];
@@ -20,31 +22,26 @@ protected:
         Castling castle_rights[CLR_NB];
         BB en_passant_sq;
 
+private:
+
         //temporary variables (re-evaluated each position)
         BB all_pieces;
         BB team_pieces[CLR_NB];
-
-
-        //dependency
-        void init_moves();
 
         //move generators
         void castling_gen();
         void king_move_gen();
 
-        void knight_move_gen();
-        void (Board::*pawn_move_gen[CLR_NB])() = 
-        { &Board::pawn_white_move_gen, &Board::pawn_black_move_gen };
-
+        void knight_move_gen();               
 
         //generator helpers
-        Piece find_piece(BB sq, Color c);
         void general_move_gen(BB origin, Piece pce, BB moves);
-        void pawn_black_move_gen();
-        void pawn_white_move_gen();
+        void pawn_move_gen();
         void en_passant_gen(BB pawns);
         void promotion_gen(BB origin, BB dest, Piece = NO_PIECE);
         void double_move_gen(BB origin);
+        void pawn_attack_gen(BB origin);
+        void pawn_non_attack_gen(BB origin);
 
         //move helper
         void castle(Castling cstl, Color c);

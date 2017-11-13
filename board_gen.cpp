@@ -18,11 +18,11 @@ void Board::init_moves()
 
         move_vec.clear();
 
-        castling_gen();
-        king_move_gen();
-        knight_move_gen();
+        //castling_gen();
+        //king_move_gen();
+        //knight_move_gen();        
 
-        //no pawns yet!
+        pawn_move_gen();
 }
 
 Piece Board::find_piece(BB sq, Color c)
@@ -96,65 +96,64 @@ void Board::general_move_gen(BB origin, Piece pce, BB moves)
 ////////////////////////////////////////////////////////
 
 
-void Board::pawn_white_move_gen()
+void Board::pawn_move_gen()
 {
-/*
         BB pawn_pos = pieces[WHITE][PAWN];
+        BB en_p_rank = Rank((clr == WHITE) ? 4 : 3);
 
-        //check for en_passant
-        if (en_passant_sq && (pawn_pos & Rank(4)))
-                en_passant_gen(pawn_pos & Rank(4));
+        if (en_passant_sq && (pawn_pos & en_p_rank))
+                en_passant_gen(pawn_pos & en_p_rank);
 
-        //go 1-by-1 pawns
         while (pawn_pos) {
+                BB origin = get_clear_lsb(pawn_pos);                
 
-                BB origin = get_clear_lsb(pawn_pos);
-                BB attack = PAWN_ATTACK[WHITE][get_idx(origin)];
-                
-                //find 1-by-1 attacks
-                while (attack) {
-                        BB dest     = get_clear_lsb(attack);
-                        Piece their = find_piece(dest, (Color) (clr^1));
-
-                        //check for promotion
-                        if (dest & Rank(7))
-                                promotion_gen(origin, dest, their);
-                        //add normal attack move
-                        else {                        
-                                Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq, their};
-                                move_vec.push_back(new_mv);
-                        }
-                }
-
-                //find non-attacks
-                BB dest = shiftBB(origin, 1, 0);
-                
-                //if front move possible
-                if ( ~(all_pieces) & dest) {
-
-                        //check for promotion
-                        if (dest & Rank(7))
-                                promotion_gen(origin, dest, NO_PIECE);
-
-                        //add normal non-attack move
-                        else {
-                                Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
-                                move_vec.push_back(new_mv);
-
-                                //if potential double-move
-                                if (dest & Rank(2))                                         
-                                        double_move_gen(origin);                                                                
-                        }
-                }
+                pawn_attack_gen    (origin);
+                pawn_non_attack_gen(origin);
         }                
-*/
 }
+
+void Board::pawn_non_attack_gen(BB origin) 
+{
+        BB dest = shiftBB(origin, 0, 1);
+        
+        if ( ~(all_pieces) & dest) {
+                BB promo_rank = Rank((clr == WHITE) ? 7 : 0);
+                if (dest & promo_rank)
+                        promotion_gen(origin, dest, NO_PIECE);                
+                else {
+                        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
+                        move_vec.push_back(new_mv);
+                        
+                        BB double_move_rank = Rank((clr == WHITE) ? 2 : 5);
+                        if (dest & double_move_rank)        
+                                double_move_gen(origin);                                                                
+                }
+        }
+}
+
+void Board::pawn_attack_gen(BB origin)
+{
+        BB attack = PAWN_ATTACK[WHITE][get_idx(origin)];
+        while (attack) {
+                BB dest     = get_clear_lsb(attack);
+                Piece their = find_piece(dest, (Color) (clr^1));
+                                
+                BB promo_rank = Rank((clr == WHITE) ? 7 : 0);
+                if (dest & promo_rank)
+                        promotion_gen(origin, dest, their);                
+                else {                        
+                        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq, their};
+                        move_vec.push_back(new_mv);
+                }
+        }
+}
+
 
 void Board::en_passant_gen(BB pawns)
 {
         while (pawns) {
                 BB origin = get_clear_lsb(pawns);
-                BB dest   = PAWN_ATTACK[WHITE][get_idx(origin)];
+                BB dest   = PAWN_ATTACK[clr][get_idx(origin)];
                 if (dest & en_passant_sq) {
 
                         //en passant is NOT a capture
@@ -164,8 +163,6 @@ void Board::en_passant_gen(BB pawns)
                 }
         }
 }
-
-void Board::pawn_black_move_gen(){  }
 
 void Board::promotion_gen(BB origin, BB dest, Piece their)
 {
@@ -178,7 +175,7 @@ void Board::promotion_gen(BB origin, BB dest, Piece their)
 
 void Board::double_move_gen(BB origin)
 {
-        BB dest = shiftBB(origin, 0, 2);
+        BB dest = shiftBB(origin, 0, clr==WHITE ? 2 : -2);
                 
         if (~all_pieces & dest) {
                 Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
