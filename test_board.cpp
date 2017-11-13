@@ -5,6 +5,7 @@
 static std::string to_lowercase(std::string s);
 static std::string sq_to_str (BB b);
 static char        piece_to_char(Piece p);
+static std::string piece_to_str(Piece p, Color c);
 
 void Test_board::print_moves()
 {
@@ -83,6 +84,32 @@ static char piece_to_char(Piece p)
         return "KQRBNP  "[p];
 }
 
+static std::string piece_to_str(Piece p, Color c)
+{
+        if (c == WHITE) {
+                switch (p) {
+                case KING   : return "\u2654";
+                case QUEEN  : return "\u2655";
+                case ROOK   : return "\u2656";
+                case BISHOP : return "\u2657";
+                case KNIGHT : return "\u2658";
+                case PAWN   : return "\u2659";
+                default     : return "_";
+                }
+        }
+        else {
+                switch (p) {
+                case KING   : return "\u265A";
+                case QUEEN  : return "\u265B";
+                case ROOK   : return "\u265C";
+                case BISHOP : return "\u265D";
+                case KNIGHT : return "\u265E";
+                case PAWN   : return "\u265F";
+                default     : return "_";
+                }
+        }
+}
+
 static std::string to_lowercase(std::string s)
 {
         std::string lower = "";
@@ -118,12 +145,9 @@ void Test_board::print()
                 for (int f = 0; f < DIM; ++f) {
                         BB sq = File(f) & Rank(r);
 
-                        char p = piece_to_char(find_piece(sq, WHITE));
-                        if (p == ' ') {
-                                p = piece_to_char(find_piece(sq, BLACK));
-                                if (p != ' ')
-                                        p += 32;
-                        }
+                        std::string p = piece_to_str(find_piece(sq, WHITE), WHITE);
+                        if (p == "_") 
+                                p = piece_to_str(find_piece(sq, BLACK), BLACK);
                         std::cout << p << " ";
 
                 }
@@ -134,5 +158,4 @@ void Test_board::print()
         std::cout << ((castle_rights[WHITE] == BOTH)  ? "O-O & O-O-O\n":
                       (castle_rights[WHITE] == O_O)   ? "O-O\n":
                       (castle_rights[WHITE] == O_O_O) ? "O-O-O\n" : "\n");
-        std::cout << "\n  #################\n\n";
 }
