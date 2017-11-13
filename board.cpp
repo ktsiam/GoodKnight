@@ -121,6 +121,7 @@ void Board::en_passant(BB org, BB dest, Color c)
         int8_t dir = (c == WHITE) ? -1 : 1;
         pieces[c][PAWN]   ^= org | dest;
         pieces[c^1][PAWN] ^= shiftBB(dest, 0, dir);
+        en_passant_sq = 0;
 }
 
 void Board::capture(BB dest, Piece pce, Color c)

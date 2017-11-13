@@ -134,11 +134,14 @@ void Test_board::printBB(BB b)
 
 void Test_board::print()
 {
-        std::cout << ((clr==WHITE)?"\nWHITE   ":"\nBLACK   ");
-        std::cout << ((castle_rights[BLACK] == BOTH)  ? "O-O & O-O-O\n":
-                      (castle_rights[BLACK] == O_O)   ? "O-O\n":
-                      (castle_rights[BLACK] == O_O_O) ? "O-O-O\n" : "\n");
-
+        std::cout << ((clr==WHITE)?"\nWHITE   ":"\nBLACK   ")
+                  << ((castle_rights[BLACK] == BOTH)  ? "O-O & O-O-O  ":
+                      (castle_rights[BLACK] == O_O)   ? "O-O          ":
+                      (castle_rights[BLACK] == O_O_O) ? "O-O-O        ":
+                                                        "             ")
+                  << (en_passant_sq ? sq_to_str(en_passant_sq) : "")
+                  << std::endl;
+        
         std::cout << "  -----------------\n";
         for (int r = DIM-1; r >= 0; --r){
                 std::cout << r+1 << "| ";
