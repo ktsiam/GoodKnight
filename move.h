@@ -28,15 +28,16 @@ protected:
         //TODO: INCREASE EFFICIENCY OF HOW INFORMATION IS STORED
         //use helper functions from basic.h
 
-        BB orgn;
-        BB destination;
-        Piece my_pce;
-        Castling rights;
-        BB en_pass_status;
-        Piece their_pce;
-        Castling castling;
-        Piece promotion;
-        bool en_passant;
+        BB orgn;            //6 bits
+        BB destination;     //6 bits
+        Piece my_pce;       //3 bits
+        Castling rights;    //2 bits
+        BB en_pass_status;  //6 bits
+        Piece their_pce;    //3 bits
+        Castling castling;  //2 bits
+        Piece promotion;    //3 bits
+        bool en_passant;    //1 bit
+                            //total : 32 bits (yeyyy!)
 };
 
 
