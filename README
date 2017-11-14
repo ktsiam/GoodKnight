@@ -6,5 +6,10 @@ TODO:
                    - ROOKS
                    - QUEENS
 
+          calculate occupancy incrementally!! (and other properties)
+
           Allow undo's 
+          (rotated - reverse bitboards?)
+
+          future: update instead of generating?
           Make this code clockwork before moving further
