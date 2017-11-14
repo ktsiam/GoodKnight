@@ -28,19 +28,16 @@ void Board::front_move(const Move &mv)
         //capture  (en_passant is NOT a capture)
         if (mv.their_piece() != NO_PIECE)
                 capture(mv.dest(), mv.their_piece(), clr);
-        
-        //en-passant
-        if (mv.is_en_passant())
-                en_passant(mv.origin(), mv.dest(), clr);
-
-        //disabling en_p flag
-        en_passant_sq = 0;
 
         //castling
         if (mv.is_castling() != NO_CASTLING) {
                 castle(mv.is_castling(), clr);
                 castle_rights[clr] = NO_CASTLING;
         }
+
+        //en-passant  (also disable flag)
+        else if (en_passant_sq = 0, mv.is_en_passant()) 
+                en_passant(mv.origin(), mv.dest(), clr);        
 
         //promotion
         else if (mv.promoted_piece() != NO_PIECE)
@@ -66,7 +63,7 @@ void Board::front_move(const Move &mv)
                         default : break;
                 }
         }
-
+       
         //swaping color
         clr = (Color) !clr;
 
