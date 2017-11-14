@@ -1,39 +1,17 @@
 #include <iostream>
-
-#include "basic.h"
 #include "test_board.h"
 
 void print(BB b);
-void move(Board &b, std::string sq, std::string sq2, Piece p);
-void move_r(Board &b, std::string sq, std::string sq2, Piece p);
-void gen_move();
-void test_en_passant();
-void test_opening();
-
 int main()
 {
         Test_board b;
         b.print();
-        b.print_moves();
 
         std::string move;
         while(std::cin >> move)
                 b.custom_move(move);
 }
 
-/*void move(Board &b, std::string sq, std::string sq2, Piece p)
-{
-        Move mv(SQ(sq), SQ(sq2), p, NO_CASTLING, false);
-        b.front_move(mv);
-        b.print();
-}
-
-void move_r(Board &b, std::string sq, std::string sq2, Piece p)
-{
-        Move mv(SQ(sq), SQ(sq2), p, NO_CASTLING, false);
-        b.back_move(mv);
-        b.print();
-}
 
 void print(BB b)
 {
@@ -45,79 +23,3 @@ void print(BB b)
         }
         std::cout << "  A B C D E F G H\n\n";
 }
-
-void test_en_passant()
-{
-        Board b;
-
-        std::cout << "EN-PASSANT GAME\n";
-        b.print();
-        move(b, "E2", "E4", PAWN);
-        move(b, "E7", "E6", PAWN);
-        move(b, "E4", "E5", PAWN);
-        move(b, "D7", "D5", PAWN);
-
-        b.front_move(Move{ SQ("E5"), SQ("D6"), PAWN, BOTH, 0, PAWN,
-                                NO_CASTLING, NO_PIECE, true});
-        b.print();
-
-
-        std::cout << "REVERSING MOVES\n";
-        b.back_move(Move{ SQ("E5"), SQ("D6"), PAWN, BOTH, 0, PAWN,
-                                NO_CASTLING, NO_PIECE, true});
-        b.print();
-        move_r(b, "D7", "D5", PAWN);
-        move_r(b, "E4", "E5", PAWN);
-        move_r(b, "E7", "E6", PAWN);
-        move_r(b, "E2", "E4", PAWN);
-}
-
-void test_opening()
-{
-        Board b;
-
-        std::cout << "OPENING GAME\n";
-        b.print();
-        move(b, "E2", "E4", PAWN);
-        move(b, "E7", "E5", PAWN);
-        move(b, "G1", "F3", KNIGHT);
-        move(b, "B8", "C6", KNIGHT);
-        move(b, "F1", "C4", BISHOP);
-        move(b, "F8", "C5", BISHOP);
-
-        b.front_move(Move{0, 0, NO_PIECE, BOTH, 0, NO_PIECE, O_O});
-        b.print();
-
-
-        std::cout << "REVERSING MOVES\n";
-        b.back_move(Move{0, 0, NO_PIECE, BOTH, 0, NO_PIECE, O_O, NO_PIECE, 0});
-        b.print();
-
-        move_r(b, "F8", "C5", BISHOP);
-        move_r(b, "F1", "C4", BISHOP);
-        move_r(b, "B8", "C6", KNIGHT);
-        move_r(b, "G1", "F3", KNIGHT);
-        move_r(b, "E7", "E5", PAWN);
-        move_r(b, "E2", "E4", PAWN);
-}
-
-//GENERATED MOVE GRAPHS
-void gen_move()
-{
-        BB KNIGHT_MOVE[8][8];
-        for (int y = 0; y < DIM-1; ++y){
-                for (int x = 0; x < DIM; ++x) {
-                        KNIGHT_MOVE[x][y] = 0;
-
-                        if (y != 0 && y != 7){
-                                if (y == 1)
-                                        KNIGHT_MOVE[x][y] |= shiftBB(1, x, y+2);
-                                else
-                                        KNIGHT_MOVE[x][y] |= shiftBB(1, x, y+1);
-                        }
-                        //print(KNIGHT_MOVE[x][y]);
-                        std::cout << (void *)KNIGHT_MOVE[x][y] << ", ";
-                }
-        }
-}
-*/
