@@ -18,9 +18,17 @@ void Test_board::print_moves()
 void Test_board::custom_move(std::string str)
 {
         init_move_str();
+
+        if (str == "r" || str == "R") {
+                undo();
+                init_move_str();
+                return print();
+        }
+
         for (uint i = 0; i < move_str.size(); ++i)
                 if (to_lowercase(str) == to_lowercase(move_str[i])) {
-                        front_move(move_vec[i]);
+                        history.push_back(move_vec[i]);
+                        front_move(move_vec[i]);                        
                         init_move_str();
                         print();
                         return;
@@ -64,6 +72,18 @@ void Test_board::init_move_str()
                         new_mv.push_back(piece_to_char(promotion));
                 }
                 move_str.push_back(new_mv);
+        }
+}
+
+void Test_board::undo()
+{
+        std::cout << "UNDO RUNS\n";
+        if (history.empty())
+                std::cout << "No history\n";
+        else {
+                Move last = history.back();
+                history.pop_back();
+                back_move(last);
         }
 }
 
