@@ -12,9 +12,11 @@ public:
         void back_move (const Move &mv);
 
 protected:
-        std::vector<Move> move_vec;
+
         void init_moves();
         Piece find_piece(BB sq, Color c);
+
+        std::vector<Move> move_vec;
 
         //position
         BB pieces[CLR_NB][PIECE_NB];
@@ -31,12 +33,17 @@ private:
         //move generators
         void castling_gen();
         void king_move_gen();
+        void knight_move_gen();
+        void pawn_move_gen();
 
-        void knight_move_gen();               
+        //TODO: //////////////
+        void rook_move_gen();
+        void bishop_move_gen();
+        void queen_move_gen();
+        //////////////////////
 
         //generator helpers
         void general_move_gen(BB origin, Piece pce, BB moves);
-        void pawn_move_gen();
         void en_passant_gen(BB pawns);
         void promotion_gen(BB origin, BB dest, Piece = NO_PIECE);
         void double_move_gen(BB origin);

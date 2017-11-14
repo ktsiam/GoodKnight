@@ -6,7 +6,6 @@
  * BB KNIGHT_MOVE   [64]  *
  * BB KING_MOVE     [64]  *
  * BB PAWN_ATTACK[2][64]  *
- * BB PAWN_MOVE  [2][64]  *
  **************************/
 
 void Board::init_moves()
@@ -21,16 +20,17 @@ void Board::init_moves()
         castling_gen();
         king_move_gen();
         knight_move_gen();
-
         pawn_move_gen();
 }
 
 Piece Board::find_piece(BB sq, Color c)
 {
+        if (!(team_pieces[c] & sq))
+                return NO_PIECE;
         for (int i = KING; i != PIECE_NB; ++i)
                 if (pieces[c][i] & sq)
                         return (Piece) i;
-        return NO_PIECE;
+        assert(false);
 }
 
 void Board::castling_gen()
@@ -179,10 +179,3 @@ void Board::double_move_gen(BB origin)
                 move_vec.push_back(new_mv);
         }
 }
-
-
-
-////////////////////////////////////////////////////////
-//////////////////NEEEEDDDSSS WORRRRK///////////////////
-////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////
