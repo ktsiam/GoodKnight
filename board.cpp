@@ -8,9 +8,11 @@ static BB SQ(std::string s)
 Board::Board()
 {
         pieces[WHITE][KING]   = SQ("E1");          pieces[BLACK][KING]   = SQ("E8");
-        pieces[WHITE][QUEEN]  = SQ("D1");          pieces[BLACK][QUEEN]  = SQ("D8");
+//        pieces[WHITE][QUEEN]  = SQ("D1");          pieces[BLACK][QUEEN]  = SQ("D8");
+        pieces[WHITE][QUEEN]  = 0; pieces[BLACK][QUEEN]  = 0;
         pieces[WHITE][ROOK]   = SQ("A1")|SQ("H1"); pieces[BLACK][ROOK]   = SQ("A8")|SQ("H8");
-        pieces[WHITE][BISHOP] = SQ("C1")|SQ("F1"); pieces[BLACK][BISHOP] = SQ("C8")|SQ("F8");
+//        pieces[WHITE][BISHOP] = SQ("C1")|SQ("F1"); pieces[BLACK][BISHOP] = SQ("C8")|SQ("F8");
+        pieces[WHITE][BISHOP] = 0; pieces[BLACK][BISHOP] = 0;
         pieces[WHITE][KNIGHT] = SQ("B1")|SQ("G1"); pieces[BLACK][KNIGHT] = SQ("B8")|SQ("G8");
         pieces[WHITE][PAWN]   = Rank(1);           pieces[BLACK][PAWN]   = Rank(6);
 
@@ -66,9 +68,6 @@ void Board::front_move(const Move &mv)
        
         //swaping color
         clr = (Color) !clr;
-
-        //initializing moves
-        init_moves();
 }
 
 void Board::back_move(const Move &mv)
@@ -97,9 +96,6 @@ void Board::back_move(const Move &mv)
         //displacement
         else
                 displace(mv.origin(), mv.dest(), mv.my_piece(), clr);
-
-        //initializing moves INEFFICIENT!!!
-        init_moves();
 }
 
 void Board::castle(Castling cstl, Color c)
