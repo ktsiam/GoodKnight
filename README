@@ -12,4 +12,4 @@ TODO:
           (rotated - reverse bitboards?)
 
           future: update instead of generating?
-          Make this code clockwork before moving further
+          Make this code clockwork before moving further (try kcachegrind,)
