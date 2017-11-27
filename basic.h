@@ -1,3 +1,5 @@
+// Can improve file and rank function (given through multiplication and shift)
+
 #ifndef BASIC_H_
 #define BASIC_H_
 
