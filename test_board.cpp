@@ -19,11 +19,15 @@ void Test_board::custom_move(std::string str)
 {
         init_move_str();
 
+        if (str == "q" || str == "Q") {
+                std::cout << "EXITING\n";
+                exit(0);
+        }
         if (str == "r" || str == "R") {
                 undo();
                 init_move_str();
                 return print();
-        }
+        }        
 
         for (uint i = 0; i < move_str.size(); ++i)
                 if (to_lowercase(str) == to_lowercase(move_str[i])) {
@@ -77,7 +81,7 @@ void Test_board::init_move_str()
 
 void Test_board::undo()
 {
-        std::cout << "UNDO RUNS\n";
+        std::cout << "UNDO\n";
         if (history.empty())
                 std::cout << "No history\n";
         else {
