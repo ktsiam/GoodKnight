@@ -26,6 +26,8 @@ BB      get_BB    (Sq_idx idx);         // returns BB with set given bit
 BB      get_lsb   (BB b);               // returns BB with lsb
 void    clear_lsb (BB &b);              // clears lsb
 BB      get_clear_lsb(BB &b);           // returns BB with lsb and clears
+BB      get_msb   (BB b);               // returns BB with msb
+BB      get_clear_msb(BB &b);           // returns BB with msb and clears
 
 //combine BBs
 BB      unite     (BB *start, BB *end); // merges all BBs from start to end

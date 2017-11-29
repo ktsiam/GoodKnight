@@ -36,6 +36,17 @@ BB get_clear_lsb(BB &b)
         b     ^= lsb;
         return lsb;
 }
+BB get_msb(BB b)
+{
+        return b ? get_BB(63 - __builtin_clzll(b)) : 0;
+}
+
+BB get_clear_msb(BB &b)
+{
+        BB msb = get_msb(b);
+        b     ^= msb;
+        return msb;
+}
 
 //COMBINATION
 BB unite(BB *start, BB *end)
