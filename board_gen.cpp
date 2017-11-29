@@ -78,13 +78,13 @@ void Board::general_move_gen(BB origin, Piece pce, BB moves)
 
         while (non_attack) {
                 BB dest = get_clear_lsb(non_attack);
-                move_vec.push_back(Move{origin, dest, pce, castle_rights[clr], 0});
+                move_vec.push_back(Move{origin, dest, pce, castle_rights[clr], en_passant_sq});
         }
 
         while (attack) {
                 BB dest     = get_clear_lsb(attack);
                 Piece their = find_piece(dest, (Color) (clr^1));
-                Move new_mv{origin, dest, pce, castle_rights[clr], 0, their};
+                Move new_mv{origin, dest, pce, castle_rights[clr], en_passant_sq, their};
                 move_vec.push_back(new_mv);
         }
 }
