@@ -39,4 +39,7 @@ BB      Rank      (uint8_t idx);        // returns rank BB of given index
 //operation
 BB      shiftBB   (BB b, int8_t dx, int8_t dy); //shifts BB as shown
 
+//extra
+uint8_t rev_bits  (uint8_t byte);       // returns BYTE with reversed bits
+
 #endif // BASIC_H_
