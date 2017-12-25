@@ -1,6 +1,4 @@
 TODO:
-          BUG: castling rights when moving rook <---
-
           Generate move_gen functions for:
                    - ROOKS
                    - BISHOPS

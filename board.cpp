@@ -55,13 +55,12 @@ void Board::front_move(const Move &mv)
                                 set_en_passant(mv.origin(), mv.dest()); break;
                         case KING :
                                 castle_rights[clr] = NO_CASTLING;       break;
-                        case ROOK :
-                                if (clr == WHITE) {
-                                        bool o_o   = pieces[WHITE][clr] & shiftBB(1, 7, 7*clr);
-                                        bool o_o_o = pieces[WHITE][clr] & shiftBB(1, 0, 7*clr);
-                                        castle_rights[clr] = (Castling)
-                                                ((o_o | (o_o_o << 1)) & castle_rights[clr]);
-                                }
+                        case ROOK : { 
+                                bool o_o   = pieces[clr][ROOK] & shiftBB(1, 7, 7*clr);
+                                bool o_o_o = pieces[clr][ROOK] & shiftBB(1, 0, 7*clr);
+                                castle_rights[clr] = (Castling)
+                                        ((o_o | (o_o_o << 1)) & castle_rights[clr]);
+                        }
                         default : break;
                 }
         }
