@@ -21,6 +21,7 @@ void Board::init_moves()
         king_move_gen();
         knight_move_gen();
         pawn_move_gen();
+        rook_move_gen();
 }
 
 Piece Board::find_piece(BB sq, Color c)
@@ -33,7 +34,7 @@ Piece Board::find_piece(BB sq, Color c)
         assert(false);
 }
 
-void Board::castling_gen()
+void Board::castling_gen() // FIX WHEN CASTLING POSITION IS ATTACKED
 {
         int8_t y_shift = clr * 7;
         if (castle_rights[clr] & 1)
@@ -179,3 +180,60 @@ void Board::double_move_gen(BB origin)
                 move_vec.push_back(new_mv);
         }
 }
+
+void Board::rook_move_gen()
+{
+        BB rooks = pieces[clr][ROOK];
+        while (rooks) {
+                BB origin = get_clear_lsb(rooks);
+                rank_move_gen(origin, ROOK);
+                //file_move_gen(origin, ROOK);///////////FIXXIXIXIXIXIIXIXI
+        }
+}
+
+uint8_t Board::byte_bb_gen(uint8_t orig, uint8_t occup)
+{
+        uint8_t dest = ((occup - 2 * orig) ^ occup);
+
+        uint8_t occup_r  = rev_bits(occup);
+        uint8_t origin_r = rev_bits(orig);
+        
+        dest |= rev_bits(((occup_r - 2 * origin_r) ^ occup_r));
+        return dest;        
+}
+
+void Board::rank_move_gen(BB origin, Piece pce)
+{
+        uint8_t shift = get_idx(origin) / DIM * DIM;
+
+        BB dest = byte_bb_gen(origin >> shift, all_pieces >> shift);
+        sliding_move_gen(origin, dest << shift, pce);
+}
+
+void Board::sliding_move_gen(BB origin, BB dest, Piece pce)
+{       
+        edge_move_gen(origin, get_clear_lsb(dest), pce);
+        edge_move_gen(origin, get_clear_msb(dest), pce);
+        
+        while (dest) {
+                BB d = get_clear_lsb(dest);
+                Move new_mv{origin, d, pce, castle_rights[clr],
+                en_passant_sq, find_piece(dest, static_cast<Color>(clr^1))};
+                move_vec.push_back(new_mv);
+        }
+}
+
+void Board::edge_move_gen(BB origin, BB dest, Piece pce)
+{
+        if (dest & team_pieces[clr^1]) { //capture
+                Move new_mv{origin, dest, pce, castle_rights[clr],
+                en_passant_sq, find_piece(dest, static_cast<Color>(clr^1))};
+                move_vec.push_back(new_mv);
+        }
+        else if (dest & ~all_pieces) {   //free square
+                Move new_mv{origin, dest, pce, castle_rights[clr],
+                en_passant_sq};
+                move_vec.push_back(new_mv);
+        }
+}
+

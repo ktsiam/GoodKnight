@@ -11,12 +11,12 @@ public:
         void front_move(const Move &mv);
         void back_move (const Move &mv);
 
+        void init_moves();
+        std::vector<Move> move_vec;
+
 protected:
 
-        void init_moves();
-        Piece find_piece(BB sq, Color c);
-
-        std::vector<Move> move_vec;
+        Piece find_piece(BB sq, Color c);      
 
         //position
         BB pieces[CLR_NB][PIECE_NB];
@@ -37,10 +37,18 @@ private:
         void pawn_move_gen();
 
         //TODO: //////////////
-        void rook_move_gen();
+        void rook_move_gen(); //U.C.
         void bishop_move_gen();
         void queen_move_gen();
         //////////////////////
+
+        //TODO://///////////HELPER//
+        uint8_t byte_bb_gen(uint8_t orig, uint8_t occup);
+        void rank_move_gen(BB origin, Piece pce);
+        void sliding_move_gen(BB origin, BB dest, Piece pce);
+        void edge_move_gen(BB origin, BB dest, Piece pce);
+        
+        /////////////////////
 
         //generator helpers
         void general_move_gen(BB origin, Piece pce, BB moves);
