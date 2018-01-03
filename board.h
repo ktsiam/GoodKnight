@@ -16,7 +16,7 @@ public:
 
 protected:
 
-        Piece find_piece(BB sq, Color c);      
+        Piece find_piece(BB sq, Color c);
 
         //position
         BB pieces[CLR_NB][PIECE_NB];
@@ -45,9 +45,10 @@ private:
         //TODO://///////////HELPER//
         uint8_t byte_bb_gen(uint8_t orig, uint8_t occup);
         void rank_move_gen(BB origin, Piece pce);
+        void file_move_gen(BB origin, Piece pce);
         void sliding_move_gen(BB origin, BB dest, Piece pce);
         void edge_move_gen(BB origin, BB dest, Piece pce);
-        
+
         /////////////////////
 
         //generator helpers

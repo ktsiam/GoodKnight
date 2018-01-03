@@ -187,7 +187,7 @@ void Board::rook_move_gen()
         while (rooks) {
                 BB origin = get_clear_lsb(rooks);
                 rank_move_gen(origin, ROOK);
-                //file_move_gen(origin, ROOK);///////////FIXXIXIXIXIXIIXIXI
+                file_move_gen(origin, ROOK);
         }
 }
 
@@ -197,9 +197,9 @@ uint8_t Board::byte_bb_gen(uint8_t orig, uint8_t occup)
 
         uint8_t occup_r  = rev_bits(occup);
         uint8_t origin_r = rev_bits(orig);
-        
+
         dest |= rev_bits(((occup_r - 2 * origin_r) ^ occup_r));
-        return dest;        
+        return dest;
 }
 
 void Board::rank_move_gen(BB origin, Piece pce)
@@ -210,11 +210,24 @@ void Board::rank_move_gen(BB origin, Piece pce)
         sliding_move_gen(origin, dest << shift, pce);
 }
 
+void Board::file_move_gen(BB origin, Piece pce)
+{
+        BB curr_orig = flipDiag(origin);
+        BB curr_occ  = flipDiag(all_pieces);
+
+        uint8_t shift = get_idx(curr_orig) / DIM * DIM;
+
+        BB dest = byte_bb_gen(curr_orig >> shift, curr_occ >> shift);
+        dest  <<= shift;
+
+        sliding_move_gen(origin, flipDiag(dest), pce);
+}
+
 void Board::sliding_move_gen(BB origin, BB dest, Piece pce)
-{       
+{
         edge_move_gen(origin, get_clear_lsb(dest), pce);
         edge_move_gen(origin, get_clear_msb(dest), pce);
-        
+
         while (dest) {
                 BB d = get_clear_lsb(dest);
                 Move new_mv{origin, d, pce, castle_rights[clr],
