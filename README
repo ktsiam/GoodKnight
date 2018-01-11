@@ -1,10 +1,6 @@
 TODO:
           Generate move_gen functions for:
-                   - ROOKS
                    - BISHOPS
                    - QUEENS
 
-          (rotated - reverse bitboards?)
-
-          future: update instead of generating?
-          Make this code clockwork before moving further (try kcachegrind,)
+          Design traversal algorithm
