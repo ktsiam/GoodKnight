@@ -207,7 +207,7 @@ void Board::rank_move_gen(BB origin, Piece pce)
         uint8_t shift = get_idx(origin) / DIM * DIM;
 
         BB dest = byte_bb_gen(origin >> shift, all_pieces >> shift);
-        sliding_move_gen(origin, dest << shift, pce);
+        general_move_gen(origin, pce, dest << shift);
 }
 
 void Board::file_move_gen(BB origin, Piece pce)
@@ -220,33 +220,5 @@ void Board::file_move_gen(BB origin, Piece pce)
         BB dest = byte_bb_gen(curr_orig >> shift, curr_occ >> shift);
         dest  <<= shift;
 
-        sliding_move_gen(origin, flipDiag(dest), pce);
+        general_move_gen(origin, pce, flipDiag(dest));
 }
-
-void Board::sliding_move_gen(BB origin, BB dest, Piece pce)
-{
-        edge_move_gen(origin, get_clear_lsb(dest), pce);
-        edge_move_gen(origin, get_clear_msb(dest), pce);
-
-        while (dest) {
-                BB d = get_clear_lsb(dest);
-                Move new_mv{origin, d, pce, castle_rights[clr],
-                en_passant_sq, find_piece(dest, static_cast<Color>(clr^1))};
-                move_vec.push_back(new_mv);
-        }
-}
-
-void Board::edge_move_gen(BB origin, BB dest, Piece pce)
-{
-        if (dest & team_pieces[clr^1]) { //capture
-                Move new_mv{origin, dest, pce, castle_rights[clr],
-                en_passant_sq, find_piece(dest, static_cast<Color>(clr^1))};
-                move_vec.push_back(new_mv);
-        }
-        else if (dest & ~all_pieces) {   //free square
-                Move new_mv{origin, dest, pce, castle_rights[clr],
-                en_passant_sq};
-                move_vec.push_back(new_mv);
-        }
-}
-
