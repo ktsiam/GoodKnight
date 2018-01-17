@@ -4,12 +4,13 @@
 #include "basic.h"
 #include "move.h"
 #include <vector>
+#include <stack>
 
 class Board {
 public:
         Board();
-        void front_move(const Move &mv);
-        void back_move (const Move &mv);
+        void front_move(const Move mv);
+        void back_move ();
 
         void init_moves();
         std::vector<Move> move_vec;
@@ -23,8 +24,11 @@ protected:
         Color clr;
         Castling castle_rights[CLR_NB];
         BB en_passant_sq;
-
+        
 private:
+        
+        //move history
+        std::stack<Move> history;
 
         //temporary variables (re-evaluated each position)
         BB all_pieces;

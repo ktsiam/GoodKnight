@@ -21,11 +21,11 @@ Board::Board()
 
         castle_rights[WHITE] = BOTH;
         castle_rights[BLACK] = BOTH;
-
+        
         init_moves();
 }
 
-void Board::front_move(const Move &mv)
+void Board::front_move(const Move mv)
 {
         //capture  (en_passant is NOT a capture)
         if (mv.their_piece() != NO_PIECE)
@@ -67,10 +67,15 @@ void Board::front_move(const Move &mv)
        
         //swaping color
         clr = (Color) !clr;
+
+        history.push(mv); //copy and swap
 }
 
-void Board::back_move(const Move &mv)
+void Board::back_move()
 {
+        const Move mv = history.top();
+        history.pop();
+
         //swapping color, adjusting Castling & en_passant
         clr = (Color) !clr;
         en_passant_sq      = mv.en_passant_status();

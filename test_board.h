@@ -15,7 +15,6 @@ public:
 private:
         void init_move_str();
         std::vector<std::string> move_str;
-        std::vector<Move> history;
 };
 
 

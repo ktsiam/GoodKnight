@@ -31,7 +31,6 @@ void Test_board::custom_move(std::string str)
 
         for (uint i = 0; i < move_str.size(); ++i)
                 if (to_lowercase(str) == to_lowercase(move_str[i])) {
-                        history.push_back(move_vec[i]);
                         front_move(move_vec[i]);                        
                         init_move_str();
                         print();
@@ -85,9 +84,7 @@ void Test_board::undo()
         if (history.empty())
                 std::cout << "No history\n";
         else {
-                Move last = history.back();
-                history.pop_back();
-                back_move(last);
+                back_move();
         }
 }
 
