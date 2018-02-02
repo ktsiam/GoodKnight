@@ -25,7 +25,7 @@ public:
 
 private:
 
-        uint32_t data;        
+        uint32_t data;        //2 bits free
 };
 
 

@@ -15,7 +15,7 @@ Move::Move(BB org, BB dest, Piece myP, Castling c_rights,
                 | (en_p ? 1 : 0)   << 23
                 
                 //for reversability
-                | get_idx(en_p_st) << 24
+                | get_idx(en_p_st) << 24 //can withdraw 2 bits if necessary (index file)
                 | c_rights         << 30;
 }
 
