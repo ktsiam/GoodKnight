@@ -28,6 +28,7 @@ void    clear_lsb (BB &b);              // clears lsb
 BB      get_clear_lsb(BB &b);           // returns BB with lsb and clears
 BB      get_msb   (BB b);               // returns BB with msb
 BB      get_clear_msb(BB &b);           // returns BB with msb and clears
+BB      pop_count (BB b);               // returns number of set bits
 
 //combine BBs
 BB      unite     (BB *start, BB *end); // merges all BBs from start to end
@@ -37,10 +38,10 @@ BB      File      (uint8_t idx);        // returns file BB of given index
 BB      Rank      (uint8_t idx);        // returns rank BB of given index
 
 //operation
-BB      shiftBB   (BB b, int8_t dx, int8_t dy); //shifts BB as shown
-
-//swaps
-uint8_t rev_bits   (uint8_t byte);     // returns BYTE with reversed bits
+BB      shiftBB    (BB b, int8_t dx, int8_t dy); //shifts BB as shown
 BB      flipDiag   (BB b);             // flips a1-h8
+BB      rot_45_c   (BB b);             // maps diagonals to files
+BB      rot_45_a   (BB b);             // maps anti-diagonals to files
+uint8_t rev_bits   (uint8_t byte);     // returns BYTE with reversed bits
 
 #endif // BASIC_H_

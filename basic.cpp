@@ -48,6 +48,11 @@ BB get_clear_msb(BB &b)
         return msb;
 }
 
+BB pop_count(const BB b)
+{
+        return  __builtin_popcountll(b);
+}
+
 //COMBINATION
 BB unite(BB *start, BB *end)
 {
@@ -96,7 +101,8 @@ uint8_t rev_bits(uint8_t byte)
                 rev_bit_table[byte >> 4];
 }
 
-BB flipDiag(BB x) {
+BB flipDiag(BB x) 
+{
         BB t;
         static const BB k1 = 0x5500550055005500;
         static const BB k2 = 0x3333000033330000;
@@ -107,5 +113,32 @@ BB flipDiag(BB x) {
         x ^=       t ^ (t >> 14) ;
         t  = k1 & (x ^ (x <<  7));
         x ^=       t ^ (t >>  7) ;
+        return x;
+}
+
+static BB rotateRight(BB x, int s)
+{
+        return (x >> s) | (x << (64-s));
+}
+
+BB rot_45_c(BB x)
+{
+        const BB k1 = 0xAAAAAAAAAAAAAAAA;
+        const BB k2 = 0xCCCCCCCCCCCCCCCC;
+        const BB k4 = 0xF0F0F0F0F0F0F0F0;
+        x ^= k1 & (x ^ rotateRight(x,  8));
+        x ^= k2 & (x ^ rotateRight(x, 16));
+        x ^= k4 & (x ^ rotateRight(x, 32));
+        return x;
+}
+
+BB rot_45_a(BB x)
+{
+        const BB k1 = 0x5555555555555555;
+        const BB k2 = 0x3333333333333333;
+        const BB k4 = 0x0f0f0f0f0f0f0f0f;
+        x ^= k1 & (x ^ rotateRight(x,  8));
+        x ^= k2 & (x ^ rotateRight(x, 16));
+        x ^= k4 & (x ^ rotateRight(x, 32));
         return x;
 }
