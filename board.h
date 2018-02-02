@@ -40,11 +40,8 @@ private:
         void knight_move_gen();
         void pawn_move_gen();
         void rook_move_gen();
-
-        //TODO: //////////////
         void bishop_move_gen();
         void queen_move_gen();
-        //////////////////////
 
         //static generator helpers
         void general_move_gen(BB origin, Piece pce, BB moves);
@@ -53,11 +50,15 @@ private:
         void double_move_gen(BB origin);
         void pawn_attack_gen(BB origin);
         void pawn_non_attack_gen(BB origin);
-        
-        //sliding generator helpers       
+
+        //sliding generator helpers
         void rank_move_gen(BB origin, Piece pce);
         void file_move_gen(BB origin, Piece pce);
-        uint8_t byte_bb_gen(uint8_t orig, uint8_t occup);
+        void diagonal_move_gen(BB origin, Piece pce);
+        void antidiag_move_gen(BB origin, Piece pce);
+        uint8_t byte_bb_gen      (uint8_t orig, uint8_t occup);
+        uint8_t byte_bb_gen_left (uint8_t orig, uint8_t occup);
+        uint8_t byte_bb_gen_right(uint8_t orig, uint8_t occup);
 
         //front-back move helpers
         void castle(Castling cstl, Color c);
