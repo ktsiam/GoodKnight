@@ -1,6 +1,4 @@
 TODO:
-          Generate move_gen functions for:
-                   - BISHOPS
-                   - QUEENS
-
-          Design traversal algorithm
+          build attack_boards for both colors
+          
+          traversal tree
