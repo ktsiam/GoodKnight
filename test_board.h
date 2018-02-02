@@ -5,9 +5,10 @@
 
 class Test_board : public Board {
 public:
-        Test_board() = default;
+        Test_board();
+        ~Test_board() = default;
+        
         void print();
-        void printBB(BB b);
         void print_moves();
         void custom_move(std::string str);
         void undo();

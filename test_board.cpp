@@ -7,9 +7,13 @@ static std::string sq_to_str (BB b);
 static char        piece_to_char(Piece p);
 static std::string piece_to_str(Piece p, Color c);
 
-void Test_board::print_moves()
+Test_board::Test_board()
 {
         init_move_str();
+}
+
+void Test_board::print_moves()
+{
         for (auto it = move_str.begin(); it != move_str.end(); ++it)
                 std::cout << *it << ' ';
         std::cout << std::endl;
@@ -25,13 +29,15 @@ void Test_board::custom_move(std::string str)
         }
         if (str == "r" || str == "R") {
                 undo();
+                init_moves();
                 init_move_str();
                 return print();
         }        
 
         for (uint i = 0; i < move_str.size(); ++i)
                 if (to_lowercase(str) == to_lowercase(move_str[i])) {
-                        front_move(move_vec[i]);                        
+                        front_move(move_vec[i]);
+                        init_moves();
                         init_move_str();
                         print();
                         return;
@@ -42,7 +48,6 @@ void Test_board::custom_move(std::string str)
 
 void Test_board::init_move_str()
 {
-        init_moves();
         move_str.clear();
         for (auto it = move_vec.begin(); it != move_vec.end(); ++it) {
                 if (it -> is_castling()) {
@@ -137,20 +142,6 @@ static std::string to_lowercase(std::string s)
         for (auto it = s.begin(); it != s.end(); ++it)
                 lower.push_back(tolower(*it));
         return lower;
-}
-
-
-
-
-void Test_board::printBB(BB b)
-{
-        for (int r = 7; r >= 0; --r){
-                std::cout << r+1 << " ";
-                for (int f = 0; f < 8; ++f)
-                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
-                std::cout << "\n";
-        }
-        std::cout << "  A B C D E F G H\n\n";
 }
 
 void Test_board::print()
