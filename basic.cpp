@@ -1,5 +1,6 @@
 #include "basic.h"
 
+
 static const Bitboard debruijn64 = 0x03f79d71b4cb0a89;
 static const uint8_t index64[64] = {
         0,  1, 48,  2, 57, 49, 28,  3, 61, 58, 50, 42, 38, 29, 17,  4,
@@ -142,3 +143,19 @@ BB rot_45_a(BB x)
         x ^= k4 & (x ^ rotateRight(x, 32));
         return x;
 }
+
+
+
+//debugging
+#include <iostream>
+void print(BB b)
+{
+        for (int r = 7; r >= 0; --r){
+                std::cout << r+1 << " ";
+                for (int f = 0; f < 8; ++f)
+                        std::cout << "_o"[(bool)(b & 1ULL << (8*r+f))] << " ";
+                std::cout << "\n";
+        }
+        std::cout << "  A B C D E F G H\n\n";
+}
+

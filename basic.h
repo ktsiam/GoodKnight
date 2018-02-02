@@ -15,8 +15,10 @@ enum Color    : uint8_t { WHITE, BLACK, CLR_NB };
 enum Castling : uint8_t { NO_CASTLING, O_O, O_O_O, BOTH };
 enum Piece    : uint8_t { KING, QUEEN, ROOK, BISHOP, KNIGHT,
                           PAWN, PIECE_NB = 6, NO_PIECE = 7 };
-
 const uint8_t DIM = 8;
+
+//debugging
+void print(BB b);
 
 //conversion
 uint8_t get_idx   (BB b);               // returns index of lsb
