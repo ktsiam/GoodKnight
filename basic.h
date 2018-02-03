@@ -7,6 +7,10 @@
 #include <cassert>
 #include <string>
 
+//Branch prediction helpers
+#define LIKELY(condition)   __builtin_expect(static_cast<bool>(condition), 1)
+#define UNLIKELY(condition) __builtin_expect(static_cast<bool>(condition), 0)
+
 typedef uint64_t Bitboard;
 typedef Bitboard BB;
 typedef uint8_t Sq_idx;
