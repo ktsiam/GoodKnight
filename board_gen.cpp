@@ -5,7 +5,6 @@
 /**************************
  * BB KNIGHT_MOVE   [64]  *
  * BB KING_MOVE     [64]  *
- * BB PAWN_ATTACK[2][64]  *
  **************************/
 
 void Board::init_moves()
