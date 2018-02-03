@@ -36,7 +36,7 @@ Piece Board::find_piece(BB sq, Color c)
         assert(false);
 }
 
-void Board::castling_gen() // FIX WHEN CASTLING POSITION IS ATTACKED
+void Board::castling_gen()
 {
         int8_t y_shift = clr * 7;
         if (castle_rights[clr] & 1)
@@ -63,13 +63,95 @@ void Board::knight_move_gen()
         while (knight_pos) {
                 BB origin = get_clear_lsb(knight_pos);
                 BB moves  = KNIGHT_MOVE[get_idx(origin)];
-
                 general_move_gen(origin, KNIGHT, moves);
+        }
+}
+
+void Board::pawn_move_gen()
+{
+        BB pawn_pos = pieces[clr][PAWN];
+        
+        BB front_1 = rel_shift_up(pawn_pos, DIM) & ~all_pieces;
+        BB front_2 = rel_shift_up(front_1,  DIM) & ~all_pieces
+                & Rank(clr == WHITE ? 3 : 4);
+        
+        BB take_left = rel_shift_up(pawn_pos, DIM-1)
+                & (team_pieces[clr^1] | en_passant_sq) & ~File(7);
+        
+        BB take_right = rel_shift_up(pawn_pos, DIM+1)
+                & (team_pieces[clr^1] | en_passant_sq) & ~File(0);
+        
+        while (front_1) {
+                BB dest = get_clear_lsb(front_1);
+                BB orig = rel_shift_down(dest, DIM);
+                pawn_move(orig, dest);
+        }
+        while (front_2) {
+                BB dest = get_clear_lsb(front_2);
+                BB orig = rel_shift_down(dest, 2*DIM);
+                pawn_move(orig, dest);
+        }
+        while (take_left) {
+                BB dest = get_clear_lsb(take_left);
+                BB orig = rel_shift_down(dest, DIM-1);
+                pawn_capture(orig, dest);
+        }
+        while (take_right) {
+                BB dest = get_clear_lsb(take_right);
+                BB orig = rel_shift_down(dest, DIM+1);
+                pawn_capture(orig, dest);
         }
 }
 
 
 
+void Board::pawn_capture(BB origin, BB dest)
+{
+        //checking for promotion
+        if (UNLIKELY(!rel_shift_up(dest, DIM))) {
+                promotion_gen(origin, dest,  false);
+                return;
+        }        
+        Piece taken_pce = find_piece(dest, static_cast<Color>(clr^1));
+        bool en_p       = (taken_pce == NO_PIECE);
+        
+        Move new_mv{origin, dest, PAWN, castle_rights[clr],
+                en_passant_sq, taken_pce, NO_CASTLING, NO_PIECE, en_p};
+        move_vec.push_back(new_mv);        
+}
+
+void Board::pawn_move(BB origin, BB dest)
+{
+        if (UNLIKELY(!rel_shift_up(dest, DIM))) {
+                promotion_gen(origin, dest,  false);
+                return;
+        }
+        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
+        move_vec.push_back(new_mv);        
+}
+
+void Board::promotion_gen(BB origin, BB dest, bool quiet)
+{
+        Piece their = (quiet) ? NO_PIECE :
+                find_piece(dest, static_cast<Color>(clr^1));;
+        
+        for (int p = QUEEN; p != PAWN; ++p) {
+                Move new_mv{ origin, dest, PAWN, castle_rights[clr],
+                             en_passant_sq, their, NO_CASTLING, (Piece) p };
+                move_vec.push_back(new_mv);
+        }
+}
+                                  
+BB Board::rel_shift_up(BB b, uint8_t shift)
+{
+        return (clr == WHITE) ? (b << shift) : (b >> shift);
+}
+
+BB Board::rel_shift_down(BB b, uint8_t shift)
+{
+        return (clr == WHITE) ? (b >> shift) : (b << shift);
+}
+                                  
 void Board::general_move_gen(BB origin, Piece pce, BB moves)
 {
         moves &= ~team_pieces[clr];
@@ -92,96 +174,6 @@ void Board::general_move_gen(BB origin, Piece pce, BB moves)
         }
 }
 
-void Board::pawn_move_gen()
-{
-        BB pawn_pos = pieces[clr][PAWN];
-        BB en_p_rank = Rank((clr == WHITE) ? 4 : 3);
-
-        if (en_passant_sq && (pawn_pos & en_p_rank))
-                en_passant_gen(pawn_pos & en_p_rank);
-
-        while (pawn_pos) {
-                BB origin = get_clear_lsb(pawn_pos);
-
-                pawn_attack_gen    (origin);
-                pawn_non_attack_gen(origin);
-        }
-}
-
-void Board::pawn_non_attack_gen(BB origin)
-{
-        int8_t push = (clr == WHITE) ? 1 : -1;
-        BB     dest = shiftBB(origin, 0, push);
-
-        if ( ~(all_pieces) & dest) {
-                BB promo_rank = Rank((clr == WHITE) ? 7 : 0);
-                if (dest & promo_rank)
-                        promotion_gen(origin, dest, NO_PIECE);
-                else {
-                        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
-                        move_vec.push_back(new_mv);
-
-                        BB double_move_rank = Rank((clr == WHITE) ? 2 : 5);
-                        if (dest & double_move_rank)
-                                double_move_gen(origin);
-                }
-        }
-}
-
-void Board::pawn_attack_gen(BB origin)
-{
-        BB attack = PAWN_ATTACK[clr][get_idx(origin)];
-        while (attack) {
-                BB dest     = get_clear_lsb(attack);
-
-                if (dest & ~team_pieces[clr^1])
-                        continue;
-
-                Piece their = find_piece(dest, (Color) (clr^1));
-                BB promo_rank = Rank((clr == WHITE) ? 7 : 0);
-                if (dest & promo_rank)
-                        promotion_gen(origin, dest, their);
-                else {
-                        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq, their};
-                        move_vec.push_back(new_mv);
-                }
-        }
-}
-
-
-void Board::en_passant_gen(BB pawns)
-{
-        while (pawns) {
-                BB origin = get_clear_lsb(pawns);
-                BB dest   = PAWN_ATTACK[clr][get_idx(origin)] & en_passant_sq;
-                if (dest) {
-
-                        //en passant is NOT a capture
-                        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq,
-                                        NO_PIECE, NO_CASTLING, NO_PIECE, true};
-                        move_vec.push_back(new_mv);
-                }
-        }
-}
-
-void Board::promotion_gen(BB origin, BB dest, Piece their)
-{
-        for (int p = QUEEN; p != PAWN; ++p) {
-                Move new_mv{ origin, dest, PAWN, castle_rights[clr],
-                             en_passant_sq, their, NO_CASTLING, (Piece) p };
-                move_vec.push_back(new_mv);
-        }
-}
-
-void Board::double_move_gen(BB origin)
-{
-        BB dest = shiftBB(origin, 0, clr==WHITE ? 2 : -2);
-
-        if (~all_pieces & dest) {
-                Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
-                move_vec.push_back(new_mv);
-        }
-}
 
 void Board::rook_move_gen()
 {
@@ -280,7 +272,6 @@ void Board::antidiag_move_gen(BB origin, Piece pce)
 
         dest ^= origin;
 
-        dest &= ~team_pieces[clr];
         general_move_gen(origin, pce, dest);
 }
 
@@ -295,12 +286,8 @@ uint8_t Board::byte_bb_gen_left(uint8_t orig, uint8_t occup)
 {
         return (occup - 2 * orig) ^ occup;
 }
+
 uint8_t Board::byte_bb_gen_right(uint8_t orig, uint8_t occup)
 {
-        uint8_t occup_r  = rev_bits(occup);
-        uint8_t origin_r = rev_bits(orig);
-
-        return rev_bits(((occup_r - 2 * origin_r) ^ occup_r));
+        return rev_bits(byte_bb_gen_left(rev_bits(orig), rev_bits(occup)));
 }
-
-

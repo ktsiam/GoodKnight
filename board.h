@@ -29,7 +29,6 @@ protected:
         std::stack<Move> history;
 private:
 
-
         //temporary variables (re-evaluated each position)
         BB all_pieces;
         BB team_pieces[CLR_NB];
@@ -45,15 +44,15 @@ private:
 
         //static generator helpers
         void general_move_gen(BB origin, Piece pce, BB moves);
-        void en_passant_gen(BB pawns);
-        void promotion_gen(BB origin, BB dest, Piece = NO_PIECE);
-        void double_move_gen(BB origin);
-        void pawn_attack_gen(BB origin);
-        void pawn_non_attack_gen(BB origin);
+        void pawn_move       (BB origin, BB dest);
+        void pawn_capture    (BB origin, BB dest);        
+        void promotion_gen   (BB origin, BB dest, bool quiet);
+        BB   rel_shift_up  (BB b, uint8_t shift);
+        BB   rel_shift_down(BB b, uint8_t shift);
 
         //sliding generator helpers
-        void rank_move_gen(BB origin, Piece pce);
-        void file_move_gen(BB origin, Piece pce);
+        void rank_move_gen    (BB origin, Piece pce);
+        void file_move_gen    (BB origin, Piece pce);
         void diagonal_move_gen(BB origin, Piece pce);
         void antidiag_move_gen(BB origin, Piece pce);
         uint8_t byte_bb_gen      (uint8_t orig, uint8_t occup);
