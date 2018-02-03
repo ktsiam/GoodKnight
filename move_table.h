@@ -1,6 +1,8 @@
 #ifndef MOVE_TABLE_H_
 #define MOVE_TABLE_H_
 
+#include "basic.h"
+
 const BB KNIGHT_MOVE[DIM*DIM] = {
         0x20400, 0x50800, 0xa1100, 0x142200,
         0x284400, 0x508800, 0xa01000, 0x402000,
