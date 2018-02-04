@@ -1,17 +1,24 @@
 #include "board.h"
 
-#include "move_table.h"
 
+#include "move_table.h"
 /**************************
  * BB KNIGHT_MOVE   [64]  *
  * BB KING_MOVE     [64]  *
  **************************/
+
+////////////////////////////// PUBLIC /////////////////////////////
+
+// HEAD GENERATE FUNCTION
 
 void Board::init_moves()
 {
         team_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
         team_pieces[BLACK] = unite(&pieces[BLACK][KING], &pieces[BLACK][PIECE_NB]);
 
+        team_moves [WHITE] = unite(&moves[WHITE][KING],  &moves[WHITE][PIECE_NB]);
+        team_moves [BLACK] = unite(&moves[BLACK][KING],  &moves[BLACK][PIECE_NB]);
+        
         all_pieces = team_pieces[WHITE] | team_pieces[BLACK];
 
         move_vec.clear();
@@ -25,6 +32,8 @@ void Board::init_moves()
         queen_move_gen();
 }
 
+////////////////////////////// PROTECTED /////////////////////////////
+
 Piece Board::find_piece(BB sq, Color c)
 {
         if (!(team_pieces[c] & sq))
@@ -34,6 +43,10 @@ Piece Board::find_piece(BB sq, Color c)
                         return (Piece) i;
         assert(false);
 }
+
+////////////////////////////// PRIVATE /////////////////////////////
+
+// MOVE GENERATING FUNCTIONS (per piece + castling)
 
 void Board::castling_gen()
 {
@@ -79,6 +92,8 @@ void Board::pawn_move_gen()
         
         BB take_right = rel_shift_up(pawn_pos, DIM+1)
                 & (team_pieces[clr^1] | en_passant_sq) & ~File(0);
+
+        moves[clr][PAWN] = front_1 | front_2 | take_left | take_right;
         
         while (front_1) {
                 BB dest = get_clear_lsb(front_1);
@@ -102,7 +117,76 @@ void Board::pawn_move_gen()
         }
 }
 
+void Board::rook_move_gen()
+{
+        BB rooks = pieces[clr][ROOK];
+        while (rooks) {
+                BB origin = get_clear_lsb(rooks);
+                rank_move_gen(origin, ROOK);
+                file_move_gen(origin, ROOK);
+        }
+}
 
+void Board::bishop_move_gen()
+{
+        BB bishops = pieces[clr][BISHOP];
+        while (bishops) {
+                BB origin = get_clear_lsb(bishops);
+                diagonal_move_gen(origin, BISHOP);
+                antidiag_move_gen(origin, BISHOP);
+        }
+}
+
+void Board::queen_move_gen()
+{
+        BB queens = pieces[clr][QUEEN];
+        while (queens) {
+                BB origin = get_clear_lsb(queens);
+                rank_move_gen     (origin, QUEEN);
+                file_move_gen    (origin, QUEEN);
+                diagonal_move_gen(origin, QUEEN);
+                antidiag_move_gen(origin, QUEEN);
+        }
+}
+
+
+
+// HELPERS FOR GENERATING FUNCTIONS OF STATIC MOVES
+
+void Board::general_move_gen(BB origin, Piece pce, BB squares)
+{
+        squares &= ~team_pieces[clr];
+        moves[clr][pce] = squares;
+        
+        if (!squares) return;
+
+        BB attack     = squares & team_pieces[clr^1];
+        BB non_attack = squares ^ attack;
+        
+        while (non_attack) {
+                BB dest = get_clear_lsb(non_attack);
+                Move new_mv{origin, dest, pce, castle_rights[clr], en_passant_sq};
+                move_vec.push_back(new_mv);
+        }
+
+        while (attack) {
+                BB dest     = get_clear_lsb(attack);
+                Piece their = find_piece(dest, (Color) (clr^1));
+                Move new_mv{origin, dest, pce, castle_rights[clr],
+                                en_passant_sq, their};
+                move_vec.push_back(new_mv);
+        }
+}
+
+void Board::pawn_move(BB origin, BB dest)
+{
+        if (UNLIKELY(!rel_shift_up(dest, DIM))) {
+                promotion_gen(origin, dest,  false);
+                return;
+        }
+        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
+        move_vec.push_back(new_mv);        
+}
 
 void Board::pawn_capture(BB origin, BB dest)
 {
@@ -116,16 +200,6 @@ void Board::pawn_capture(BB origin, BB dest)
         
         Move new_mv{origin, dest, PAWN, castle_rights[clr],
                 en_passant_sq, taken_pce, NO_CASTLING, NO_PIECE, en_p};
-        move_vec.push_back(new_mv);        
-}
-
-void Board::pawn_move(BB origin, BB dest)
-{
-        if (UNLIKELY(!rel_shift_up(dest, DIM))) {
-                promotion_gen(origin, dest,  false);
-                return;
-        }
-        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
         move_vec.push_back(new_mv);        
 }
 
@@ -150,39 +224,10 @@ BB Board::rel_shift_down(BB b, uint8_t shift)
 {
         return (clr == WHITE) ? (b >> shift) : (b << shift);
 }
-                                  
-void Board::general_move_gen(BB origin, Piece pce, BB moves)
-{
-        moves &= ~team_pieces[clr];
-
-        if (!moves) return;
-
-        BB attack     = moves & team_pieces[clr^1];
-        BB non_attack = moves ^ attack;
-
-        while (non_attack) {
-                BB dest = get_clear_lsb(non_attack);
-                move_vec.push_back(Move{origin, dest, pce, castle_rights[clr], en_passant_sq});
-        }
-
-        while (attack) {
-                BB dest     = get_clear_lsb(attack);
-                Piece their = find_piece(dest, (Color) (clr^1));
-                Move new_mv{origin, dest, pce, castle_rights[clr], en_passant_sq, their};
-                move_vec.push_back(new_mv);
-        }
-}
 
 
-void Board::rook_move_gen()
-{
-        BB rooks = pieces[clr][ROOK];
-        while (rooks) {
-                BB origin = get_clear_lsb(rooks);
-                rank_move_gen(origin, ROOK);
-                file_move_gen(origin, ROOK);
-        }
-}
+
+// HELPERS FOR GENERATING FUNCTIONS OF SLIDING MOVES
 
 void Board::rank_move_gen(BB origin, Piece pce)
 {
@@ -203,28 +248,6 @@ void Board::file_move_gen(BB origin, Piece pce)
         dest  <<= shift;
 
         general_move_gen(origin, pce, flipDiag(dest));
-}
-
-void Board::bishop_move_gen()
-{
-        BB bishops = pieces[clr][BISHOP];
-        while (bishops) {
-                BB origin = get_clear_lsb(bishops);
-                diagonal_move_gen(origin, BISHOP);
-                antidiag_move_gen(origin, BISHOP);
-        }
-}
-
-void Board::queen_move_gen()
-{
-        BB queens = pieces[clr][QUEEN];
-        while (queens) {
-                BB origin = get_clear_lsb(queens);
-                rank_move_gen     (origin, QUEEN);
-                file_move_gen    (origin, QUEEN);
-                diagonal_move_gen(origin, QUEEN);
-                antidiag_move_gen(origin, QUEEN);
-        }
 }
 
 void Board::diagonal_move_gen(BB origin, Piece pce)

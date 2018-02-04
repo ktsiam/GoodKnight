@@ -17,22 +17,33 @@ public:
 
 protected:
 
-        Piece find_piece(BB sq, Color c);
-
         //position
         BB pieces[CLR_NB][PIECE_NB];
+        BB moves [CLR_NB][PIECE_NB];
+        
         Color clr;
         Castling castle_rights[CLR_NB];
         BB en_passant_sq;
 
         //move history
         std::stack<Move> history;
-private:
 
         //temporary variables (re-evaluated each position)
         BB all_pieces;
         BB team_pieces[CLR_NB];
+        BB team_moves [CLR_NB];
+        
+        Piece find_piece(BB sq, Color c);
+private:
 
+        //front_move - back_move helpers
+        void castle(Castling cstl, Color c);
+        void en_passant(BB org, BB dest, Color c);
+        void capture(BB dest, Piece pce, Color c);
+        void promote(BB org, BB dest, Piece new_pce, Color c);
+        void displace(BB org, BB dest, Piece pce, Color c);
+        void set_en_passant(BB org, BB dest);
+        
         //move generators
         void castling_gen();
         void king_move_gen();
@@ -43,7 +54,7 @@ private:
         void queen_move_gen();
 
         //static generator helpers
-        void general_move_gen(BB origin, Piece pce, BB moves);
+        void general_move_gen(BB origin, Piece pce, BB squares);
         void pawn_move       (BB origin, BB dest);
         void pawn_capture    (BB origin, BB dest);        
         void promotion_gen   (BB origin, BB dest, bool quiet);
@@ -58,14 +69,6 @@ private:
         uint8_t byte_bb_gen      (uint8_t orig, uint8_t occup);
         uint8_t byte_bb_gen_left (uint8_t orig, uint8_t occup);
         uint8_t byte_bb_gen_right(uint8_t orig, uint8_t occup);
-
-        //front-back move helpers
-        void castle(Castling cstl, Color c);
-        void en_passant(BB org, BB dest, Color c);
-        void capture(BB dest, Piece pce, Color c);
-        void promote(BB org, BB dest, Piece new_pce, Color c);
-        void displace(BB org, BB dest, Piece pce, Color c);
-        void set_en_passant(BB org, BB dest);
 };
 
 

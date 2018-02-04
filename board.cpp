@@ -7,12 +7,22 @@ static BB SQ(std::string s)
 
 Board::Board()
 {
+        //position
         pieces[WHITE][KING]   = SQ("E1");          pieces[BLACK][KING]   = SQ("E8");
         pieces[WHITE][QUEEN]  = SQ("D1");          pieces[BLACK][QUEEN]  = SQ("D8");
         pieces[WHITE][ROOK]   = SQ("A1")|SQ("H1"); pieces[BLACK][ROOK]   = SQ("A8")|SQ("H8");
         pieces[WHITE][BISHOP] = SQ("C1")|SQ("F1"); pieces[BLACK][BISHOP] = SQ("C8")|SQ("F8");
         pieces[WHITE][KNIGHT] = SQ("B1")|SQ("G1"); pieces[BLACK][KNIGHT] = SQ("B8")|SQ("G8");
-        pieces[WHITE][PAWN]   = Rank(1);           pieces[BLACK][PAWN]   = Rank(6);        
+        pieces[WHITE][PAWN]   = Rank(1);           pieces[BLACK][PAWN]   = Rank(6);  
+
+        //possible moves
+        moves[WHITE][KING]    = 0;                  moves[BLACK][KING]   = 0;
+        moves[WHITE][QUEEN]   = 0;                  moves[BLACK][QUEEN]  = 0;
+        moves[WHITE][ROOK]    = 0;                  moves[BLACK][ROOK]   = 0;
+        moves[WHITE][BISHOP]  = 0;                  moves[BLACK][BISHOP] = 0;
+        moves[WHITE][KNIGHT]  = SQ("A3")|SQ("C3")|SQ("F3")|SQ("H3");
+        moves[BLACK][KNIGHT]  = SQ("A6")|SQ("C3")|SQ("F6")|SQ("H6");
+        moves[WHITE][PAWN]    = Rank(2)|Rank(3);    moves[BLACK][PAWN]   = Rank(4)|Rank(5);  
         
         clr = WHITE;
         en_passant_sq = 0;
