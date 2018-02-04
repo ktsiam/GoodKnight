@@ -3,7 +3,7 @@
 
 #include "basic.h"
 
-const BB KNIGHT_MOVE[DIM*DIM] = {
+constexpr BB KNIGHT_MOVE[DIM*DIM] = {
         0x20400, 0x50800, 0xa1100, 0x142200,
         0x284400, 0x508800, 0xa01000, 0x402000,
         0x2040004, 0x5080008, 0xa110011, 0x14220022,
@@ -22,7 +22,7 @@ const BB KNIGHT_MOVE[DIM*DIM] = {
         0x44280000000000,   0x88500000000000,   0x10a00000000000,  0x20400000000000
 };
 
-const BB KING_MOVE[DIM*DIM] = {
+constexpr BB KING_MOVE[DIM*DIM] = {
         0x302, 0x705, 0xe0a, 0x1c14,
         0x3828, 0x7050, 0xe0a0, 0xc040,
         0x30203, 0x70507, 0xe0a0e, 0x1c141c,
