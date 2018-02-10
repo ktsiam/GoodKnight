@@ -9,10 +9,12 @@
 class Board {
 public:
         Board();
-        void front_move(const Move mv);
-        void back_move ();
-
-        void init_moves();
+        ~Board() = default;
+        
+        virtual void front_move(const Move mv) = 0;
+        virtual void back_move ()              = 0;
+        virtual void init_moves()              = 0;
+        
         std::vector<Move> move_vec;
 
 protected:
@@ -27,22 +29,8 @@ protected:
 
         //move history
         std::stack<Move> history;
-
-        //temporary variables (re-evaluated each position)
-        BB all_pieces;
-        BB team_pieces[CLR_NB];
-        BB team_moves [CLR_NB];
         
-        Piece find_piece(BB sq, Color c);
 private:
-
-        //front_move - back_move helpers
-        void castle(Castling cstl, Color c);
-        void en_passant(BB org, BB dest, Color c);
-        void capture(BB dest, Piece pce, Color c);
-        void promote(BB org, BB dest, Piece new_pce, Color c);
-        void displace(BB org, BB dest, Piece pce, Color c);
-        void set_en_passant(BB org, BB dest);
         
         //move generators
         void castling_gen();
