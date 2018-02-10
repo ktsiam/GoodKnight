@@ -1,9 +1,10 @@
 #ifndef TEST_BOARD_H_
 #define TEST_BOARD_H_
 
-#include "board.h"
+#include "move_maker.h"
+#include "move_generator.h"
 
-class Test_board : public Board {
+class Test_board : public Move_maker, public Move_generator {
 public:
         Test_board();
         ~Test_board() = default;

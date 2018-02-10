@@ -9,6 +9,7 @@ static std::string piece_to_str(Piece p, Color c);
 
 Test_board::Test_board()
 {
+        init_moves();
         init_move_str();
 }
 
