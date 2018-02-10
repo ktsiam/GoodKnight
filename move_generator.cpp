@@ -12,35 +12,39 @@
 
 Move_generator::Move_generator()
 {
-        //possible movement squares
-        moves[WHITE][KING]    = 0;                  moves[BLACK][KING]   = 0;
-        moves[WHITE][QUEEN]   = 0;                  moves[BLACK][QUEEN]  = 0;
-        moves[WHITE][ROOK]    = 0;                  moves[BLACK][ROOK]   = 0;
-        moves[WHITE][BISHOP]  = 0;                  moves[BLACK][BISHOP] = 0;
-        moves[WHITE][KNIGHT]  = SQ("A3")|SQ("C3")|SQ("F3")|SQ("H3");
-        moves[BLACK][KNIGHT]  = SQ("A6")|SQ("C6")|SQ("F6")|SQ("H6");
-        moves[WHITE][PAWN]    = Rank(2)|Rank(3);    moves[BLACK][PAWN] = Rank(4)|Rank(5);
+        //possible movement squares for black
+        movement[BLACK][KING]   = SQ("D8")|SQ("F8")|SQ("D7")|SQ("E7")|SQ("F7");
+        movement[BLACK][QUEEN]  = SQ("C8")|SQ("E8")|SQ("C7")|SQ("D7")|SQ("E7");
+        movement[BLACK][ROOK]   = SQ("A7")|SQ("H7")|SQ("B8")|SQ("G8");
+        movement[BLACK][BISHOP] = SQ("B7")|SQ("G7")|SQ("D7")|SQ("E7");
+        movement[BLACK][KNIGHT] = SQ("A6")|SQ("C6")|SQ("F6")|SQ("H6");
+        movement[BLACK][PAWN]   = Rank(4) |Rank(5);
 }
 
 void Move_generator::init_moves()
 {
-        team_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
-        team_pieces[BLACK] = unite(&pieces[BLACK][KING], &pieces[BLACK][PIECE_NB]);
-
-        team_moves [WHITE] = unite(&moves[WHITE][KING],  &moves[WHITE][PIECE_NB]);
-        team_moves [BLACK] = unite(&moves[BLACK][KING],  &moves[BLACK][PIECE_NB]);
-        
-        all_pieces = team_pieces[WHITE] | team_pieces[BLACK];
-
         move_vec.clear();
+                
+        team_pieces[BLACK] = unite(&pieces[BLACK][KING], &pieces[BLACK][PIECE_NB]);
+        team_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
+        all_pieces = team_pieces[WHITE] | team_pieces[BLACK];
+        
+        init_opp_movement();                
 
-        castling_gen();
-        king_move_gen();
         knight_move_gen();
-        pawn_move_gen();
         rook_move_gen();
         bishop_move_gen();
         queen_move_gen();
+        king_move_gen();
+        pawn_move_gen();
+        castling_gen();
+
+        team_movement [clr] = unite(&movement[clr][KING],  &movement[clr][PIECE_NB]);
+
+/*
+        std::cout << "Moves of " << ((clr==WHITE)?"WHITE":"BLACK")<<std::endl;
+        print(team_movement[clr]);
+*/
 }
 
 ////////////////////////////// PROTECTED /////////////////////////////
@@ -57,22 +61,59 @@ Piece Move_generator::find_piece(BB sq, Color c)
 
 ////////////////////////////// PRIVATE /////////////////////////////
 
-// MOVE GENERATING FUNCTIONS (per piece + castling)
+//MOVEMENT GENERATING FUNCTION (less overhead than init_moves)
 
-#include <iostream>
+void Move_generator::init_opp_movement()
+{
+        if (UNLIKELY(history.empty()))
+                return;
+
+        only_movement = true;
+        clr = static_cast<Color>(clr^1);
+
+        {
+                Move last_mv = history.top();
+                if (last_mv.is_castling()) {
+                        king_move_gen();
+                        rook_move_gen();
+                } else if (last_mv.is_en_passant()) {
+                        pawn_move_gen();
+                        rook_move_gen();
+                        bishop_move_gen();
+                        queen_move_gen();
+                } else {
+                        switch (last_mv.my_piece()) {
+                                case KING   : king_move_gen();   break;
+                                case PAWN   : pawn_move_gen();   break;
+                                case KNIGHT : movement[clr][KNIGHT] = 0;
+                                              knight_move_gen(); break;
+                                default     :;  
+                        }                                                
+                        bishop_move_gen();
+                        rook_move_gen();
+                        queen_move_gen();
+                }
+        }
+        team_movement[clr] = unite(&movement[clr][KING],  &movement[clr][PIECE_NB]);
+        
+        only_movement = false;
+        clr = static_cast<Color>(clr^1);
+}
+
+
+// MOVE GENERATING FUNCTIONS (called by init_moves)
+
 void Move_generator::castling_gen()
 {
-        std::cout << "attacks of " << ((clr==WHITE)?"BLACK":"WHITE")<<std::endl;
-        print(team_moves[clr^1]);
         int8_t shift = (clr == WHITE) ? 0 : 7*DIM;
         if (castle_rights[clr] & O_O)
                 if ((0b11 << (shift + 5) & all_pieces) == 0)
-                        if ((0b111 << (shift + 4) & team_moves[clr^1]) == 0)
+                        if ((0b111 << (shift + 4) & team_movement[clr^1]) == 0)
                                 move_vec.push_back(Move(0, 0, NO_PIECE,
                                 castle_rights[clr], en_passant_sq, NO_PIECE, O_O));
         if (castle_rights[clr] & O_O_O)
                 if ((0b111 << (shift+1) & all_pieces) == 0)
-                        if ((0b111 << (shift+2) & team_moves[clr^1]) == 0)
+                        if ((0b111 << (shift+2) & team_movement[clr^1]) == 0)
                                 move_vec.push_back(Move(0, 0, NO_PIECE,
                                 castle_rights[clr], en_passant_sq, NO_PIECE, O_O_O));
 }
@@ -81,13 +122,15 @@ void Move_generator::king_move_gen()
 {
         BB origin = pieces[clr][KING];
         BB moves  = KING_MOVE[get_idx(origin)];
+        moves &= ~team_movement[clr^1];
         general_move_gen(origin, KING, moves);
 }
 
 void Move_generator::knight_move_gen()
 {
+        movement[clr][KNIGHT] = 0;
+        
         BB knight_pos = pieces[clr][KNIGHT];
-
         while (knight_pos) {
                 BB origin = get_clear_lsb(knight_pos);
                 BB moves  = KNIGHT_MOVE[get_idx(origin)];
@@ -104,12 +147,14 @@ void Move_generator::pawn_move_gen()
                 & Rank(clr == WHITE ? 3 : 4);
         
         BB take_left = rel_shift_up(pawn_pos, DIM-1)
-                & (team_pieces[clr^1] | en_passant_sq) & ~File(7);
+                & ~File(clr == WHITE ? 7:0);
         
         BB take_right = rel_shift_up(pawn_pos, DIM+1)
-                & (team_pieces[clr^1] | en_passant_sq) & ~File(0);
+                & ~File(clr == WHITE ? 0:7);
 
-        moves[clr][PAWN] = front_1 | front_2 | take_left | take_right;
+        movement[clr][PAWN] = front_1 | front_2 | take_left | take_right;        
+
+        if (only_movement) return;
         
         while (front_1) {
                 BB dest = get_clear_lsb(front_1);
@@ -121,11 +166,15 @@ void Move_generator::pawn_move_gen()
                 BB orig = rel_shift_down(dest, 2*DIM);
                 pawn_move(orig, dest);
         }
+        
+        take_left &= team_pieces[clr^1] | en_passant_sq;
         while (take_left) {
                 BB dest = get_clear_lsb(take_left);
                 BB orig = rel_shift_down(dest, DIM-1);
                 pawn_capture(orig, dest);
         }
+        
+        take_right &= ~team_pieces[clr^1] | en_passant_sq;
         while (take_right) {
                 BB dest = get_clear_lsb(take_right);
                 BB orig = rel_shift_down(dest, DIM+1);
@@ -135,6 +184,8 @@ void Move_generator::pawn_move_gen()
 
 void Move_generator::rook_move_gen()
 {
+        movement[clr][ROOK] = 0;
+        
         BB rooks = pieces[clr][ROOK];
         while (rooks) {
                 BB origin = get_clear_lsb(rooks);
@@ -145,6 +196,8 @@ void Move_generator::rook_move_gen()
 
 void Move_generator::bishop_move_gen()
 {
+        movement[clr][BISHOP] = 0;
+        
         BB bishops = pieces[clr][BISHOP];
         while (bishops) {
                 BB origin = get_clear_lsb(bishops);
@@ -155,6 +208,8 @@ void Move_generator::bishop_move_gen()
 
 void Move_generator::queen_move_gen()
 {
+        movement[clr][QUEEN] = 0;
+        
         BB queens = pieces[clr][QUEEN];
         while (queens) {
                 BB origin = get_clear_lsb(queens);
@@ -171,7 +226,9 @@ void Move_generator::queen_move_gen()
 
 void Move_generator::general_move_gen(BB origin, Piece pce, BB squares)
 {
-        moves[clr][pce] = squares;
+        movement[clr][pce] |= squares;
+        if (only_movement) return;
+        
         squares &= ~team_pieces[clr];
 
         BB attack     = squares & team_pieces[clr^1];
@@ -284,7 +341,6 @@ void Move_generator::diagonal_move_gen(BB origin, Piece pce)
 
         dest ^= origin;
 
-        dest &= ~team_pieces[clr];
         general_move_gen(origin, pce, dest);
 }
 

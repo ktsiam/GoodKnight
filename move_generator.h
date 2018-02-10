@@ -10,21 +10,22 @@ public:
         ~Move_generator() = default;
 
         void init_moves() override;
-        void init_opp_movement();
 
 protected:
         //re-evaluated each run
-        BB moves [CLR_NB][PIECE_NB];
         BB all_pieces;
         BB team_pieces[CLR_NB];
-        BB team_moves [CLR_NB];
+        BB team_movement [CLR_NB];
+        BB movement[CLR_NB][PIECE_NB];
 
         //useful helper
         Piece find_piece(BB sq, Color c);
 private:
 
+        //prevents illegal king moves
         bool only_movement;
-        
+        void init_opp_movement();
+
         //move generators
         void king_move_gen();
         void knight_move_gen();
