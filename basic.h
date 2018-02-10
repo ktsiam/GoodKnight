@@ -11,6 +11,8 @@
 #define LIKELY(condition)   __builtin_expect(static_cast<bool>(condition), 1)
 #define UNLIKELY(condition) __builtin_expect(static_cast<bool>(condition), 0)
 
+#define SQ(s) (File(s[0] - 'A') & Rank(s[1] - '1'))
+
 typedef uint64_t Bitboard;
 typedef Bitboard BB;
 typedef uint8_t Sq_idx;
