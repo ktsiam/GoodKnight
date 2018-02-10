@@ -14,6 +14,7 @@ public:
         virtual void front_move(const Move mv) = 0;
         virtual void back_move ()              = 0;
         virtual void init_moves()              = 0;
+        virtual int  evaluate()                = 0;
         
         std::vector<Move> move_vec;
 
@@ -21,7 +22,6 @@ protected:
 
         //position
         BB pieces[CLR_NB][PIECE_NB];
-        BB moves [CLR_NB][PIECE_NB];
         
         Color clr;
         Castling castle_rights[CLR_NB];

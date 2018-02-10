@@ -10,6 +10,18 @@
 
 // HEAD GENERATE FUNCTION
 
+Move_generator::Move_generator()
+{
+        //possible movement squares
+        moves[WHITE][KING]    = 0;                  moves[BLACK][KING]   = 0;
+        moves[WHITE][QUEEN]   = 0;                  moves[BLACK][QUEEN]  = 0;
+        moves[WHITE][ROOK]    = 0;                  moves[BLACK][ROOK]   = 0;
+        moves[WHITE][BISHOP]  = 0;                  moves[BLACK][BISHOP] = 0;
+        moves[WHITE][KNIGHT]  = SQ("A3")|SQ("C3")|SQ("F3")|SQ("H3");
+        moves[BLACK][KNIGHT]  = SQ("A6")|SQ("C6")|SQ("F6")|SQ("H6");
+        moves[WHITE][PAWN]    = Rank(2)|Rank(3);    moves[BLACK][PAWN] = Rank(4)|Rank(5);
+}
+
 void Move_generator::init_moves()
 {
         team_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
@@ -47,17 +59,22 @@ Piece Move_generator::find_piece(BB sq, Color c)
 
 // MOVE GENERATING FUNCTIONS (per piece + castling)
 
+#include <iostream>
 void Move_generator::castling_gen()
 {
-        int8_t y_shift = clr * 7;
-        if (castle_rights[clr] & 1)
-                if ((~shiftBB(0b11, 5, y_shift) & all_pieces) == all_pieces)
-                        move_vec.push_back(Move(0, 0, NO_PIECE, castle_rights[clr],
-                                                en_passant_sq, NO_PIECE, O_O));
-        if (castle_rights[clr] & 2)
-                if ((~shiftBB(0b111, 1, y_shift) & all_pieces) == all_pieces)
-                        move_vec.push_back(Move(0, 0, NO_PIECE, castle_rights[clr],
-                                                en_passant_sq, NO_PIECE, O_O_O));
+        std::cout << "attacks of " << ((clr==WHITE)?"BLACK":"WHITE")<<std::endl;
+        print(team_moves[clr^1]);
+        int8_t shift = (clr == WHITE) ? 0 : 7*DIM;
+        if (castle_rights[clr] & O_O)
+                if ((0b11 << (shift + 5) & all_pieces) == 0)
+                        if ((0b111 << (shift + 4) & team_moves[clr^1]) == 0)
+                                move_vec.push_back(Move(0, 0, NO_PIECE,
+                                castle_rights[clr], en_passant_sq, NO_PIECE, O_O));
+        if (castle_rights[clr] & O_O_O)
+                if ((0b111 << (shift+1) & all_pieces) == 0)
+                        if ((0b111 << (shift+2) & team_moves[clr^1]) == 0)
+                                move_vec.push_back(Move(0, 0, NO_PIECE,
+                                castle_rights[clr], en_passant_sq, NO_PIECE, O_O_O));
 }
 
 void Move_generator::king_move_gen()
@@ -154,10 +171,8 @@ void Move_generator::queen_move_gen()
 
 void Move_generator::general_move_gen(BB origin, Piece pce, BB squares)
 {
-        squares &= ~team_pieces[clr];
         moves[clr][pce] = squares;
-        
-        if (!squares) return;
+        squares &= ~team_pieces[clr];
 
         BB attack     = squares & team_pieces[clr^1];
         BB non_attack = squares ^ attack;

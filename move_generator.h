@@ -4,14 +4,17 @@
 #include "board.h"
 
 class Move_generator : virtual public Board{
+        
 public:
-        Move_generator()  = default;
+        Move_generator();
         ~Move_generator() = default;
 
-        void  init_moves() override;
+        void init_moves() override;
+        void init_opp_movement();
 
 protected:
-        //re-evaluated at each turn
+        //re-evaluated each run
+        BB moves [CLR_NB][PIECE_NB];
         BB all_pieces;
         BB team_pieces[CLR_NB];
         BB team_moves [CLR_NB];
@@ -19,6 +22,8 @@ protected:
         //useful helper
         Piece find_piece(BB sq, Color c);
 private:
+
+        bool only_movement;
         
         //move generators
         void king_move_gen();
@@ -45,6 +50,7 @@ private:
         uint8_t byte_bb_gen      (uint8_t orig, uint8_t occup);
         uint8_t byte_bb_gen_left (uint8_t orig, uint8_t occup);
         uint8_t byte_bb_gen_right(uint8_t orig, uint8_t occup);
+
 };
 
 #endif // MOVE_GENERATOR_

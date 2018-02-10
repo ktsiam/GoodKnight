@@ -12,14 +12,6 @@ Board::Board()
         pieces[WHITE][KNIGHT] = SQ("B1")|SQ("G1"); pieces[BLACK][KNIGHT] = SQ("B8")|SQ("G8");
         pieces[WHITE][PAWN]   = Rank(1);           pieces[BLACK][PAWN]   = Rank(6);  
 
-        //possible moves
-        moves[WHITE][KING]    = 0;                  moves[BLACK][KING]   = 0;
-        moves[WHITE][QUEEN]   = 0;                  moves[BLACK][QUEEN]  = 0;
-        moves[WHITE][ROOK]    = 0;                  moves[BLACK][ROOK]   = 0;
-        moves[WHITE][BISHOP]  = 0;                  moves[BLACK][BISHOP] = 0;
-        moves[WHITE][KNIGHT]  = SQ("A3")|SQ("C3")|SQ("F3")|SQ("H3");
-        moves[BLACK][KNIGHT]  = SQ("A6")|SQ("C3")|SQ("F6")|SQ("H6");
-        moves[WHITE][PAWN]    = Rank(2)|Rank(3);    moves[BLACK][PAWN]   = Rank(4)|Rank(5);  
         
         clr = WHITE;
         en_passant_sq = 0;
@@ -27,5 +19,3 @@ Board::Board()
         castle_rights[WHITE] = BOTH;
         castle_rights[BLACK] = BOTH;
 }
-
-#undef SQ
