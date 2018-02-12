@@ -1,7 +1,5 @@
 #include "board.h"
 
-#define SQ(s) (File(s[0] - 'A') & Rank(s[1] - '1'))
-
 Board::Board()
 {
         //position
