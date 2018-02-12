@@ -6,6 +6,8 @@
 #include <vector>
 #include <stack>
 
+extern const uint8_t DEPTH;
+
 class Board {
 public:
         Board();

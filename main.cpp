@@ -1,8 +1,9 @@
 #include <iostream>
 #include "test_board.h"
 
-void print(BB b);
-int main()
+const uint8_t DEPTH = 5;
+
+[[noreturn]] int main() 
 {
         Test_board b;
         b.print();
