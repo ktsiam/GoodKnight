@@ -21,6 +21,7 @@ Move_generator::Move_generator()
         movement[BLACK][PAWN]   = Rank(4) |Rank(5);
 }
 
+#include <iostream>
 void Move_generator::init_moves()
 {
         move_vec.clear();
@@ -41,10 +42,10 @@ void Move_generator::init_moves()
 
         team_movement [clr] = unite(&movement[clr][KING],  &movement[clr][PIECE_NB]);
 
-/*
+
         std::cout << "Moves of " << ((clr==WHITE)?"WHITE":"BLACK")<<std::endl;
         print(team_movement[clr]);
-*/
+
 }
 
 ////////////////////////////// PROTECTED /////////////////////////////
@@ -85,8 +86,7 @@ void Move_generator::init_opp_movement()
                         switch (last_mv.my_piece()) {
                                 case KING   : king_move_gen();   break;
                                 case PAWN   : pawn_move_gen();   break;
-                                case KNIGHT : movement[clr][KNIGHT] = 0;
-                                              knight_move_gen(); break;
+                                case KNIGHT : knight_move_gen(); break;
                                 default     :;  
                         }                                                
                         bishop_move_gen();
@@ -152,7 +152,8 @@ void Move_generator::pawn_move_gen()
         BB take_right = rel_shift_up(pawn_pos, DIM+1)
                 & ~File(clr == WHITE ? 0:7);
 
-        movement[clr][PAWN] = front_1 | front_2 | take_left | take_right;        
+        //movement[clr][PAWN] = front_1 | front_2 | take_left | take_right;
+        movement[clr][PAWN] = 0;
 
         if (only_movement) return;
         
