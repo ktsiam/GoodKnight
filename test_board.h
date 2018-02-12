@@ -1,10 +1,9 @@
 #ifndef TEST_BOARD_H_
 #define TEST_BOARD_H_
 
-#include "move_maker.h"
-#include "evaluator.h"
+#include "traverser.h"
 
-class Test_board : public Evaluator, public Move_maker {
+class Test_board : public Traverser {
 public:
         Test_board();
         ~Test_board() = default;
