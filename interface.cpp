@@ -1,4 +1,4 @@
-#include "test_board.h"
+#include "interface.h"
 
 #include <iostream>
 
@@ -7,23 +7,24 @@ static std::string sq_to_str (BB b);
 static char        piece_to_char(Piece p);
 static std::string piece_to_str(Piece p, Color c);
 
-Test_board::Test_board()
+Interface::Interface()
 {
         init_moves();
         init_move_str();
+        print();
 }
 
-void Test_board::print_moves()
+void Interface::print_moves()
 {
-        for (auto it = move_str.begin(); it != move_str.end(); ++it)
-                std::cout << *it << ' ';
+        int count = 0;
+        for (auto it = move_str.begin(); it != move_str.end(); ++it, ++count)
+                std::cout << *it << " \n"[count == 10];
         std::cout << std::endl;
 }
 
-void Test_board::custom_move(std::string str)
+void Interface::custom_move(std::string str)
 {
         if (str == "q" || str == "Q") {
-                std::cout << "EXITING\n";
                 exit(0);
         }
         if (str == "r" || str == "R") {
@@ -37,17 +38,19 @@ void Test_board::custom_move(std::string str)
         for (uint i = 0; i < move_str.size(); ++i)
                 if (to_lowercase(str) == to_lowercase(move_str[i])) {
                         front_move(move_vec[i]);
+                        init_moves();
+                        print();
                         front_move(best_move());                        
                         init_moves();
                         init_move_str();
                         print();
                         return;
                 }
-        std::cout << "MOVE NOT FOUND :\n";
+        std::cout << "Please Choose a valid move:\n";
         print_moves();
 }
 
-void Test_board::init_move_str()
+void Interface::init_move_str()
 {
         move_str.clear();
         for (auto it = move_vec.begin(); it != move_vec.end(); ++it) {
@@ -84,13 +87,10 @@ void Test_board::init_move_str()
         }
 }
 
-void Test_board::undo()
+void Interface::undo()
 {
-        if (history.empty())
-                std::cout << "No history\n";
-        else {
+        if (!history.empty())
                 back_move();
-        }
 }
 
 static std::string sq_to_str(BB b)
@@ -144,7 +144,7 @@ static std::string to_lowercase(std::string s)
         return lower;
 }
 
-void Test_board::print()
+void Interface::print()
 {
         std::cout << ((clr==WHITE)?"\nWHITE   ":"\nBLACK   ")
                   << ((castle_rights[BLACK] == BOTH)  ? "O-O & O-O-O  ":
