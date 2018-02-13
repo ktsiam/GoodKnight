@@ -129,11 +129,14 @@ void Move_generator::castling_gen()
 void Move_generator::king_move_gen()
 {
         movement[clr][KING] = 0;
-        
-        BB origin = pieces[clr][KING];
-        BB moves  = KING_MOVE[get_idx(origin)];
-        moves &= ~team_movement[clr^1];
-        general_move_gen(origin, KING, moves);
+
+        BB king_pos = pieces[clr][KING];
+        if (king_pos) {        
+                BB origin = king_pos;
+                BB moves  = KING_MOVE[get_idx(origin)];
+                moves &= ~team_movement[clr^1];
+                general_move_gen(origin, KING, moves);
+        }
 }
 
 void Move_generator::knight_move_gen()
