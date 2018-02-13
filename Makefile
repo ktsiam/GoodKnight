@@ -1,7 +1,7 @@
 
 CXX      = clang++
-CXXFLAGS = -std=c++11 -Wall -Wextra #-Weverything #-O3
-LDLFLAGS = -lpthread
+CXXFLAGS = -g -std=c++11 -Wall -Wextra -O3
+LDLFLAGS = 
 
 all:   chess
 
@@ -20,9 +20,9 @@ test_board.o:           test_board.h     test_board.cpp              traverser.o
 main.o:                                        main.cpp             test_board.o
 
 clean:
-	rm -f *.o
-	rm -f chess
+	rm -f  chess
+	rm -f  *.o
+	rm -f  callgrind*
 	rm -rf *.dSYM
-	rm -f callgrind*
 
 
