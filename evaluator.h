@@ -6,7 +6,7 @@
 class Evaluator : public Move_generator {
         
 public:
-        Evaluator();
+        Evaluator()  = default;
         ~Evaluator() = default;
         int evaluate() override;
         
