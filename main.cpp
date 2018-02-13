@@ -4,7 +4,7 @@
 
 unsigned TIME_TAKEN;
 unsigned MOVE_COUNT = 0;
-const uint8_t DEPTH = 7;
+const uint8_t DEPTH = 6;
 
 [[noreturn]] int main() 
 {
