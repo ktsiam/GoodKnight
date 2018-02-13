@@ -7,16 +7,16 @@
 class Traverser : public Evaluator, public Move_maker {
 
 public:
-        Traverser();
+        Traverser()  = default;
         ~Traverser() = default;
 
         Move best_move();
         
 private:
-        
-        uint8_t depth;
 
-        int move_eval(Move mv);
+        // alpha-beta prunning
+        int alphaBetaMax( int alpha, int beta, int depthleft);
+        int alphaBetaMin( int alpha, int beta, int depthleft);
         
 };
 

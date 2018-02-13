@@ -1,65 +1,81 @@
 #include "traverser.h"
 
 #include <climits>
+#include <ctime>
 
 extern unsigned MOVE_COUNT;
+extern unsigned TIME_TAKEN;
 
-Traverser::Traverser()
-{        
-        depth = 0;
-}
 
-#include <iostream>
 Move Traverser::best_move()
 {
-        MOVE_COUNT = 0;
-        init_moves();
+
+        clock_t start = clock();
         
-        if (move_vec.empty()) {                
-                assert (0 && "STALEMATE");
+        init_moves();
+        std::vector<Move> copy = move_vec;
+        int max_score = std::numeric_limits<int>::min();
+        Move best_mv; //initialized to 0
+        
+        for (auto it = copy.begin(); it != copy.end(); ++it) {
+
+                front_move(*it);
+
+                int score = -alphaBetaMax (std::numeric_limits<int>::min(),
+                                           std::numeric_limits<int>::max(), DEPTH-1);
+                        
+                if (score > max_score) {
+                        best_mv = *it;
+                        max_score = score;
+                }
+                back_move();
         }
 
-        std::vector<Move> move_copy = move_vec;
+        clock_t end = clock();
+        TIME_TAKEN = (end - start);
         
-        Move best      = move_copy.front();
-        int  best_eval = -move_eval(best);
-        
-        for (auto it = move_copy.begin() + 1; it != move_copy.end(); ++it) {
-                int curr_eval = -move_eval(*it);
-                if (curr_eval > best_eval) {
-                        best_eval = curr_eval;
-                        best = *it;
-                }
-        }
-        
-        std::cout << "EVALUTATION FOR BLACK: " << best_eval << std::endl;
-        return best;
+        assert((uint32_t)best_mv);
+        return best_mv;
 }
 
-int Traverser::move_eval(Move mv)
+int Traverser::alphaBetaMax(int alpha, int beta, int depthleft)
 {
-        ++ MOVE_COUNT;
-        
-        ++ depth;
-        front_move(mv);
+        MOVE_COUNT ++;
+        if ( depthleft == 0 ) return evaluate();
+
         init_moves();
-        
-        int best_eval = std::numeric_limits<int>::min();
-        if (depth == DEPTH || mv.their_piece() == KING) {
-                best_eval = evaluate();
-        } else {               
-                std::vector<Move> move_copy = move_vec;
-                best_eval = move_eval(move_vec.front());
-                for (auto it = move_copy.begin() + 1; it != move_copy.end(); ++it) {
-                        int curr_eval = -move_eval(*it);
-                        best_eval = std::max(best_eval, curr_eval);
-                }
-        }
+        std::vector<Move> copy = move_vec;
+        for (auto it = copy.begin(); it != copy.end(); ++it) {
                 
-        back_move();
-        -- depth;
-
-        return best_eval;
+                front_move(*it);                
+                int score = alphaBetaMin( alpha, beta, depthleft - 1 );
+                back_move();
+                
+                if( score >= beta )
+                        return beta;
+                if( score > alpha )
+                        alpha = score;
+        }
+        return alpha;
 }
+ 
+int Traverser::alphaBetaMin(int alpha, int beta, int depthleft)
+{
+        MOVE_COUNT ++;
+        if ( depthleft == 0 ) return -evaluate();
 
+        init_moves();
+        std::vector<Move> copy = move_vec;
+        for (auto it = copy.begin(); it != copy.end(); ++it) {
 
+                front_move(*it);                
+                int score = alphaBetaMax( alpha, beta, depthleft - 1 );
+                back_move();
+                                
+                if( score <= alpha )
+                        return alpha;
+                if( score < beta )
+                        beta = score;
+        }
+        return beta;
+}
