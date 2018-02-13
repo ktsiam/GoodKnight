@@ -1,8 +1,10 @@
 #include <iostream>
+
 #include "test_board.h"
 
+unsigned TIME_TAKEN;
 unsigned MOVE_COUNT = 0;
-const uint8_t DEPTH = 3;
+const uint8_t DEPTH = 5;
 
 [[noreturn]] int main() 
 {
@@ -12,6 +14,9 @@ const uint8_t DEPTH = 3;
         std::string move;
         while(std::cin >> move){
                 b.custom_move(move);
-                std::cout << MOVE_COUNT << std::endl;
+                std::cout << "LOOKED at "     << MOVE_COUNT/1000
+                          << "K POSITIONS in\n" << TIME_TAKEN/1000
+                          << "ms\n";
+                MOVE_COUNT = 0;
         }
 }
