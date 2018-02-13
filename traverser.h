@@ -9,6 +9,15 @@ class Traverser : public Evaluator, public Move_maker {
 public:
         Traverser();
         ~Traverser() = default;
+
+        Move best_move();
+        
+private:
+        
+        uint8_t depth;
+
+        int move_eval(Move mv);
+        
 };
 
 #endif // TRAVERSER_H_
