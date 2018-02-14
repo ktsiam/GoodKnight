@@ -17,13 +17,13 @@ protected:
         BB team_pieces[CLR_NB];
         BB team_movement [CLR_NB];
         BB movement[CLR_NB][PIECE_NB];
+        bool only_movement[CLR_NB];
 
         //useful helper
         Piece find_piece(BB sq, Color c);
 private:
 
         //prevents illegal king moves
-        bool only_movement;
         void init_opp_movement();
 
         //move generators

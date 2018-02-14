@@ -21,7 +21,9 @@ Move_generator::Move_generator()
         movement[BLACK][PAWN]   = Rank(4) |Rank(5);
         
         team_movement[BLACK]     = unite(&movement[BLACK][KING], &movement[BLACK][PIECE_NB]);
-        only_movement = false;
+        
+        only_movement[WHITE] = false;
+        only_movement[BLACK] = false;
 }
 
 //#include <iostream>
@@ -72,8 +74,8 @@ void Move_generator::init_opp_movement()
         if (UNLIKELY(history.empty()))
                 return;
 
-        only_movement = true;
         clr = static_cast<Color>(clr^1);
+        only_movement[clr] = true;
 
         {
                 Move last_mv = history.top();
@@ -100,7 +102,7 @@ void Move_generator::init_opp_movement()
         
         team_movement[clr] = unite(&movement[clr][KING],  &movement[clr][PIECE_NB]);
         
-        only_movement = false;
+        only_movement[clr] = false;
         clr = static_cast<Color>(clr^1);
 }
 
@@ -110,9 +112,6 @@ void Move_generator::init_opp_movement()
 void Move_generator::castling_gen()
 {
         uint8_t shift = (clr == WHITE) ? 0 : (7*DIM);
-        //print(all_pieces);
-        //print(0b11 << (shift+5));
-        //print(0b11 << (shift+5) & all_pieces);
         
         if (castle_rights[clr] & O_O)
                 if ((0b11ULL << (shift + 5) & all_pieces) == 0)
@@ -168,7 +167,7 @@ void Move_generator::pawn_move_gen()
         movement[clr][PAWN] = front_1 | front_2 | take_left | take_right;
         //movement[clr][PAWN] = 0;
 
-        if (only_movement) return;
+        if (only_movement[clr]) return;
         
         while (front_1) {
                 BB dest = get_clear_lsb(front_1);
@@ -241,7 +240,7 @@ void Move_generator::queen_move_gen()
 void Move_generator::general_move_gen(BB origin, Piece pce, BB squares)
 {
         movement[clr][pce] |= squares;
-        if (only_movement) return;
+        if (only_movement[clr]) return;
         
         squares &= ~team_pieces[clr];
 
