@@ -113,12 +113,13 @@ void Move_generator::castling_gen()
 {
         uint8_t shift = (clr == WHITE) ? 0 : (7*DIM);
         
-        if (castle_rights[clr] & O_O)
+        if ((castle_rights[clr] & O_O) && (pieces[clr][ROOK] & (1ULL << (shift + 7))))
                 if ((0b11ULL << (shift + 5) & all_pieces) == 0)
                         if ((0b111ULL << (shift + 4) & team_movement[clr^1]) == 0)
                                 move_vec.push_back(Move(0, 0, NO_PIECE,
                                 castle_rights[clr], en_passant_sq, NO_PIECE, O_O));
-        if (castle_rights[clr] & O_O_O)
+        
+        if (castle_rights[clr] & O_O_O && (pieces[clr][ROOK] & (1ULL << shift)))
                 if ((0b111ULL << (shift+1) & all_pieces) == 0)
                         if ((0b111ULL << (shift + 2) & team_movement[clr^1]) == 0)
                                 move_vec.push_back(Move(0, 0, NO_PIECE,
@@ -153,19 +154,17 @@ void Move_generator::knight_move_gen()
 void Move_generator::pawn_move_gen()
 {
         BB pawn_pos = pieces[clr][PAWN];
+
+        BB take_left = rel_shift_up(pawn_pos, DIM-1)
+                & ~File(clr == WHITE ? 7:0);        
+        BB take_right = rel_shift_up(pawn_pos, DIM+1)
+                & ~File(clr == WHITE ? 0:7);
+
+        movement[clr][PAWN] = take_left | take_right;
         
         BB front_1 = rel_shift_up(pawn_pos, DIM) & ~all_pieces;
         BB front_2 = rel_shift_up(front_1,  DIM) & ~all_pieces
                 & Rank(clr == WHITE ? 3 : 4);
-        
-        BB take_left = rel_shift_up(pawn_pos, DIM-1)
-                & ~File(clr == WHITE ? 7:0);
-        
-        BB take_right = rel_shift_up(pawn_pos, DIM+1)
-                & ~File(clr == WHITE ? 0:7);
-
-        movement[clr][PAWN] = front_1 | front_2 | take_left | take_right;
-        //movement[clr][PAWN] = 0;
 
         if (only_movement[clr]) return;
         
