@@ -6,7 +6,6 @@
 extern unsigned MOVE_COUNT;
 extern unsigned TIME_TAKEN;
 
-
 Move Traverser::best_move()
 {
 
@@ -33,8 +32,9 @@ Move Traverser::best_move()
 
         clock_t end = clock();
         TIME_TAKEN = (end - start);
+
+        if ((uint32_t)best_mv == 0) throw std::string("STALEMATE");
         
-        assert((uint32_t)best_mv);
         return best_mv;
 }
 

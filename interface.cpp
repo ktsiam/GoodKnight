@@ -40,7 +40,13 @@ void Interface::custom_move(std::string str)
                         front_move(move_vec[i]);
                         init_moves();
                         print();
-                        front_move(best_move());                        
+                        try {
+                                front_move(best_move());
+                        } catch (std::string msg) {
+                                std::cout << msg << std::endl;
+                                exit(0);
+                        }
+
                         init_moves();
                         init_move_str();
                         print();
