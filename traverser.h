@@ -4,6 +4,8 @@
 #include "evaluator.h"
 #include "move_maker.h"
 
+const extern uint8_t DEPTH;
+
 class Traverser : public Evaluator, public Move_maker {
 
 public:
