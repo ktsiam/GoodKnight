@@ -26,7 +26,6 @@ Move_generator::Move_generator()
         only_movement[BLACK] = false;
 }
 
-//#include <iostream>
 void Move_generator::init_moves()
 {
         move_vec.clear();
@@ -46,11 +45,6 @@ void Move_generator::init_moves()
         pawn_move_gen();
 
         team_movement [clr] = unite(&movement[clr][KING],  &movement[clr][PIECE_NB]);
-
-
-//        std::cout << "Moves of " << ((clr==WHITE)?"WHITE":"BLACK")<<std::endl;
-//        print(team_movement[clr]);
-
 }
 
 ////////////////////////////// PROTECTED /////////////////////////////
@@ -129,7 +123,7 @@ void Move_generator::castling_gen()
 void Move_generator::king_move_gen()
 {
         movement[clr][KING] = 0;
-
+        
         BB king_pos = pieces[clr][KING];
         if (king_pos) {        
                 BB origin = king_pos;
