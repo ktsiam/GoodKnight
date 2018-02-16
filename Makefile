@@ -11,7 +11,7 @@ chess: main.o
 
 basic.o:                     basic.h          basic.cpp
 move.o:                       move.h 	       move.cpp                  basic.o
-board.o:                     board.h          board.cpp                   move.o
+board.o:           state.h   board.h          board.cpp                   move.o
 move_maker.o:           move_maker.h     move_maker.cpp                  board.o
 move_generator.o:   move_generator.h move_generator.cpp                  board.o
 evaluator.o:             evaluator.h      evaluator.cpp         move_generator.o

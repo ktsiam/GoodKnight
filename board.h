@@ -3,12 +3,12 @@
 
 #include "basic.h"
 #include "move.h"
+#include "state.h"
+
 #include <vector>
 #include <stack>
 
-extern const uint8_t DEPTH;
-
-class Board {
+class Board : protected State {
 public:
         Board();
         ~Board() = default;
@@ -22,14 +22,6 @@ public:
 
 protected:
 
-        //position
-        BB pieces[CLR_NB][PIECE_NB];
-        
-        Color clr;
-        Castling castle_rights[CLR_NB];
-        BB en_passant_sq;
-
-        //move history
         std::stack<Move> history;
 };
 
