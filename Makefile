@@ -1,6 +1,6 @@
 
-CXX      = clang++
-CXXFLAGS = -g -std=c++11 -Wall -Wextra -O3
+CXX      = g++
+CXXFLAGS = -std=c++11 -Wall -Wextra -O3
 LDLFLAGS = 
 
 all:   chess
