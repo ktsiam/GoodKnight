@@ -3,3 +3,5 @@
 *.dSYM
 chess
 *.txt
+thread
+profiling
