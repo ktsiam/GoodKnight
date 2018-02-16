@@ -16,6 +16,8 @@ private:
         void print();
         void print_moves();
         void init_move_str();
+        void checkmate();
+        void stalemate();
         
         std::vector<std::string> move_str;
 };

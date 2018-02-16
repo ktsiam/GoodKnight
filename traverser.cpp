@@ -15,11 +15,12 @@ Move Traverser::best_move()
         std::vector<Move> copy = move_vec;
         int max_score = std::numeric_limits<int>::min();
         Move best_mv; //initialized to 0
+
         
         for (auto it = copy.begin(); it != copy.end(); ++it) {
 
                 front_move(*it);
-
+                
                 int score = -alphaBetaMax (std::numeric_limits<int>::min(),
                                            std::numeric_limits<int>::max(), DEPTH-1);
                         
@@ -33,8 +34,7 @@ Move Traverser::best_move()
         clock_t end = clock();
         TIME_TAKEN = (end - start);
 
-        if ((uint32_t)best_mv == 0) throw std::string("STALEMATE");
-        
+        assert((uint32_t)best_mv);
         return best_mv;
 }
 

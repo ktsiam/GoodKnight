@@ -22,6 +22,22 @@ void Interface::print_moves()
         std::cout << std::endl;
 }
 
+void Interface::checkmate()
+{
+        init_moves();
+        if (movement[clr][KING] == 0 && team_movement[clr^1] & KING)
+                std::cout << "CHECKMATE" << std::endl;
+                
+}
+
+void Interface::stalemate() //called after checkmate
+{
+        init_moves();
+        if (move_vec.empty())
+                std::cout << "STALEMATE" << std::endl;
+}
+    
+
 void Interface::custom_move(std::string str)
 {
         if (str == "q" || str == "Q") {
@@ -37,19 +53,20 @@ void Interface::custom_move(std::string str)
 
         for (uint i = 0; i < move_str.size(); ++i)
                 if (to_lowercase(str) == to_lowercase(move_str[i])) {
-                        front_move(move_vec[i]);
+                        front_move(move_vec[i]); // our move
                         init_moves();
                         print();
-                        try {
-                                front_move(best_move());
-                        } catch (std::string msg) {
-                                std::cout << msg << std::endl;
-                                exit(0);
-                        }
+                        checkmate();
+                        stalemate();
 
+                        
+                        front_move(best_move()); // their move
                         init_moves();
-                        init_move_str();
                         print();
+                        checkmate();
+                        stalemate();
+                        
+                        init_move_str();
                         return;
                 }
         std::cout << "Please Choose a valid move:\n";
