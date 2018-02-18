@@ -22,8 +22,9 @@ public:
         Castling castle_rights() const;  // returns previous castle rights
         BB en_passant_status()   const;  // returns previous en_passant square
 
-        Move()              { data = 0;    }
-        operator uint32_t() { return data; }
+        Move()                          {        data = 0;        }
+        operator uint32_t()             { return data;            }
+        bool operator==(const Move &mv) { return data == mv.data; }
         
 private:
 
