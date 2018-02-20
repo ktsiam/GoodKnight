@@ -2,6 +2,7 @@
 
 #include <climits>
 #include <ctime>
+#include <cstring>
 #include <algorithm>
 
 extern unsigned MOVE_COUNT;
