@@ -1,3 +1,4 @@
 TODO:
+          - rewrite interface
+          - build lookup table
           - work on evaluation function     
-          - more prunning needed
