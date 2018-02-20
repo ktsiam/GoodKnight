@@ -11,6 +11,11 @@ public:
              Piece theirP = NO_PIECE, Castling cstl = NO_CASTLING,
              Piece promo = NO_PIECE, bool en_p = false);
 
+        Move() = default;
+        Move(uint32_t d)                {        data = d;        }
+        operator uint32_t()             { return data;            }
+        bool operator==(const Move &mv) { return data == mv.data; }
+        
         Castling is_castling()   const;  // returns castling type of move
         bool is_en_passant()     const;  // returns if move is en_passant
         BB dest()                const;  // returns BB with destination
@@ -21,10 +26,6 @@ public:
 
         Castling castle_rights() const;  // returns previous castle rights
         BB en_passant_status()   const;  // returns previous en_passant square
-
-        Move()                          {        data = 0;        }
-        operator uint32_t()             { return data;            }
-        bool operator==(const Move &mv) { return data == mv.data; }
         
 private:
 
