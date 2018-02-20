@@ -13,10 +13,9 @@
 
 #define SQ(s) (File(s[0] - 'A') & Rank(s[1] - '1'))
 
-typedef int      Score;
-typedef uint64_t Bitboard;
-typedef Bitboard BB;
 typedef uint8_t  Sq_idx;
+typedef int32_t  Score;
+typedef uint64_t BB;
 
 enum Color    : uint8_t { WHITE, BLACK, CLR_NB };
 enum Castling : uint8_t { NO_CASTLING, O_O, O_O_O, BOTH };
