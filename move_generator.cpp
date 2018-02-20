@@ -128,6 +128,8 @@ void Move_generator::king_move_gen()
         if (king_pos) {        
                 BB origin = king_pos;
                 BB moves  = KING_MOVE[get_idx(origin)];
+
+                movement[clr][KING] = moves;
                 moves &= ~team_movement[clr^1];
                 general_move_gen(origin, KING, moves);
         }

@@ -4,7 +4,7 @@
 #include "evaluator.h"
 #include "move_maker.h"
 
-const extern uint8_t DEPTH;
+const uint8_t DEPTH = 5;
 
 class Traverser : public Evaluator, public Move_maker {
 
@@ -20,6 +20,8 @@ private:
         int alphaBetaMax( int alpha, int beta, int depthleft);
         int alphaBetaMin( int alpha, int beta, int depthleft);
         
+        void check_killer_mv(std::vector<Move> &moves, int depthleft);
+        Move killer_moves[DEPTH];
 };
 
 #endif // TRAVERSER_H_
