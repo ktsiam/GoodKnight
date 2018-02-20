@@ -14,6 +14,11 @@ Interface::Interface()
         print();
 }
     
+void Interface::sanity_check()
+{
+        checkmate();
+        stalemate();
+}
 
 void Interface::custom_move(std::string str)
 {
@@ -48,11 +53,10 @@ void Interface::custom_move(std::string str)
 void Interface::checkmate()
 {        
         init_moves();
-        if (pieces[clr][KING] & team_movement[clr^1])
+        if (pieces[clr][KING] & team_movement[clr^1]) {
                 for (auto it = move_vec.begin(); it != move_vec.end(); ++it)
-                        if (it -> my_piece() == KING) {
-                                front_move(*it);
-                        }
+                        if (it -> my_piece() == KING) return;
+        } else return;
         
         std::cout << "CHECKMATE" << std::endl;                
 }
