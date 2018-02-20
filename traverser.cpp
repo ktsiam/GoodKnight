@@ -15,7 +15,7 @@ Move Traverser::best_move()
         init_moves();
         std::vector<Move> copy = move_vec;
         int max_score = std::numeric_limits<int>::min();
-        Move best_mv; //initialized to 0
+        Move best_mv(0);
         
         for (auto it = copy.begin(); it != copy.end(); ++it) {
 
@@ -34,7 +34,6 @@ Move Traverser::best_move()
         clock_t end = clock();
         TIME_TAKEN = (end - start);
 
-        assert((uint32_t)best_mv);
         return best_mv;
 }
 
