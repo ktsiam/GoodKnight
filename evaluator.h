@@ -8,7 +8,7 @@ class Evaluator : public Move_generator {
 public:
         Evaluator()  = default;
         ~Evaluator() = default;
-        int evaluate() override;
+        Score evaluate() override;
         
                 
 private:

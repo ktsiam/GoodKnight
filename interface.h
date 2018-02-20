@@ -16,6 +16,7 @@ private:
         void print();
         void print_moves();
         void init_move_str();
+        void sanity_check();
         void checkmate();
         void stalemate();
         

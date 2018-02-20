@@ -13,29 +13,6 @@ Interface::Interface()
         init_move_str();
         print();
 }
-
-void Interface::print_moves()
-{
-        int count = 0;
-        for (auto it = move_str.begin(); it != move_str.end(); ++it, ++count)
-                std::cout << *it << " \n"[count == 10];
-        std::cout << std::endl;
-}
-
-void Interface::checkmate()
-{
-        init_moves();
-        if (movement[clr][KING] == 0 && team_movement[clr^1] & KING)
-                std::cout << "CHECKMATE" << std::endl;
-                
-}
-
-void Interface::stalemate() //called after checkmate
-{
-        init_moves();
-        if (move_vec.empty())
-                std::cout << "STALEMATE" << std::endl;
-}
     
 
 void Interface::custom_move(std::string str)
@@ -44,33 +21,47 @@ void Interface::custom_move(std::string str)
                 exit(0);
         }
         if (str == "r" || str == "R") {
-                undo();
-                undo();
+                undo(); undo();
                 init_moves();
                 init_move_str();
-                return print();
+                print();
+                return;
         }        
 
         for (uint i = 0; i < move_str.size(); ++i)
                 if (to_lowercase(str) == to_lowercase(move_str[i])) {
                         front_move(move_vec[i]); // our move
-                        init_moves();
+                        sanity_check();
                         print();
-                        checkmate();
-                        stalemate();
-
                         
                         front_move(best_move()); // their move
-                        init_moves();
+                        sanity_check();
                         print();
-                        checkmate();
-                        stalemate();
                         
                         init_move_str();
                         return;
                 }
         std::cout << "Please Choose a valid move:\n";
         print_moves();
+}
+
+void Interface::checkmate()
+{        
+        init_moves();
+        if (pieces[clr][KING] & team_movement[clr^1])
+                for (auto it = move_vec.begin(); it != move_vec.end(); ++it)
+                        if (it -> my_piece() == KING) {
+                                front_move(*it);
+                        }
+        
+        std::cout << "CHECKMATE" << std::endl;                
+}
+
+void Interface::stalemate() //called after checkmate
+{
+        init_moves();
+        if (move_vec.empty())
+                std::cout << "STALEMATE" << std::endl;
 }
 
 void Interface::init_move_str()
@@ -108,6 +99,14 @@ void Interface::init_move_str()
                 }
                 move_str.push_back(new_mv);
         }
+}
+
+void Interface::print_moves()
+{
+        int count = 0;
+        for (auto it = move_str.begin(); it != move_str.end(); ++it, ++count)
+                std::cout << *it << " \n"[count == 10];
+        std::cout << std::endl;
 }
 
 void Interface::undo()

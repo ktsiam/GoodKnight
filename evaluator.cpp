@@ -1,6 +1,6 @@
 #include "evaluator.h"
 
-int Evaluator::evaluate()  //NEEDS (A LOT OF) WORK
+Score Evaluator::evaluate()  //NEEDS (A LOT OF) WORK
 {
         only_movement[clr] = true;
         init_moves();

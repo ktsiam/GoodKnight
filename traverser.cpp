@@ -14,15 +14,15 @@ Move Traverser::best_move()
 
         init_moves();
         std::vector<Move> copy = move_vec;
-        int max_score = std::numeric_limits<int>::min();
+        Score max_score = std::numeric_limits<Score>::min();
         Move best_mv(0);
         
         for (auto it = copy.begin(); it != copy.end(); ++it) {
 
                 front_move(*it);
                 
-                int score = -alphaBetaMax (std::numeric_limits<int>::min(),
-                                           std::numeric_limits<int>::max(), DEPTH-1);
+                Score score = -alphaBetaMax (std::numeric_limits<Score>::min(),
+                                             std::numeric_limits<Score>::max(), DEPTH-1);
                         
                 if (score > max_score) {
                         best_mv = *it;
@@ -37,10 +37,10 @@ Move Traverser::best_move()
         return best_mv;
 }
 
-int Traverser::alphaBetaMax(int alpha, int beta, int depthleft)
+Score Traverser::alphaBetaMax(Score alpha, Score beta, uint8_t depthleft)
 {
         MOVE_COUNT ++;
-        if ( depthleft == 0 ) return evaluate();
+        if (depthleft == 0) return evaluate();
 
         init_moves();
 
@@ -50,23 +50,23 @@ int Traverser::alphaBetaMax(int alpha, int beta, int depthleft)
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
                 
                 front_move(*it);                
-                int score = alphaBetaMin( alpha, beta, depthleft - 1 );
+                Score score = alphaBetaMin( alpha, beta, depthleft - 1 );
                 back_move();
                 
-                if( score >= beta ) { //killer move
+                if(score >= beta) { //killer move
                         killer_moves[depthleft] = *it;
                         return beta;
                 }
-                if( score > alpha )
+                if(score > alpha)
                         alpha = score;
         }
         return alpha;
 }
                         
-int Traverser::alphaBetaMin(int alpha, int beta, int depthleft)
+Score Traverser::alphaBetaMin(Score alpha, Score beta, uint8_t depthleft)
 {
         MOVE_COUNT ++;
-        if ( depthleft == 0 ) return -evaluate();
+        if (depthleft == 0) return -evaluate();
 
         init_moves();
         
@@ -76,7 +76,7 @@ int Traverser::alphaBetaMin(int alpha, int beta, int depthleft)
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
                 
                 front_move(*it);                
-                int score = alphaBetaMax( alpha, beta, depthleft - 1 );
+                Score score = alphaBetaMax( alpha, beta, depthleft - 1 );
                 back_move();
                                 
                 if( score <= alpha )
@@ -87,7 +87,7 @@ int Traverser::alphaBetaMin(int alpha, int beta, int depthleft)
         return beta;
 }
 
-void Traverser::check_killer_mv(std::vector<Move> &moves, int depthleft)
+void Traverser::check_killer_mv(std::vector<Move> &moves, uint8_t depthleft)
 {
         auto killer_mv = std::find(moves.begin(), moves.end(), killer_moves[depthleft]);
         if (killer_mv != moves.end()) {

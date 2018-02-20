@@ -17,10 +17,10 @@ public:
 private:
 
         // alpha-beta prunning
-        int alphaBetaMax( int alpha, int beta, int depthleft);
-        int alphaBetaMin( int alpha, int beta, int depthleft);
+        Score alphaBetaMax(Score alpha, Score beta, uint8_t depthleft);
+        Score alphaBetaMin(Score alpha, Score beta, uint8_t depthleft);
         
-        void check_killer_mv(std::vector<Move> &moves, int depthleft);
+        void check_killer_mv(std::vector<Move> &moves, uint8_t depthleft);
         Move killer_moves[DEPTH];
 };
 
