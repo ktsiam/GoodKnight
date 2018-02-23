@@ -146,7 +146,7 @@ static std::string piece_to_str(Piece p, Color c)
                 case BISHOP : return "\u2657";
                 case KNIGHT : return "\u2658";
                 case PAWN   : return "\u2659";
-                default     : return "_";
+                default     : return "-";
                 }
         }
         else {
@@ -157,7 +157,7 @@ static std::string piece_to_str(Piece p, Color c)
                 case BISHOP : return "\u265D";
                 case KNIGHT : return "\u265E";
                 case PAWN   : return "\u265F";
-                default     : return "_";
+                default     : return "-";
                 }
         }
 }
@@ -187,7 +187,7 @@ void Interface::print()
                         BB sq = File(f) & Rank(r);
 
                         std::string p = piece_to_str(find_piece(sq, WHITE), WHITE);
-                        if (p == "_") 
+                        if (p == "-") 
                                 p = piece_to_str(find_piece(sq, BLACK), BLACK);
                         std::cout << p << " ";
 
