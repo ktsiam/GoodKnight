@@ -50,7 +50,7 @@ Score Traverser::alphaBetaMax(Score alpha, Score beta, uint8_t depthleft)
         
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
                 
-                if (!front_move(*it)) continue;
+                if (!front_move(*it)) return WIN_EVAL + depthleft;
                 Score score = alphaBetaMin( alpha, beta, depthleft - 1 );
                 back_move();
                 
@@ -76,7 +76,7 @@ Score Traverser::alphaBetaMin(Score alpha, Score beta, uint8_t depthleft)
         
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
                 
-                if (!front_move(*it)) continue;
+                if (!front_move(*it)) return -(WIN_EVAL + depthleft);
                 Score score = alphaBetaMax( alpha, beta, depthleft - 1 );
                 back_move();
                                 
