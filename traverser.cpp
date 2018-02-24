@@ -8,6 +8,7 @@
 extern unsigned MOVE_COUNT;
 extern unsigned TIME_TAKEN;
 
+#include <iostream>
 Move Traverser::best_move()
 {
         clock_t start = clock();
@@ -35,6 +36,7 @@ Move Traverser::best_move()
         clock_t end = clock();
         TIME_TAKEN = (end - start);
 
+        std::cout << max_score << std::endl;
         return best_mv;
 }
 
@@ -50,7 +52,7 @@ Score Traverser::alphaBetaMax(Score alpha, Score beta, uint8_t depthleft)
         
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
                 
-                if (!front_move(*it)) return WIN_EVAL + depthleft;
+                front_move(*it);
                 Score score = alphaBetaMin( alpha, beta, depthleft - 1 );
                 back_move();
                 
@@ -75,9 +77,9 @@ Score Traverser::alphaBetaMin(Score alpha, Score beta, uint8_t depthleft)
         check_killer_mv(copy, depthleft);
         
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
-                
-                if (!front_move(*it)) return -(WIN_EVAL + depthleft);
-                Score score = alphaBetaMax( alpha, beta, depthleft - 1 );
+
+                front_move(*it);
+                Score score = alphaBetaMax( alpha, beta, depthleft - 1 );                
                 back_move();
                                 
                 if( score <= alpha )
