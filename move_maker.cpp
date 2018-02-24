@@ -4,11 +4,12 @@
 
 // MOVE MAKING FUNCTIONS
 
-void Move_maker::front_move(const Move mv)
+bool Move_maker::front_move(const Move mv)
 {
         //capture  (en_passant is NOT a capture)
         if (mv.their_piece() != NO_PIECE)
-                capture(mv.dest(), mv.their_piece(), clr);
+                if (!capture(mv.dest(), mv.their_piece(), clr))
+                        return false;
 
         //castling
         if (mv.is_castling() != NO_CASTLING) {
@@ -48,6 +49,7 @@ void Move_maker::front_move(const Move mv)
         clr = (Color) !clr;
 
         history.push(mv); //copy and swap
+        return true;
 }
 
 void Move_maker::back_move()
@@ -89,7 +91,7 @@ void Move_maker::back_move()
 
 void Move_maker::castle(Castling cstl, Color c)
 {
-        int8_t opposite = (c == BLACK) * 7;
+        int8_t opposite = (c == WHITE) ? 0 : 7;
         if (cstl == O_O) {
                 pieces[c][KING] ^= shiftBB(0b101, 4, opposite);
                 pieces[c][ROOK] ^= shiftBB(0b101, 5, opposite);
@@ -107,9 +109,11 @@ void Move_maker::en_passant(BB org, BB dest, Color c)
         pieces[c^1][PAWN] ^= shiftBB(dest, 0, dir);
 }
 
-void Move_maker::capture(BB dest, Piece pce, Color c)
+bool Move_maker::capture(BB dest, Piece pce, Color c)
 {
+        if (pce == KING) return false;
         pieces[c^1][pce] ^= dest;
+        return true;
 }
 
 void Move_maker::promote(BB org, BB dest, Piece new_pce, Color c)

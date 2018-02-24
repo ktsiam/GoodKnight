@@ -19,7 +19,7 @@ Move Traverser::best_move()
         Move best_mv(0);
         
         for (auto it = copy.begin(); it != copy.end(); ++it) {
-
+                
                 front_move(*it);
                 
                 Score score = -alphaBetaMax (std::numeric_limits<Score>::min(),
@@ -50,7 +50,7 @@ Score Traverser::alphaBetaMax(Score alpha, Score beta, uint8_t depthleft)
         
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
                 
-                front_move(*it);                
+                if (!front_move(*it)) continue;
                 Score score = alphaBetaMin( alpha, beta, depthleft - 1 );
                 back_move();
                 
@@ -76,7 +76,7 @@ Score Traverser::alphaBetaMin(Score alpha, Score beta, uint8_t depthleft)
         
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
                 
-                front_move(*it);                
+                if (!front_move(*it)) continue;
                 Score score = alphaBetaMax( alpha, beta, depthleft - 1 );
                 back_move();
                                 
