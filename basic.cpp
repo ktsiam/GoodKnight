@@ -70,13 +70,11 @@ static const BB R_INIT = 0xFF;
 
 BB File(uint8_t idx)
 {
-        assert (idx < DIM);
         return F_INIT << idx;
 }
 
 BB Rank(uint8_t idx)
 {
-        assert(idx < DIM);
         return R_INIT << (idx * DIM);
 }
 
