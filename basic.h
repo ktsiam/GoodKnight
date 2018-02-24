@@ -46,7 +46,6 @@ BB      File      (uint8_t idx);        // returns file BB of given index
 BB      Rank      (uint8_t idx);        // returns rank BB of given index
 
 //operation
-BB      shiftBB    (BB b, int8_t dx, int8_t dy); //shifts BB as shown
 BB      flipDiag   (BB b);             // flips a1-h8
 BB      rot_45_c   (BB b);             // maps diagonals to files
 BB      rot_45_a   (BB b);             // maps anti-diagonals to files

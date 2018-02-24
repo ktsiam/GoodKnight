@@ -78,17 +78,6 @@ BB Rank(uint8_t idx)
         return R_INIT << (idx * DIM);
 }
 
-
-//OPERATION
-BB shiftBB(BB b, int8_t dx, int8_t dy)
-{
-        int8_t d = dy * DIM + dx;
-        if (d > 0)
-                return b << d;
-        else
-                return b >> (-d);
-}
-
 static const uint8_t rev_bit_table[16] = {
         0x0, 0x8, 0x4, 0xC, 0x2, 0xA, 0x6, 0xE,
         0x1, 0x9, 0x5, 0xD, 0x3, 0xB, 0x7, 0xF
