@@ -107,13 +107,13 @@ void Move_generator::castling_gen()
 {
         uint8_t shift = (clr == WHITE) ? 0 : (7*DIM);
         
-        if ((castle_rights[clr] & O_O) && (pieces[clr][ROOK] & (1ULL << (shift + 7))))
+        if (castle_rights[clr] & O_O)
                 if ((0b11ULL << (shift + 5) & all_pieces) == 0)
                         if ((0b111ULL << (shift + 4) & team_movement[clr^1]) == 0)
                                 move_vec.push_back(Move(0, 0, NO_PIECE,
                                 castle_rights[clr], en_passant_sq, NO_PIECE, O_O));
         
-        if (castle_rights[clr] & O_O_O && (pieces[clr][ROOK] & (1ULL << shift)))
+        if (castle_rights[clr] & O_O_O)
                 if ((0b111ULL << (shift+1) & all_pieces) == 0)
                         if ((0b111ULL << (shift + 2) & team_movement[clr^1]) == 0)
                                 move_vec.push_back(Move(0, 0, NO_PIECE,
