@@ -13,12 +13,13 @@ public:
 
 private:
         //front_move - back_move helpers
-        void castle(Castling cstl, Color c);
-        void en_passant(BB org, BB dest, Color c);
-        bool capture(BB dest, Piece pce, Color c);
-        void promote(BB org, BB dest, Piece new_pce, Color c);
-        void displace(BB org, BB dest, Piece pce, Color c);
+        void castle(Castling cstlc);
+        void en_passant(BB org, BB dest);
+        bool capture(BB dest, Piece pce);
+        void promote(BB org, BB dest, Piece new_pce);
+        void displace(BB org, BB dest, Piece pce);
         void set_en_passant(BB org, BB dest);
+        void check_castling(Color c);
         
 };
 #endif // MOVE_MAKER_

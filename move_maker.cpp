@@ -8,26 +8,26 @@ bool Move_maker::front_move(const Move mv)
 {
         //capture  (en_passant is NOT a capture)
         if (mv.their_piece() != NO_PIECE)
-                if (!capture(mv.dest(), mv.their_piece(), clr))
+                if (!capture(mv.dest(), mv.their_piece()))
                         return false;
 
         //castling
         if (mv.is_castling() != NO_CASTLING) {
-                castle(mv.is_castling(), clr);
+                castle(mv.is_castling());
                 castle_rights[clr] = NO_CASTLING;
         }
 
         //en-passant  (also disable flag)
         else if (en_passant_sq = 0, mv.is_en_passant()) 
-                en_passant(mv.origin(), mv.dest(), clr);        
+                en_passant(mv.origin(), mv.dest());        
 
         //promotion
         else if (mv.promoted_piece() != NO_PIECE)
-                        promote(mv.origin(), mv.dest(), mv.promoted_piece(), clr);
+                        promote(mv.origin(), mv.dest(), mv.promoted_piece());
 
         //displacement
         else {
-                displace(mv.origin(), mv.dest(), mv.my_piece(), clr);
+                displace(mv.origin(), mv.dest(), mv.my_piece());
 
                 //checking for future en-passant & castling rights
                 switch (mv.my_piece()) {
@@ -35,11 +35,8 @@ bool Move_maker::front_move(const Move mv)
                                 set_en_passant(mv.origin(), mv.dest()); break;
                         case KING :
                                 castle_rights[clr] = NO_CASTLING;       break;
-                        case ROOK : { 
-                                bool o_o   = pieces[clr][ROOK] & shiftBB(1, 7, 7*clr);
-                                bool o_o_o = pieces[clr][ROOK] & shiftBB(1, 0, 7*clr);
-                                castle_rights[clr] = (Castling)
-                                        ((o_o | (o_o_o << 1)) & castle_rights[clr]);
+                        case ROOK : {
+                                if (castle_rights[clr]) check_castling(clr);
                         }
                         default : break;
                 }
@@ -58,29 +55,29 @@ void Move_maker::back_move()
         history.pop();
 
         //swapping color, adjusting Castling & en_passant
-        clr = (Color) !clr;
+        clr = static_cast<Color>(clr^1);
         en_passant_sq      = mv.en_passant_status();
         castle_rights[clr] = mv.castle_rights();
 
         //capture (en_passant is NOT a capture)
         if (mv.their_piece() != NO_PIECE)
-                capture(mv.dest(), mv.their_piece(), clr);
+                capture(mv.dest(), mv.their_piece());
 
         //castling
         if (mv.is_castling() != NO_CASTLING)
-                castle(mv.is_castling(), clr);
+                castle(mv.is_castling());
 
         //en-passant
         else if (mv.is_en_passant())
-                en_passant(mv.origin(), mv.dest(), clr);
+                en_passant(mv.origin(), mv.dest());
 
         //promotion
         else if (mv.promoted_piece() != NO_PIECE)
-                        promote(mv.origin(), mv.dest(), mv.promoted_piece(), clr);
+                        promote(mv.origin(), mv.dest(), mv.promoted_piece());
 
         //displacement
         else
-                displace(mv.origin(), mv.dest(), mv.my_piece(), clr);
+                displace(mv.origin(), mv.dest(), mv.my_piece());
 }
 
 
@@ -89,51 +86,60 @@ void Move_maker::back_move()
 
 // HELPERS
 
-void Move_maker::castle(Castling cstl, Color c)
+void Move_maker::castle(Castling cstl)
 {
-        int8_t opposite = (c == WHITE) ? 0 : 7;
+        uint8_t shift = (clr == WHITE) ? 0 : 56;
         if (cstl == O_O) {
-                pieces[c][KING] ^= shiftBB(0b101, 4, opposite);
-                pieces[c][ROOK] ^= shiftBB(0b101, 5, opposite);
+                pieces[clr][KING] ^= (0b101 << (shift + 4));
+                pieces[clr][ROOK] ^= (0b101 << (shift + 5));
         }
         else {
-                pieces[c][KING] ^= shiftBB(0b101,  2, opposite);
-                pieces[c][ROOK] ^= shiftBB(0b1001, 0, opposite);
+                pieces[clr][KING] ^= (0b101  << (shift + 2));
+                pieces[clr][ROOK] ^= (0b1001 << shift);
         }
 }
 
-void Move_maker::en_passant(BB org, BB dest, Color c)
+void Move_maker::en_passant(BB org, BB dest)
 {
-        int8_t dir = (c == WHITE) ? -1 : 1;
-        pieces[c][PAWN]   ^= org | dest;
-        pieces[c^1][PAWN] ^= shiftBB(dest, 0, dir);
+        pieces[clr  ][PAWN]   ^= org | dest;
+        pieces[clr^1][PAWN]   ^= (clr == WHITE) ? (dest >> 8) : (dest << 8);
 }
 
-bool Move_maker::capture(BB dest, Piece pce, Color c)
+bool Move_maker::capture(BB dest, Piece pce)
 {
-        if (pce == KING) return false;
-        pieces[c^1][pce] ^= dest;
+        if (pce == KING)  return false;
+        if ((pce == ROOK) && castle_rights[clr^1])
+                check_castling((Color)(clr^1));
+        pieces[clr^1][pce] ^= dest;
         return true;
 }
 
-void Move_maker::promote(BB org, BB dest, Piece new_pce, Color c)
+void Move_maker::promote(BB org, BB dest, Piece new_pce)
 {
-        pieces[c][PAWN]    ^= org;
-        pieces[c][new_pce] ^= dest;
+        pieces[clr][PAWN]    ^= org;
+        pieces[clr][new_pce] ^= dest;
 }
 
-void Move_maker::displace(BB org, BB dest, Piece pce, Color c)
+void Move_maker::displace(BB org, BB dest, Piece pce)
 {
-        pieces[c][pce] ^= org | dest;
+        pieces[clr][pce] ^= org | dest;
 }
 
 void Move_maker::set_en_passant(BB org, BB dest)
 {
-        if (shiftBB(org, 0, 2) == dest)
-                en_passant_sq = shiftBB(org, 0, 1);
-        else if (shiftBB(org, 0, -2) == dest)
-                en_passant_sq = shiftBB(org, 0, -1);
+        if      ((clr == WHITE) && (org << 16) == dest)
+                en_passant_sq = org << 8;
+        else if ((clr == BLACK) && (org >> 16) == dest)
+                en_passant_sq = org >> 8;
         else
                 en_passant_sq = 0;
 }
 
+void Move_maker::check_castling(Color c)
+{
+        uint8_t shift = (c == WHITE) ? 0 : 56;
+        bool o_o   = pieces[c][ROOK] & (1 << (shift + 7));
+        bool o_o_o = pieces[c][ROOK] & (1 << (shift    ));
+        castle_rights[c] = static_cast<Castling>
+                ((o_o | (o_o_o << 1)) & castle_rights[clr]);
+}
