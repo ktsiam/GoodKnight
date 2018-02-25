@@ -88,12 +88,12 @@ void Move_maker::castle(Castling cstl)
 {
         uint8_t shift = (clr == WHITE) ? 0 : 56;
         if (cstl == O_O) {
-                pieces[clr][KING] ^= (0b101 << (shift + 4));
-                pieces[clr][ROOK] ^= (0b101 << (shift + 5));
+                pieces[clr][KING] ^= (0b101ull << (shift + 4));
+                pieces[clr][ROOK] ^= (0b101ull << (shift + 5));
         }
         else {
-                pieces[clr][KING] ^= (0b101  << (shift + 2));
-                pieces[clr][ROOK] ^= (0b1001 << shift);
+                pieces[clr][KING] ^= (0b101ull  << (shift + 2));
+                pieces[clr][ROOK] ^= (0b1001ull << shift);
         }
 }
 
