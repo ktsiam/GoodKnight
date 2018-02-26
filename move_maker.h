@@ -8,7 +8,7 @@ public:
         Move_maker()  = default;
         ~Move_maker() = default;
 
-        void front_move(const Move mv) override;
+        bool front_move(const Move mv) override;
         void back_move ()              override;
 
 private:

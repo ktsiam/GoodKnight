@@ -4,11 +4,14 @@
 
 // MOVE MAKING FUNCTIONS
 
-void Move_maker::front_move(const Move mv)
+bool Move_maker::front_move(const Move mv)
 {
+        bool quience = true;
         //capture  (en_passant is NOT a capture)
-        if (mv.their_piece() != NO_PIECE)
+        if (mv.their_piece() != NO_PIECE) {
                 capture(mv.dest(), mv.their_piece());
+                quience = false;
+        }
 
         //castling
         if (mv.is_castling() != NO_CASTLING) {
@@ -17,12 +20,16 @@ void Move_maker::front_move(const Move mv)
         }
 
         //en-passant  (also disable flag)
-        else if (en_passant_sq = 0, mv.is_en_passant()) 
-                en_passant(mv.origin(), mv.dest());        
+        else if (en_passant_sq = 0, mv.is_en_passant()) {
+                en_passant(mv.origin(), mv.dest());
+                quience = false;
+        }
 
         //promotion
-        else if (mv.promoted_piece() != NO_PIECE)
-                        promote(mv.origin(), mv.dest(), mv.promoted_piece());
+        else if (mv.promoted_piece() != NO_PIECE) {
+                promote(mv.origin(), mv.dest(), mv.promoted_piece());
+                quience = false;
+        }
 
         //displacement
         else {
@@ -45,6 +52,7 @@ void Move_maker::front_move(const Move mv)
         clr = (Color) !clr;
 
         history.push(mv); //copy and swap
+        return quience;
 }
 
 void Move_maker::back_move()
