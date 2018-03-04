@@ -2,20 +2,23 @@
 #define MOVE_H_
 
 #include "basic.h"
+#include <vector>
 
 class Move {
 
 public:
 
+        Move() = default;
+        Move(uint32_t _data);
         Move(BB org, BB dest, Piece myP, Castling c_rights, BB en_p_st, 
              Piece theirP = NO_PIECE, Castling cstl = NO_CASTLING,
              Piece promo = NO_PIECE, bool en_p = false);
-
-        Move() = default;
-        Move(uint32_t d)                {        data = d;        }
-        operator uint32_t()             { return data;            }
-        bool operator==(const Move &mv) { return data == mv.data; }
         
+        bool
+        operator==(Move mv);
+        operator uint32_t();
+        
+        bool is_quiet()          const;  // returns if move is quiet 
         Castling is_castling()   const;  // returns castling type of move
         bool is_en_passant()     const;  // returns if move is en_passant
         BB dest()                const;  // returns BB with destination
@@ -30,6 +33,26 @@ public:
 private:
 
         uint32_t data;        //2 bits free
+};
+
+struct Line {
+        Score value;
+        std::vector<Move> seq;
+
+        Line &cons(Move mv, Line &ln);
+        Line &operator-();
+        friend Line &cons(Move mv, Line &ln);
+       
+#define DEF_OP(OP) bool operator OP (const Line &o) { return value OP o.value; } \
+                   bool operator OP (Score s)       { return value OP s; }
+
+        DEF_OP(>) 
+        DEF_OP(<)
+        DEF_OP(==)
+        DEF_OP(>=)
+        DEF_OP(<=)
+        
+#undef DEF_OP
 };
 
 
