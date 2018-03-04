@@ -1,93 +1,49 @@
 #include "traverser.h"
 
 #include <climits>
-#include <ctime>
-#include <cstring>
 #include <algorithm>
 
-extern unsigned MOVE_COUNT;
-extern unsigned TIME_TAKEN;
+static const uint8_t MAX_QUIENCE = 20;
 
-#include <iostream>
-Move Traverser::best_move()
+Line Traverser::analyze()
 {
-        clock_t start = clock();
-        memset(&killer_moves, 0, sizeof(killer_moves));
-
-        init_moves();
-        std::vector<Move> copy = move_vec;
-        Score max_score = std::numeric_limits<Score>::min();
-        Move best_mv(0);
+        killer_moves = main_line.seq;
+        killer_moves.resize(MAX_QUIENCE);
         
-        for (auto it = copy.begin(); it != copy.end(); ++it) {
-                
-                front_move(*it);
-                
-                Score score = -alphaBetaMax (std::numeric_limits<Score>::min(),
-                                             std::numeric_limits<Score>::max(), DEPTH-1);
-                        
-                if (score > max_score) {
-                        best_mv = *it;
-                        max_score = score;
-                }
-                back_move();
-        }
+        init_moves();
+        if (move_vec.empty()) throw "NO_MOVES";
+        
+        main_line = alphaBeta ( -(WIN_EVAL + DEPTH), WIN_EVAL + DEPTH, DEPTH);
 
-        clock_t end = clock();
-        TIME_TAKEN = (end - start);
-
-        std::cout << max_score << std::endl;
-        return best_mv;
+        return main_line;
 }
 
-Score Traverser::alphaBetaMax(Score alpha, Score beta, uint8_t depthleft)
+Line Traverser::alphaBeta(Score alpha, Score beta, uint8_t depthleft)
 {
-        MOVE_COUNT ++;
-        if (depthleft == 0) return evaluate();
-
+        if (!pieces[clr][KING]) return Line{ -(WIN_EVAL + depthleft), {} };
+        if (depthleft == 0)     return Line{ evaluate()             , {} };        
         init_moves();
-
-        std::vector<Move> copy = move_vec;
+        if (move_vec.empty())   return Line{ no_move_eval(depthleft), {} };
+        
+        auto copy = move_vec;
         check_killer_mv(copy, depthleft);
         
+        Line best_ln { -(WIN_EVAL + DEPTH), {} };
         for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
-                
                 front_move(*it);
-                Score score = alphaBetaMin( alpha, beta, depthleft - 1 );
+                Line curr = -alphaBeta(-beta, -alpha, depthleft - 1);
                 back_move();
-                
-                if(score >= beta) { //killer move
+                if (curr >= beta) {
                         killer_moves[depthleft] = *it;
-                        return beta;
+                        curr.value = beta;
+                        return cons(*it, curr); // beta-cutoff
                 }
-                if(score > alpha)
-                        alpha = score;
-        }
-        return alpha;
-}
-                        
-Score Traverser::alphaBetaMin(Score alpha, Score beta, uint8_t depthleft)
-{
-        MOVE_COUNT ++;
-        if (depthleft == 0) return -evaluate();
-
-        init_moves();
-        
-        std::vector<Move> copy = move_vec;
-        check_killer_mv(copy, depthleft);
-        
-        for (auto it = copy.rbegin(); it != copy.rend(); ++it) {
-
-                front_move(*it);
-                Score score = alphaBetaMax( alpha, beta, depthleft - 1 );                
-                back_move();
-                                
-                if( score <= alpha )
-                        return alpha;
-                if( score < beta )
-                        beta = score;
-        }
-        return beta;
+                if (curr > alpha) {
+                        best_ln = cons(*it, curr); // alpha = max
+                        alpha   = best_ln.value;
+                }
+        }        
+        return best_ln;
 }
 
 void Traverser::check_killer_mv(std::vector<Move> &moves, uint8_t depthleft)
