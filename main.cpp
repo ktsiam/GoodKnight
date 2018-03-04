@@ -2,25 +2,54 @@
 
 #include "interface.h"
 
-unsigned TIME_TAKEN;
-unsigned MOVE_COUNT = 0;
+enum COMMANDS { CPU_MOVE, PLAYER_MOVE, ANALYSIS, UNDO, QUIT };
 
-[[noreturn]] int main(int argc, char *argv[]) 
-{
-        Interface inter;
-        std::string move;
-        bool verbose = (argc == 2) && (!strcmp(argv[1], "-v"));
-        
-        while(std::cin >> move){                
-                inter.custom_move(move);
-                
-                if (MOVE_COUNT != 0 && verbose) {
-                        std::cout << "LOOKED at "
-                                  << MOVE_COUNT/1000
-                                  << "K POSITIONS in\n"
-                                  << TIME_TAKEN/1000
-                                  << "ms\n";
-                        MOVE_COUNT = 0;
+COMMANDS decode(std::string s);
+void clear() { std::cout << "\n\n\n\n\n\n\n\n\n"; }
+
+int main() 
+{        
+        Interface chess;
+
+        std::string s;
+        while (std::cin >> s) {
+                switch (decode(s)) {                        
+                case QUIT        : return 0;
+                        
+                case UNDO        : clear();
+                        chess.undo();          break;
+                        
+                case ANALYSIS    : clear();
+                        chess.analysis();      break;
+                        
+                case CPU_MOVE    : clear();
+                        chess.computer_move(); break;
+                        
+                case PLAYER_MOVE : clear();
+                        chess.player_move(s);  break;
                 }
         }
+        return 0;
+}
+
+COMMANDS decode(std::string s)
+{
+        if (s == "q" || s == "Q"
+            || s == "quit"
+            || s == "exit") return QUIT;
+        if (   s == "u" || s == "U"
+            || s == "r" || s == "R") return UNDO;
+        if (s == "a" || s == "e"
+            || s == "analysis"
+            || s == "analyze"
+            || s == "eval"
+            || s == "evaluate"
+            || s == "score")      return ANALYSIS;       
+        if (s == "c" || s == "cpu"
+            || s == "computer"
+            || s == "move"
+            || s == "play"
+            || s == "engine")     return CPU_MOVE;
+        
+        return PLAYER_MOVE;
 }
