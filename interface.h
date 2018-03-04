@@ -3,22 +3,22 @@
 
 #include "traverser.h"
 
-class Interface : public Traverser {
+class Interface : private Traverser {
 public:
         Interface();
         ~Interface() = default;
         
-        void custom_move(std::string str);
-
+        void analysis();
+        void player_move(std::string mv);
+        void computer_move();
+        void undo();
+        
 private:
 
-        void undo();
-        void print();
-        void print_moves();
         void init_move_str();
-        void sanity_check();
-        void checkmate();
-        void stalemate();
+        void render_analysis();
+        void render_moves();
+        void render_board();
         
         std::vector<std::string> move_str;
 };
