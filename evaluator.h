@@ -3,20 +3,20 @@
 
 #include "move_generator.h"
 
+const Score WIN_EVAL = 20000000;
+
 class Evaluator : public Move_generator {
         
 public:
         Evaluator()  = default;
         ~Evaluator() = default;
         Score evaluate() override;
+        Score no_move_eval(uint8_t depthleft);        
         
-                
-private:
-
         
 /******** INHERITED VARIABLES TO BE USED *****
-        BB pieces[CLR_NB][PIECE_NB];
-        BB moves [CLR_NB][PIECE_NB];
+        BB pieces   [CLR_NB][PIECE_NB];
+        BB movement [CLR_NB][PIECE_NB];
         
         Color clr;
         Castling castle_rights[CLR_NB];
