@@ -36,8 +36,9 @@ COMMANDS decode(std::string s)
 {
         if (s == "q" || s == "Q"
             || s == "quit"
-            || s == "exit") return QUIT;
-        if (   s == "u" || s == "U"
+            || s == "exit")          return QUIT;
+        if (s == "u" || s == "U"
+            || s == "undo"
             || s == "r" || s == "R") return UNDO;
         if (s == "a" || s == "e"
             || s == "analysis"

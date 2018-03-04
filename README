@@ -1,4 +1,15 @@
+How to play:
+       make and execute (gcc, c++11 needed)
+
+       Keys:
+                `[SQ][SQ]` --> Move  (e.g. `e2e4`)
+                `cpu`      --> Let engine move
+                `analysis  --> Analyze position
+                `undo`     --> Takes back last move
+                `quit`     --> Quits engine
+
+                Initials for these instructions are recognized
+
 TODO:
-          - rewrite interface
           - build lookup table
           - work on evaluation function     
