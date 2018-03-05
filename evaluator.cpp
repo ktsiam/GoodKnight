@@ -12,8 +12,7 @@ Score Evaluator::evaluate()
 
 Score Evaluator::material(Color c)
 {
-        return
-                900 * pop_count(pieces[c][QUEEN ]) +
+        return  900 * pop_count(pieces[c][QUEEN ]) +
                 500 * pop_count(pieces[c][ROOK  ]) +
                 325 * pop_count(pieces[c][BISHOP]) +
                 300 * pop_count(pieces[c][KNIGHT]) +
@@ -22,8 +21,22 @@ Score Evaluator::material(Color c)
 
 Score Evaluator::position(Color c)
 {
+        Score eval = 0;
+        
         BB central_pawns = pieces[c][PAWN] & 0x1c1c000000;
-        return 20 * pop_count(central_pawns);
+        eval += 20 * pop_count(central_pawns);        
+
+        // isolated pawns
+        // double pawns
+        // knights in center
+        // holes
+        // castling rights & king in corner
+        // x-rays
+        // pawn forward (linear)
+        // bishop and light-dark squares
+        // bishop pair
+        
+        return eval;
 }
 
 

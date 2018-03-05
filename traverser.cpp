@@ -34,8 +34,10 @@ Line Traverser::alphaBeta(Line alpha, Line beta, uint8_t depthleft)
                 front_move(*it);
                 Line curr = -alphaBeta(-beta, -alpha, depthleft - 1);
                 back_move();
-                if (curr >= beta)                        
+                if (curr >= beta) {
+                        killer_moves[depthleft] = beta.seq.back();
                         return beta; // beta cutoff
+                }
                 if (curr > alpha)
                         alpha = cons(*it, curr); // alpha = max
         }        
