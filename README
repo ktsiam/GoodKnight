@@ -11,5 +11,7 @@ How to play:
                 Initials for these instructions are recognized
 
 TODO:
+          - add quiescence search for horizon effect
+          - add time_dependent DEPTH
+          - work on evaluation function
           - build lookup table
-          - work on evaluation function     
