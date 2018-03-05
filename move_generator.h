@@ -9,7 +9,7 @@ public:
         Move_generator();
         ~Move_generator() = default;
 
-        void init_moves() override;
+        void init_moves(bool quick) override;
 
 protected:
         //re-evaluated each run
@@ -24,7 +24,7 @@ protected:
 private:
 
         //prevents illegal king moves
-        void init_opp_movement();
+        void init_opp_movement(bool quick);
 
         //move generators
         void king_move_gen();

@@ -15,7 +15,7 @@ public:
         
         virtual bool  front_move(const Move mv) = 0;
         virtual void  back_move ()              = 0;
-        virtual void  init_moves()              = 0;
+        virtual void  init_moves(bool quick)    = 0;
         virtual Score evaluate()                = 0;
         
         std::vector<Move> move_vec;

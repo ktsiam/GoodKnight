@@ -11,7 +11,7 @@ static string to_ascii(BB b);
 
 Interface::Interface()
 {
-        init_moves();
+        init_moves(false);
         init_move_str();
         render_board();
 }
@@ -39,7 +39,7 @@ void Interface::computer_move()
 
 void Interface::player_move(string str)
 {
-        init_moves();
+        init_moves(false);
         init_move_str();
 
         if (str == "0-0"   || str == "o-o")   str = "O-O";
@@ -80,7 +80,7 @@ void Interface::render_moves()
 
 void Interface::render_board()
 {
-        init_moves();
+        init_moves(false);
         std::cout << "   "
                   << ((castle_rights[BLACK] == BOTH)  ? "O-O & O-O-O  ":
                       (castle_rights[BLACK] == O_O)   ? "O-O          ":

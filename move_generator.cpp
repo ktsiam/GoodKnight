@@ -26,16 +26,17 @@ Move_generator::Move_generator()
         only_movement[BLACK] = false;
 }
 
-void Move_generator::init_moves()
+void Move_generator::init_moves(bool quick)
 {
-        move_vec.clear();
-                
+        if (quick) only_movement[clr] = true;
+        else move_vec.clear();
+        
         team_pieces[BLACK] = unite(&pieces[BLACK][KING], &pieces[BLACK][PIECE_NB]);
         team_pieces[WHITE] = unite(&pieces[WHITE][KING], &pieces[WHITE][PIECE_NB]);
         all_pieces = team_pieces[WHITE] | team_pieces[BLACK];
         
-        init_opp_movement();                
-
+        init_opp_movement(quick);
+        
         castling_gen();
         knight_move_gen();
         rook_move_gen();
@@ -44,7 +45,8 @@ void Move_generator::init_moves()
         king_move_gen();
         pawn_move_gen();
 
-        team_movement [clr] = unite(&movement[clr][KING],  &movement[clr][PIECE_NB]);
+        team_movement[clr] = unite(&movement[clr][KING],  &movement[clr][PIECE_NB]);  
+        only_movement[clr] = false;
 }
 
 ////////////////////////////// PROTECTED /////////////////////////////
@@ -63,15 +65,12 @@ Piece Move_generator::find_piece(BB sq, Color c)
 
 //MOVEMENT GENERATING FUNCTION (less overhead than init_moves)
 
-void Move_generator::init_opp_movement()
+void Move_generator::init_opp_movement(bool quick)
 {
-        if (UNLIKELY(history.empty()))
-                return;
-
         clr = static_cast<Color>(clr^1);
         only_movement[clr] = true;
-
-        {
+                
+        if (quick) {
                 Move last_mv = history.top();
                 if (last_mv.is_castling()) {
                         king_move_gen();
@@ -83,15 +82,23 @@ void Move_generator::init_opp_movement()
                         queen_move_gen();
                 } else {
                         switch (last_mv.my_piece()) {
-                                case KING   : king_move_gen();   break;
-                                case PAWN   : pawn_move_gen();   break;
-                                case KNIGHT : knight_move_gen(); break;
-                                default     :;  
+                        case KING   : king_move_gen();   break;
+                        case PAWN   : pawn_move_gen();   break;
+                        case KNIGHT : knight_move_gen(); break;
+                        default     :;  
                         }                                                
                         bishop_move_gen();
                         rook_move_gen();
                         queen_move_gen();
                 }
+        } else {
+                castling_gen();
+                knight_move_gen();
+                rook_move_gen();
+                bishop_move_gen();
+                queen_move_gen();
+                king_move_gen();
+                pawn_move_gen();
         }
         
         team_movement[clr] = unite(&movement[clr][KING],  &movement[clr][PIECE_NB]);
@@ -105,19 +112,21 @@ void Move_generator::init_opp_movement()
 
 void Move_generator::castling_gen()
 {
+        if (only_movement[clr]) return;
+        
         uint8_t shift = (clr == WHITE) ? 0 : (7*DIM);
         
         if (castle_rights[clr] & O_O)
                 if ((0b11ULL << (shift + 5) & all_pieces) == 0)
                         if ((0b111ULL << (shift + 4) & team_movement[clr^1]) == 0)
                                 move_vec.push_back(Move(0, 0, NO_PIECE,
-                                castle_rights[clr], en_passant_sq, NO_PIECE, O_O));
+                                castle_rights, en_passant_sq, NO_PIECE, O_O));
         
         if (castle_rights[clr] & O_O_O)
                 if ((0b111ULL << (shift+1) & all_pieces) == 0)
                         if ((0b111ULL << (shift + 2) & team_movement[clr^1]) == 0)
                                 move_vec.push_back(Move(0, 0, NO_PIECE,
-                                castle_rights[clr], en_passant_sq, NO_PIECE, O_O_O));
+                                castle_rights, en_passant_sq, NO_PIECE, O_O_O));
 }
 
 void Move_generator::king_move_gen()
@@ -244,14 +253,14 @@ void Move_generator::general_move_gen(BB origin, Piece pce, BB squares)
         
         while (non_attack) {
                 BB dest = get_clear_lsb(non_attack);
-                Move new_mv{origin, dest, pce, castle_rights[clr], en_passant_sq};
+                Move new_mv{origin, dest, pce, castle_rights, en_passant_sq};
                 move_vec.push_back(new_mv);
         }
 
         while (attack) {
                 BB dest     = get_clear_lsb(attack);
                 Piece their = find_piece(dest, (Color) (clr^1));
-                Move new_mv{origin, dest, pce, castle_rights[clr],
+                Move new_mv{origin, dest, pce, castle_rights,
                                 en_passant_sq, their};
                 move_vec.push_back(new_mv);
         }
@@ -263,7 +272,7 @@ void Move_generator::pawn_move(BB origin, BB dest)
                 promotion_gen(origin, dest,  false);
                 return;
         }
-        Move new_mv{origin, dest, PAWN, castle_rights[clr], en_passant_sq};
+        Move new_mv{origin, dest, PAWN, castle_rights, en_passant_sq};
         move_vec.push_back(new_mv);        
 }
 
@@ -277,7 +286,7 @@ void Move_generator::pawn_capture(BB origin, BB dest)
         Piece taken_pce = find_piece(dest, static_cast<Color>(clr^1));
         bool en_p       = (taken_pce == NO_PIECE);
         
-        Move new_mv{origin, dest, PAWN, castle_rights[clr],
+        Move new_mv{origin, dest, PAWN, castle_rights,
                 en_passant_sq, taken_pce, NO_CASTLING, NO_PIECE, en_p};
         move_vec.push_back(new_mv);        
 }
@@ -288,7 +297,7 @@ void Move_generator::promotion_gen(BB origin, BB dest, bool quiet)
                 find_piece(dest, static_cast<Color>(clr^1));;
         
         for (int p = QUEEN; p != PAWN; ++p) {
-                Move new_mv{ origin, dest, PAWN, castle_rights[clr],
+                Move new_mv{ origin, dest, PAWN, castle_rights,
                              en_passant_sq, their, NO_CASTLING, (Piece) p };
                 move_vec.push_back(new_mv);
         }

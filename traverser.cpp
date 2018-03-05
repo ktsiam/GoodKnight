@@ -10,7 +10,7 @@ Line Traverser::analyze()
         killer_moves = main_line.seq;
         killer_moves.resize(MAX_QUIENCE);
         
-        init_moves();
+        init_moves(false);
         if (move_vec.empty()) throw "NO_MOVES";
         
         main_line = alphaBeta ( Line { -(WIN_EVAL + DEPTH), {} },
@@ -24,7 +24,7 @@ Line Traverser::alphaBeta(Line alpha, Line beta, uint8_t depthleft)
 {
         if (!pieces[clr][KING]) return Line{ -(WIN_EVAL + depthleft), {} };
         if (depthleft == 0)     return Line{ evaluate()             , {} };
-        init_moves();
+        init_moves(false);
         if (move_vec.empty())   return Line{ no_move_eval(depthleft), {} };
         
         auto copy = move_vec;

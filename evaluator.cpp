@@ -2,9 +2,7 @@
 
 Score Evaluator::evaluate()  //NEEDS (A LOT OF) WORK
 {
-        only_movement[clr] = true;
-        init_moves();
-        only_movement[clr] = false;
+        init_moves(true); //quick
 
         BB central_pawns_w = pieces[clr  ][PAWN] & 0x1c1c000000;
         BB central_pawns_b = pieces[clr^1][PAWN] & 0x1c1c000000;
@@ -28,9 +26,8 @@ Score Evaluator::evaluate()  //NEEDS (A LOT OF) WORK
 
 Score Evaluator::no_move_eval(uint8_t depthleft)
 {
-        only_movement[clr] = true;
-        init_moves();
-        only_movement[clr] = false;
+        init_moves(true); //quick
+        
         return (pieces[clr][KING] & team_movement[clr^1]) ?
                 -(WIN_EVAL + depthleft) : 0;
 }
