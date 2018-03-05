@@ -5,7 +5,7 @@
 #include "move_maker.h"
 
 
-const uint8_t MAX_DEPTH = 6;
+const uint8_t MAX_DEPTH = 5;
 
 class Traverser : public Evaluator, public Move_maker {
 
