@@ -9,7 +9,7 @@ bool Move_maker::front_move(const Move mv)
         bool quience = true;
         //capture  (en_passant is NOT a capture)
         if (mv.their_piece() != NO_PIECE) {
-                capture(mv.dest(), mv.their_piece());
+                capture(mv.dest(), mv.their_piece(), true);
                 quience = false;
         }
 
@@ -61,13 +61,14 @@ void Move_maker::back_move()
         history.pop();
 
         //swapping color, adjusting Castling & en_passant
-        clr = static_cast<Color>(clr^1);
-        en_passant_sq      = mv.en_passant_status();
-        castle_rights[clr] = mv.castle_rights();
+        clr                  = static_cast<Color>(clr^1);
+        en_passant_sq        = mv.en_passant_status(clr);
+        castle_rights[WHITE] = mv.castle_rights(WHITE);
+        castle_rights[BLACK] = mv.castle_rights(BLACK);
 
         //capture (en_passant is NOT a capture)
         if (mv.their_piece() != NO_PIECE)
-                capture(mv.dest(), mv.their_piece());
+                capture(mv.dest(), mv.their_piece(), false);
 
         //castling
         if (mv.is_castling() != NO_CASTLING)
@@ -111,10 +112,10 @@ void Move_maker::en_passant(BB org, BB dest)
         pieces[clr^1][PAWN]   ^= (clr == WHITE) ? (dest >> 8) : (dest << 8);
 }
 
-void Move_maker::capture(BB dest, Piece pce)
+void Move_maker::capture(BB dest, Piece pce, bool front)
 {
         pieces[clr^1][pce] ^= dest;
-        if ((pce == ROOK) && castle_rights[clr^1])
+        if (front && (pce == ROOK) && castle_rights[clr^1])
                 check_castling((Color)(clr^1));
 }
 
