@@ -62,7 +62,9 @@ void Interface::undo()
 
 void Interface::render_analysis()
 {
-        std::cout << "Evaluation: " << main_line.value << std::endl;        
+        std::cout << "Evaluation: "
+                  << ((clr == WHITE)? 1 : -1) * main_line.value / 100.0
+                  << std::endl;        
         int count = 0;
         for (auto it = main_line.seq.rbegin(); it != main_line.seq.rend(); ++it)
                 std::cout << to_str(*it) << " \n"[count % 5 == 4];

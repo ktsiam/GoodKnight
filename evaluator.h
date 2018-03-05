@@ -13,6 +13,10 @@ public:
         Score evaluate() override;
         Score no_move_eval(uint8_t depthleft);        
         
+private:
+        
+        Score material(Color c);
+        Score position(Color c);
         
 /******** INHERITED VARIABLES TO BE USED *****
         BB pieces   [CLR_NB][PIECE_NB];
