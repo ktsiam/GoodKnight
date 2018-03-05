@@ -1,7 +1,7 @@
 #include "move.h"
 
 Move::Move(uint32_t _data) : data(_data) {};
-Move::Move(BB org, BB dest, Piece myP, Castling c_rights, 
+Move::Move(BB org, BB dest, Piece myP, Castling *c_rights, 
            BB en_p_st, Piece theirP, Castling cstl, 
            Piece promo, bool en_p)
 {
@@ -15,8 +15,10 @@ Move::Move(BB org, BB dest, Piece myP, Castling c_rights,
                 | (en_p ? 1 : 0)   << 23
                 
                 //for reversability
-                | get_idx(en_p_st) << 24 //can withdraw 2 bits if necessary (index file)
-                | c_rights         << 30;
+                | get_idx(en_p_st) % DIM << 24
+                | (en_p_st != 0)         << 27
+                | c_rights[WHITE]        << 28
+                | c_rights[BLACK]        << 30;
 }
 
 bool Move::operator==(Move mv) { return data == mv.data; }
@@ -30,9 +32,10 @@ BB       Move::origin()            const { return static_cast<BB>(get_BB(data >>
 Piece    Move::my_piece()          const { return static_cast<Piece>    (data >> 12 & 0x7      ); }
 Piece    Move::their_piece()       const { return static_cast<Piece>    (data >> 15 & 0x7      ); }
 Piece    Move::promoted_piece()    const { return static_cast<Piece>    (data >> 18 & 0x7      ); }
-Castling Move::castle_rights()     const { return static_cast<Castling> (data >> 30            ); }
-BB       Move::en_passant_status() const { return static_cast<BB>(get_BB(data >> 24 & 0x3F) &~1); }
-// Edge case: get_idx(en_p_st) == 0
+BB       Move::en_passant_status(Color c) const
+{ return (data >> 27 & 0x1) ? File(data >> 24 & 0x7) & Rank(4-c):0;}
+Castling Move::castle_rights    (Color c) const
+{ return static_cast<Castling> (data >> ((c == WHITE) ? 28 : 30) & 0x3);}
 
-Line Line::operator-()      { return Line { -value, seq }; }
+Line Line::operator-()       { return Line { -value, seq }; }
 Line &cons(Move mv, Line &ln){ return ln.seq.push_back(mv), ln; }
