@@ -16,12 +16,12 @@ public:
         Line analyze(); // throws if no moves
 
 protected:
-        
+
         Line main_line;
-        
+
 private:
 
-        Line alphaBeta(Score alpha, Score beta, uint8_t depthleft);
+        Line alphaBeta(Line alpha, Line beta, uint8_t depthleft);
         
         void check_killer_mv(std::vector<Move> &moves, uint8_t depthleft);
         std::vector<Move> killer_moves;
