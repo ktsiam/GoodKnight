@@ -40,10 +40,10 @@ Score Evaluator::position(Color c)
 }
 
 
-Score Evaluator::no_move_eval(uint8_t depthleft)
+Score Evaluator::no_move_eval(int8_t depthleft)
 {
         init_moves(true); //quick
         
         return (pieces[clr][KING] & team_movement[clr^1]) ?
-                -(WIN_EVAL + depthleft) : 0;
+                -(WIN_EVAL - depthleft) : 0;
 }

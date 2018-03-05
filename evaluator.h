@@ -11,7 +11,7 @@ public:
         Evaluator()  = default;
         ~Evaluator() = default;
         Score evaluate() override;
-        Score no_move_eval(uint8_t depthleft);        
+        Score no_move_eval(int8_t depth);        
         
 private:
         
