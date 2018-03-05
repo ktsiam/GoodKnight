@@ -42,6 +42,8 @@ void Interface::player_move(string str)
         init_moves();
         init_move_str();
 
+        if (str == "0-0"   || str == "o-o")   str = "O-O";
+        if (str == "0-0-O" || str == "o-o-o") str = "O-O-O";
         for (uint i = 0; i < move_str.size(); ++i)
                 if (move_str[i] == str) {
                         front_move(move_vec[i]);
