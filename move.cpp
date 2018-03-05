@@ -34,5 +34,5 @@ Castling Move::castle_rights()     const { return static_cast<Castling> (data >>
 BB       Move::en_passant_status() const { return static_cast<BB>(get_BB(data >> 24 & 0x3F) &~1); }
 // Edge case: get_idx(en_p_st) == 0
 
-Line &Line::operator-()      { value = -value;    return *this; }
+Line Line::operator-()      { return Line { -value, seq }; }
 Line &cons(Move mv, Line &ln){ return ln.seq.push_back(mv), ln; }

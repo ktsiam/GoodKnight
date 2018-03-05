@@ -40,7 +40,7 @@ struct Line {
         std::vector<Move> seq;
 
         Line &cons(Move mv, Line &ln);
-        Line &operator-();
+        Line operator-();
         friend Line &cons(Move mv, Line &ln);
        
 #define DEF_OP(OP) bool operator OP (const Line &o) { return value OP o.value; } \
