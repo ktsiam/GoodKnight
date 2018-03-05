@@ -5,7 +5,6 @@
 enum COMMANDS { CPU_MOVE, PLAYER_MOVE, ANALYSIS, UNDO, QUIT };
 
 COMMANDS decode(std::string s);
-void clear() { std::cout << "\n\n\n\n\n\n\n\n\n"; }
 
 int main() 
 {        
@@ -16,17 +15,13 @@ int main()
                 switch (decode(s)) {                        
                 case QUIT        : return 0;
                         
-                case UNDO        : clear();
-                        chess.undo();          break;
+                case UNDO        : chess.undo();          break;
                         
-                case ANALYSIS    : clear();
-                        chess.analysis();      break;
+                case ANALYSIS    : chess.analysis();      break;
                         
-                case CPU_MOVE    : clear();
-                        chess.computer_move(); break;
+                case CPU_MOVE    : chess.computer_move(); break;
                         
-                case PLAYER_MOVE : clear();
-                        chess.player_move(s);  break;
+                case PLAYER_MOVE : chess.player_move(s);  break;
                 }
         }
         return 0;
