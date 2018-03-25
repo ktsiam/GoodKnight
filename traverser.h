@@ -13,16 +13,17 @@ public:
         Traverser()  = default;
         ~Traverser() = default;
 
-        Line analyze(); // throws if no moves
+        void analyze(); // throws if no moves
 
 protected:
 
-        Line main_line;
+        Score best_evaluation;
+        Move  best_move;
 
 private:
         
-        Line alphaBeta (Line alpha, Line beta, int8_t depthleft);
-        Line quiescence(Line alpha, Line beta, int8_t depthleft);
+        Score alphaBeta (Score alpha, Score beta, int8_t depthleft);
+        Score quiescence(Score alpha, Score beta, int8_t depthleft);
         
         void check_killer_mv(std::vector<Move> &moves, int8_t depthleft);
         std::vector<Move> killer_moves;

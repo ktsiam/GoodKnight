@@ -36,6 +36,3 @@ BB       Move::en_passant_status(Color c) const
 { return (data >> 27 & 0x1) ? File(data >> 24 & 0x7) & Rank(4-c):0;}
 Castling Move::castle_rights    (Color c) const
 { return static_cast<Castling> (data >> ((c == WHITE) ? 28 : 30) & 0x3);}
-
-Line Line::operator-()       { return Line { -value, seq }; }
-Line &cons(Move mv, Line &ln){ return ln.seq.push_back(mv), ln; }
