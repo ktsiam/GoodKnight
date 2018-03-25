@@ -144,7 +144,7 @@ void Interface::render_board()
                 for (int f = 0; f < DIM; ++f) {
                         BB sq = File(f) & Rank(r);
                         string        p = to_utf8(find_piece(sq, WHITE), WHITE);
-                        if (p == "-") p = to_utf8(find_piece(sq, BLACK), BLACK);
+                        if (p == "\u00B7") p = to_utf8(find_piece(sq, BLACK), BLACK);
                         std::cout << p << " ";
                 }
                 std::cout << "|\n";
@@ -197,7 +197,7 @@ static std::string to_utf8(Piece p, Color c)
                 case BISHOP : return "\u2657";
                 case KNIGHT : return "\u2658";
                 case PAWN   : return "\u2659";
-                default     : return "-";
+                default     : return "\u00B7";
                 }
         }
         else {
@@ -208,7 +208,7 @@ static std::string to_utf8(Piece p, Color c)
                 case BISHOP : return "\u265D";
                 case KNIGHT : return "\u265E";
                 case PAWN   : return "\u265F";
-                default     : return "-";
+                default     : return "\u00B7";
                 }
         }
 }
