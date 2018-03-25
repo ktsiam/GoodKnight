@@ -13,14 +13,61 @@ Interface::Interface()
 {
         init_moves(false);
         init_move_str();
+}
+
+void Interface::interactive()
+{
         render_board();
+        
+        enum COMMANDS { CPU_MOVE, PLAYER_MOVE, ANALYSIS, UNDO, QUIT };
+        auto decode = [](std::string s) {
+                if (s == "q" || s == "Q" || s == "quit")     return QUIT;
+                if (s == "u" || s == "U" || s == "undo")     return UNDO;
+                if (s == "a" || s == "A" || s == "analysis") return ANALYSIS;
+                if (s == "c" || s == "C" || s == "cpu")      return CPU_MOVE;
+                return PLAYER_MOVE;
+        };
+
+        std::string inp;
+        while (std::cin >> inp)
+                switch (decode(inp)) {
+                        case UNDO        : undo();           break;
+                        case ANALYSIS    : analysis();       break;
+                        case CPU_MOVE    : computer_move();  break;
+                        case PLAYER_MOVE : player_move(inp); break;
+                        case QUIT        : return;
+        }
+}
+
+void Interface::one_player()
+{
+        render_board();
+        
+        std::string move;
+        while(true) {
+                do std::cin >> move;                        
+                while (!player_move(move));
+
+                computer_move();
+        }
+}
+
+void Interface::two_player()
+{
+        render_board();
+        
+        std::string move;
+        while(true) {
+                std::cin >> move;
+                player_move(move);
+        }
 }
 
 void Interface::init_move_str()
 {
         move_str.clear();
-        for (auto it = move_vec.begin(); it != move_vec.end(); ++it)
-                move_str.push_back(to_str(*it));
+        for (Move mv : move_vec)
+                move_str.push_back(to_str(mv));
 }
 
 void Interface::analysis()
@@ -33,50 +80,49 @@ void Interface::analysis()
 void Interface::computer_move()
 {
         analyze();
-        front_move(main_line.seq.back());
+        front_move(best_move);
         render_board();
 }
 
-void Interface::player_move(string str)
+bool Interface::player_move(string str)
 {
         init_moves(false);
         init_move_str();
 
         if (str == "0-0"   || str == "o-o")   str = "O-O";
         if (str == "0-0-O" || str == "o-o-o") str = "O-O-O";
+        
         for (uint i = 0; i < move_str.size(); ++i)
                 if (move_str[i] == str) {
                         front_move(move_vec[i]);
                         render_board();
-                        return;
+                        return true;
                 }
         render_moves();
         render_board();
+        return false;
 }
 
 void Interface::undo()
 {
-        if (!history.empty()) back_move();
+        if (!history.empty())
+                back_move();
         render_board();
 }
 
 void Interface::render_analysis()
 {
-        std::cout << "Evaluation: "
-                  << ((clr == WHITE)? 1 : -1) * main_line.value / 100.0
-                  << std::endl;        
-        int count = 0;
-        for (auto it = main_line.seq.rbegin(); it != main_line.seq.rend(); ++it)
-                std::cout << to_str(*it) << " \n"[count % 5 == 4];
-        std::cout << std::endl;
-        
+        std::cout << "MOVE  : " << to_str(best_move) << std::endl
+                  << "VALUE : " << ((clr == WHITE)? 1 : -1) * best_evaluation / 100.0
+                  << std::endl;
 }
 
 void Interface::render_moves()
 {
         int count = 0;
-        for (auto it = move_str.begin(); it != move_str.end(); ++it, ++count)
-                std::cout << *it << " \n"[count % 5 == 4];
+        for (std::string mv : move_str) 
+                std::cout << mv << " \n"[count++ % 5 == 4];
+
         std::cout << std::endl;
 }
 

@@ -1,51 +1,36 @@
+#include "interface.h"
+#include <string>
 #include <iostream>
 
-#include "interface.h"
-
-enum COMMANDS { CPU_MOVE, PLAYER_MOVE, ANALYSIS, UNDO, QUIT };
-
-COMMANDS decode(std::string s);
-
-int main() 
-{        
-        Interface chess;
-
-        std::string s;
-        while (std::cin >> s) {
-                switch (decode(s)) {                        
-                case QUIT        : return 0;
-                        
-                case UNDO        : chess.undo();          break;
-                        
-                case ANALYSIS    : chess.analysis();      break;
-                        
-                case CPU_MOVE    : chess.computer_move(); break;
-                        
-                case PLAYER_MOVE : chess.player_move(s);  break;
-                }
-        }
+void usage();
+int main(int argc, char *argv[]) 
+{
+        Interface inter;
+        if (argc == 1)
+                inter.one_player();
+        else if (std::string(argv[1]) == "-i")
+                inter.interactive();
+        else if (std::string(argv[1]) == "-two")
+                inter.two_player();
+        else if (std::string(argv[1]) == "-one")
+                inter.one_player();
+        else usage();
+        
         return 0;
 }
 
-COMMANDS decode(std::string s)
+void usage()
 {
-        if (s == "q" || s == "Q"
-            || s == "quit"
-            || s == "exit")          return QUIT;
-        if (s == "u" || s == "U"
-            || s == "undo"
-            || s == "r" || s == "R") return UNDO;
-        if (s == "a" || s == "e"
-            || s == "analysis"
-            || s == "analyze"
-            || s == "eval"
-            || s == "evaluate"
-            || s == "score")      return ANALYSIS;       
-        if (s == "c" || s == "cpu"
-            || s == "computer"
-            || s == "move"
-            || s == "play"
-            || s == "engine")     return CPU_MOVE;
-        
-        return PLAYER_MOVE;
+        std::cout << "Flags: "
+                  << "\n\t `-one` --> One-player chess [default]"
+                  << "\n\t `-two` --> Two-player chess"
+                  << "\n\t `-i`   --> Interactive mode"
+                  << "\n\nInteractive Keys: "
+                  << "\n\t`[SQ][SQ]` --> Move  (e.g. `e2e4`)"
+                  << "\n\t`cpu`      --> Let engine move"
+                  << "\n\t`analysis  --> Analyze position"
+                  << "\n\t`undo`     --> Takes back last move"
+                  << "\n\t`quit`     --> Quits engine"
+                  << "\n\n\t[Initials for these instructions are recognized]\n";
+        exit(1);
 }
