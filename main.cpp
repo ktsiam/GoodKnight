@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
         Interface inter;
         if (argc == 1)
-                inter.one_player();
+                usage();
         else if (std::string(argv[1]) == "-i")
                 inter.interactive();
         else if (std::string(argv[1]) == "-two")
