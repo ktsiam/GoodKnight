@@ -42,12 +42,10 @@ void Interface::interactive()
 void Interface::one_player()
 {
         render_board();
-        
         std::string move;
-        while(true) {
-                do std::cin >> move;                        
-                while (!player_move(move));
-
+        
+        while(std::cin >> move) {
+                if (!player_move(move)) continue;
                 computer_move();
         }
 }
@@ -57,10 +55,8 @@ void Interface::two_player()
         render_board();
         
         std::string move;
-        while(true) {
-                std::cin >> move;
+        while(std::cin >> move)
                 player_move(move);
-        }
 }
 
 void Interface::init_move_str()
