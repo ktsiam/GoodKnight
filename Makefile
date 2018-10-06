@@ -1,12 +1,10 @@
-
 CXX      = g++
-CXXFLAGS = -std=c++11 -mpopcnt -O3 -Wall -Wextra
-LDLFLAGS = 
+CXXFLAGS = -std=c++14 -pedantic-errors -mpopcnt -O3 -Wall -Wextra
 
 all:   chess
 
 chess: main.o
-	${CXX} ${LDFLAGS} -o	chess  basic.o move.o board.o move_maker.o \
+	${CXX} -o chess  basic.o move.o board.o move_maker.o \
 	move_generator.o evaluator.o traverser.o interface.o main.o 
 
 basic.o:                     basic.h          basic.cpp
