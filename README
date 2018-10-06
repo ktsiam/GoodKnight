@@ -1,7 +1,23 @@
+Requirements:
+        GCC w/ C++11
+
 Instructions:
-        Execute with no arguments for info
+       -----------------------------------------
+       | Flags:                                |
+       | `-one` --> One-player chess [default] |
+       | `-two` --> Two-player chess           |
+       | `-i`   --> Interactive mode           |
+       |                                       |
+       | Interactive Keys:                     |
+       | `[SQ][SQ]` --> Move  (e.g. `e2e4`)    |
+       | `cpu`      --> Let engine move        |
+       | `analysis  --> Analyze position       |
+       | `undo`     --> Takes back last move   |
+       | `quit`     --> Quits engine           |
+        ----------------------------------------
+        [Initials for these instructions are recognized]
        
 TODO:
           - add time_dependent DEPTH
           - work on evaluation function
-          - build lookup table
+          - build lookup table (object slice to 'State')
